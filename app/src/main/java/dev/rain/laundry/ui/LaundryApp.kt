@@ -1,6 +1,8 @@
 package dev.rain.laundry.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,9 +36,16 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LaundryApp(vm: LaundryViewModel, onScan: () -> Unit, onPay: () -> Unit) {
+fun LaundryApp(
+    vm: LaundryViewModel,
+    onScan: () -> Unit,
+    onPay: () -> Unit,
+    settings: ThemeSettings = ThemeSettings(),
+    onThemeChange: (ThemeSettings) -> Unit = {}
+) {
     val state by vm.state.collectAsStateWithLifecycle()
     var aboutOpen by rememberSaveable { mutableStateOf(false) }
+    var themeOpen by rememberSaveable { mutableStateOf(false) }
     if (aboutOpen) {
         AboutScreen(onBack = { aboutOpen = false })
         return
@@ -44,64 +54,126 @@ fun LaundryApp(vm: LaundryViewModel, onScan: () -> Unit, onPay: () -> Unit) {
     val snackbar = remember { SnackbarHostState() }
     var inputOpen by rememberSaveable { mutableStateOf(false) }
     var logoutOpen by rememberSaveable { mutableStateOf(false) }
+    val pageStates = rememberSaveableStateHolder()
     val colors = MaterialTheme.colorScheme
+    val screen = when {
+        themeOpen -> AppScreen.THEME
+        !state.loggedIn -> AppScreen.LOGIN
+        state.page == Page.HOME -> AppScreen.HOME
+        state.page == Page.DEVICE -> AppScreen.DEVICE
+        state.page == Page.CHECKOUT -> AppScreen.CHECKOUT
+        else -> AppScreen.ORDERS
+    }
+    val selectedTab = if (themeOpen) 2 else if (state.page == Page.ORDERS) 1 else 0
+    val selectTab: (Int) -> Unit = { index ->
+        when (index) {
+            2 -> if (!themeOpen) themeOpen = true
+            0, 1 -> {
+                val destination = if (index == 0) Page.HOME else Page.ORDERS
+                if (themeOpen || state.page != destination) {
+                    themeOpen = false
+                    vm.navigate(destination)
+                }
+            }
+        }
+    }
+    val swipeEnabled = settings.swipeNavigation && state.loggedIn && !state.busy &&
+        screen in listOf(AppScreen.HOME, AppScreen.ORDERS, AppScreen.THEME)
+    // Scaffold already supplies the system navigation inset; reserve only the bar itself here.
+    val navigationSpace = if (!state.loggedIn) 0.dp else if (settings.bottomBar == BottomBarStyle.FLOATING) 96.dp else 80.dp
+    val glassUnderlay = state.loggedIn && settings.bottomBar == BottomBarStyle.FLOATING && settings.glassLevel != GlassLevel.NONE
+    // Glass samples scrolling content; final items still scroll fully above the controls.
+    val scrollBottom = 28.dp + if (glassUnderlay) navigationSpace else 0.dp
+    LaunchedEffect(state.loggedIn) {
+        if (state.loggedIn) pageStates.removeState(AppScreen.LOGIN.name)
+    }
     LaunchedEffect(state.message) {
         state.message?.let { message ->
             snackbar.showSnackbar(message)
             if (vm.state.value.message == message) vm.clearMessage()
         }
     }
-    BackHandler(state.loggedIn && state.page !in listOf(Page.HOME, Page.ORDERS) && !state.busy) {
+    BackHandler(state.loggedIn && !themeOpen && state.page !in listOf(Page.HOME, Page.ORDERS) && !state.busy) {
         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
     }
-    Box(Modifier.fillMaxSize().background(colors.background)) {
-        Box(Modifier.fillMaxSize().drawWithContent {
+    BackHandler(themeOpen) { themeOpen = false }
+    val backdropModifier = if (glassUnderlay) {
+        Modifier.drawWithContent {
             backdrop.record { this@drawWithContent.drawContent() }
             drawLayer(backdrop)
-        }) {
+        }
+    } else Modifier
+    Box(Modifier.fillMaxSize().background(colors.background)) {
+        Box(Modifier.fillMaxSize().then(backdropModifier)) {
             Scaffold(containerColor = colors.background, topBar = {
                 TopAppBar(title = {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(Icons.Outlined.LocalLaundryService, null, tint = colors.primary)
-                        Text("简洗", fontWeight = FontWeight.Bold)
+                        Icon(if (themeOpen) Icons.Outlined.Palette else Icons.Outlined.LocalLaundryService, null, tint = colors.primary)
+                        Text(if (themeOpen) "主题" else "简洗", fontWeight = FontWeight.Bold)
                     }
                 }, navigationIcon = {
-                    if (state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
+                    if (themeOpen) IconButton(onClick = { themeOpen = false }) {
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回")
+                    } else if (state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
                         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
                     }, enabled = !state.busy) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回") }
                 }, actions = {
+                    if (!state.loggedIn && !themeOpen) IconButton(onClick = { themeOpen = true }) {
+                        Icon(Icons.Outlined.Palette, contentDescription = "主题设置")
+                    }
                     IconButton(onClick = { aboutOpen = true }, enabled = !state.busy) {
                         Icon(Icons.Outlined.Info, contentDescription = "关于简洗")
                     }
                     if (state.loggedIn) TextButton(onClick = { logoutOpen = true }, enabled = !state.busy) { Text("退出") }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.background))
-            }, snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = if (state.loggedIn) 92.dp else 0.dp)) }) { padding ->
-                Column(Modifier.fillMaxSize().padding(padding)
-                    // Reserve the floating bar outside the scroll viewport so actions cannot sit underneath it.
-                    .padding(bottom = if (state.loggedIn) 96.dp else 0.dp)
-                    .verticalScroll(rememberScrollState()).imePadding()
-                    .padding(horizontal = 24.dp).padding(top = 12.dp, bottom = 28.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    Column(Modifier.widthIn(max = 520.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(22.dp)) {
-                        if (state.busy) {
-                            LinearProgressIndicator(Modifier.fillMaxWidth())
-                            Text(state.progress, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+            }, snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = navigationSpace)) }) { padding ->
+                AnimatedContent(targetState = screen,
+                    modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
+                        .padding(bottom = if (glassUnderlay) 0.dp else navigationSpace).imePadding()
+                        .pageSwipeNavigation(swipeEnabled, selectedTab, selectTab),
+                    transitionSpec = {
+                        when (settings.animation) {
+                            PageAnimation.SLIDE -> {
+                                val direction = if (targetState.ordinal >= initialState.ordinal) 1 else -1
+                                (slideInHorizontally(tween(280)) { it / 8 * direction } + fadeIn(tween(200))) togetherWith
+                                    (slideOutHorizontally(tween(220)) { -it / 8 * direction } + fadeOut(tween(150)))
+                            }
+                            PageAnimation.FADE -> fadeIn(tween(220)) togetherWith fadeOut(tween(160))
+                            PageAnimation.NONE -> EnterTransition.None togetherWith ExitTransition.None
                         }
-                        when {
-                            !state.loggedIn -> LoginScreen(state, vm::sendCode, vm::login)
-                            state.page == Page.HOME -> HomeScreen(state, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
-                            state.page == Page.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
-                            state.page == Page.CHECKOUT -> CheckoutScreen(state, vm::selectPayment, onPay)
-                            else -> OrdersScreen(state, vm::refreshOrder, vm::resumePayment, vm::cancelOrder)
+                    }, label = "pageTransition") { displayed ->
+                    pageStates.SaveableStateProvider(displayed.name) {
+                        if (displayed == AppScreen.THEME) {
+                            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                                ThemeScreen(settings, onThemeChange,
+                                    Modifier.widthIn(max = 568.dp).fillMaxSize().padding(horizontal = 24.dp),
+                                    contentBottomPadding = scrollBottom)
+                            }
+                        } else Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())
+                            .padding(horizontal = 24.dp).padding(top = 12.dp, bottom = scrollBottom),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Column(Modifier.widthIn(max = 520.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(22.dp)) {
+                                if (state.busy && displayed != AppScreen.THEME) {
+                                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                                    Text(state.progress, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                                }
+                                when (displayed) {
+                                    AppScreen.LOGIN -> LoginScreen(state, vm::sendCode, vm::login)
+                                    AppScreen.HOME -> HomeScreen(state, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
+                                    AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
+                                    AppScreen.CHECKOUT -> CheckoutScreen(state, vm::selectPayment, onPay)
+                                    AppScreen.ORDERS -> OrdersScreen(state, vm::refreshOrder, vm::resumePayment, vm::cancelOrder)
+                                    AppScreen.THEME -> Unit
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        if (state.loggedIn) GlassNavigationBar(backdrop, if (state.page == Page.ORDERS) 1 else 0,
-            { vm.navigate(if (it == 0) Page.HOME else Page.ORDERS) },
-            Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(horizontal = 28.dp, vertical = 6.dp),
-            enabled = !state.busy)
+        if (state.loggedIn) LaundryNavigationBar(backdrop, selectedTab, selectTab,
+            style = settings.bottomBar, modifier = Modifier.align(Alignment.BottomCenter),
+            enabled = !state.busy, glassLevel = settings.glassLevel)
     }
     if (inputOpen) {
         var raw by rememberSaveable { mutableStateOf("") }
@@ -119,6 +191,8 @@ fun LaundryApp(vm: LaundryViewModel, onScan: () -> Unit, onPay: () -> Unit) {
         confirmButton = { TextButton(onClick = { logoutOpen = false; vm.logout() }) { Text("退出") } },
         dismissButton = { TextButton(onClick = { logoutOpen = false }) { Text("取消") } })
 }
+
+private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, ORDERS, THEME }
 
 @Composable
 private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, String) -> Unit) {
@@ -178,10 +252,6 @@ private fun HomeScreen(state: UiState, scan: () -> Unit, paste: () -> Unit, orde
                 Icon(Icons.Outlined.ChevronRight, "查看订单")
             }
         }
-    }
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        Icon(Icons.Outlined.CheckCircle, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(19.dp))
-        Text("一次洗衣，一次确认。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 

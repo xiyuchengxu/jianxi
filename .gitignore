@@ -5,6 +5,9 @@
 local.properties
 *.jks
 *.keystore
+*.p12
+!development-debug.p12
+release-signing-secrets.json
 .android-sdk/
 .tools/
 artifacts/

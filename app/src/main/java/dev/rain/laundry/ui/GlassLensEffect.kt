@@ -3,6 +3,7 @@ package dev.rain.laundry.ui
 import android.graphics.RenderEffect
 import android.graphics.RuntimeShader
 import androidx.annotation.RequiresApi
+import androidx.compose.ui.graphics.asComposeRenderEffect
 
 /** Magnify the sampled scene; the rounded bevel bends and splits RGB samples. */
 internal const val GLASS_LENS_SHADER = """
@@ -42,12 +43,26 @@ internal const val GLASS_LENS_SHADER = """
 @RequiresApi(33)
 internal class GlassLensEffect {
     private val shader = RuntimeShader(GLASS_LENS_SHADER)
+    private var cached: androidx.compose.ui.graphics.RenderEffect? = null
+    private var lastWidth = Float.NaN
+    private var lastHeight = Float.NaN
+    private var lastDensity = Float.NaN
+    private var lastStrength = Float.NaN
+    private var lastTilt = Float.NaN
 
-    fun configure(width: Float, height: Float, density: Float, strength: Float, tilt: Float): RenderEffect {
-        shader.setFloatUniform("iSize", width.coerceAtLeast(1f), height.coerceAtLeast(1f))
+    fun configure(width: Float, height: Float, density: Float, strength: Float, tilt: Float): androidx.compose.ui.graphics.RenderEffect {
+        val w = width.coerceAtLeast(1f)
+        val h = height.coerceAtLeast(1f)
+        val amount = strength.coerceIn(0f, 1f)
+        val direction = tilt.coerceIn(-.6f, .6f)
+        cached?.let { existing ->
+            if (lastWidth == w && lastHeight == h && lastDensity == density && lastStrength == amount && lastTilt == direction) return existing
+        }
+        shader.setFloatUniform("iSize", w, h)
         shader.setFloatUniform("iDensity", density)
-        shader.setFloatUniform("iStrength", strength.coerceIn(0f, 1f))
-        shader.setFloatUniform("iTilt", tilt.coerceIn(-.6f, .6f))
-        return RenderEffect.createRuntimeShaderEffect(shader, "content")
+        shader.setFloatUniform("iStrength", amount)
+        shader.setFloatUniform("iTilt", direction)
+        lastWidth = w; lastHeight = h; lastDensity = density; lastStrength = amount; lastTilt = direction
+        return RenderEffect.createRuntimeShaderEffect(shader, "content").asComposeRenderEffect().also { cached = it }
     }
 }

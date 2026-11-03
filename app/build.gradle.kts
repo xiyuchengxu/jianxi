@@ -11,8 +11,10 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 11
-        versionName = "0.1.10"
+        versionCode = 18
+        versionName = "1.0.1"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.17\"")
+        manifestPlaceholders["internalVersion"] = "0.1.17"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -25,6 +27,15 @@ android {
             keyPassword = "android"
             storeType = "PKCS12"
         }
+        create("production") {
+            System.getenv("JIANXI_RELEASE_STORE_FILE")?.takeIf { it.isNotBlank() }?.let {
+                storeFile = file(it)
+                storePassword = System.getenv("JIANXI_RELEASE_STORE_PASSWORD")
+                keyAlias = System.getenv("JIANXI_RELEASE_KEY_ALIAS") ?: "jianxi-release"
+                keyPassword = System.getenv("JIANXI_RELEASE_KEY_PASSWORD") ?: storePassword
+                storeType = "PKCS12"
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -36,6 +47,19 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+        create("optimized") {
+            initWith(getByName("release"))
+            // Same upgrade signature and field names as previous test builds, without debugger/tooling overhead.
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = false
+            isMinifyEnabled = false
+            isShrinkResources = false
+            matchingFallbacks += listOf("release")
+        }
+        create("production") {
+            initWith(getByName("optimized"))
+            signingConfig = signingConfigs.getByName("production")
         }
     }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
@@ -50,6 +74,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation("androidx.compose.animation:animation")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")

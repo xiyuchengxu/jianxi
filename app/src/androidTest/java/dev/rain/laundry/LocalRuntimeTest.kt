@@ -15,6 +15,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.rain.laundry.data.LaundryApi
 import dev.rain.laundry.core.*
+import dev.rain.laundry.ui.GlassLevel
+import dev.rain.laundry.ui.ThemePreferences
 import com.google.gson.JsonObject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,8 +41,86 @@ class LocalRuntimeTest {
     private val automation get() = instrumentation.uiAutomation
     private val screenshots get() = File(instrumentation.targetContext.getExternalFilesDir(null), "runtime-checks").apply { mkdirs() }
 
+    @Test fun glassControlsPersistAndFixedBarRetainsTheSelectedLevel() {
+        val context = instrumentation.targetContext
+        val preferences = ThemePreferences(context)
+        val original = preferences.settings
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                acceptTermsIfNeeded()
+                click("主题设置")
+                scrollToText("轻度")
+                click("轻度")
+                await { ThemePreferences(context).settings.glassLevel == GlassLevel.LIGHT }
+                scrollToText("液态玻璃轻度交互预览")
+                val preview = Rect().also(awaitText("液态玻璃轻度交互预览")::getBoundsInScreen)
+                val downTime = SystemClock.uptimeMillis()
+                injectTouch(downTime, MotionEvent.ACTION_DOWN, preview.centerX().toFloat(), preview.bottom - 36f)
+                SystemClock.sleep(180)
+                injectTouch(downTime, MotionEvent.ACTION_MOVE, preview.left + preview.width() * .2f, preview.bottom - 36f)
+                injectTouch(downTime, MotionEvent.ACTION_UP, preview.left + preview.width() * .2f, preview.bottom - 36f)
+                click("无")
+                await { ThemePreferences(context).settings.glassLevel == GlassLevel.NONE }
+                scrollToText("固定", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+                click("固定")
+                scrollToText("当前为固定底栏，不使用液态玻璃。所选等级会在切回悬浮底栏后生效。")
+                assertEquals(GlassLevel.NONE, ThemePreferences(context).settings.glassLevel)
+                scenario.recreate()
+                awaitText("主题")
+                assertEquals(GlassLevel.NONE, ThemePreferences(context).settings.glassLevel)
+                scrollToText("完全")
+                click("完全")
+                await { ThemePreferences(context).settings.glassLevel == GlassLevel.FULL }
+                scrollToText("悬浮", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+                click("悬浮")
+                assertEquals(GlassLevel.FULL, ThemePreferences(context).settings.glassLevel)
+            }
+        } finally {
+            instrumentation.runOnMainSync { preferences.update(original) }
+        }
+    }
+
+    @Test fun firstLaunchRequiresExactAcknowledgementAndRemembersIt() {
+        val preferences = instrumentation.targetContext.getSharedPreferences("usage_agreement", 0)
+        val previousRevision = preferences.getString("accepted_revision", null)
+        val previousTime = preferences.getLong("accepted_at", 0L)
+        assertTrue(preferences.edit().clear().commit())
+        try {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+                awaitText("免责声明与用户守则")
+                for (attempt in 0 until 40) {
+                    if (find(automation.rootInActiveWindow) { it.isEditable } != null) break
+                    awaitNode { it.isScrollable }.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+                    SystemClock.sleep(100)
+                }
+                val editor = awaitNode { it.isEditable }
+                assertTrue(editor.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, Bundle().apply {
+                    putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, "我同意")
+                }))
+                instrumentation.waitForIdleSync()
+                assertNotNull(find(automation.rootInActiveWindow) { it.text?.toString() == "免责声明与用户守则" })
+                assertNull(find(automation.rootInActiveWindow) { it.text?.toString() == "手机号登录" })
+                assertNull(preferences.getString("accepted_revision", null))
+                assertTrue(editor.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, Bundle().apply {
+                    putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, AgreementPolicy.CONFIRMATION)
+                }))
+                click("确认并进入")
+                awaitText("手机号登录")
+                assertNotNull(preferences.getString("accepted_revision", null))
+                scenario.recreate()
+                awaitText("手机号登录")
+                assertNull(find(automation.rootInActiveWindow) { it.text?.toString() == "免责声明与用户守则" })
+            }
+        } finally {
+            preferences.edit().clear().apply {
+                if (previousRevision != null) putString("accepted_revision", previousRevision).putLong("accepted_at", previousTime)
+            }.commit()
+        }
+    }
+
     @Test fun loginAboutAndOfflineLicenseRenderAndReturn() {
         ActivityScenario.launch(MainActivity::class.java).use {
+            acceptTermsIfNeeded()
             awaitText("手机号登录")
             capture("01-login")
             click("关于简洗")
@@ -104,8 +184,8 @@ class LocalRuntimeTest {
         val viewport = awaitNode { it.isScrollable }
         val viewportBounds = Rect().also(viewport::getBoundsInScreen)
         val navigationBounds = Rect().also(awaitText("订单")::getBoundsInScreen)
-        assertTrue("The scroll viewport must end above the floating navigation bar",
-            viewportBounds.bottom <= navigationBounds.top)
+        assertTrue("Glass needs the scroll scene behind it",
+            viewportBounds.bottom > navigationBounds.top)
         // Reveal the final payment action without invoking it or requesting location.
         viewport.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
         instrumentation.waitForIdleSync()
@@ -230,6 +310,7 @@ class LocalRuntimeTest {
         test: (LaundryViewModel, CopyOnWriteArrayList<String>) -> Unit
     ) {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            acceptTermsIfNeeded()
             lateinit var vm: LaundryViewModel
             lateinit var state: MutableStateFlow<UiState>
             lateinit var api: LaundryApi
@@ -297,6 +378,26 @@ class LocalRuntimeTest {
         }
     }
 
+    private fun acceptTermsIfNeeded() {
+        await {
+            find(automation.rootInActiveWindow) { it.text?.toString() == "免责声明与用户守则" } != null ||
+                find(automation.rootInActiveWindow) { it.text?.toString() == "手机号登录" } != null ||
+                find(automation.rootInActiveWindow) { it.text?.toString() == "开始洗衣" } != null
+        }
+        if (find(automation.rootInActiveWindow) { it.text?.toString() == "免责声明与用户守则" } == null) return
+        for (attempt in 0 until 40) {
+            if (find(automation.rootInActiveWindow) { it.isEditable } != null) break
+            awaitNode { it.isScrollable }.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+            SystemClock.sleep(100)
+        }
+        val editor = awaitNode { it.isEditable }
+        assertTrue(editor.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, Bundle().apply {
+            putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, AgreementPolicy.CONFIRMATION)
+        }))
+        click("确认并进入")
+        await { find(automation.rootInActiveWindow) { it.text?.toString() == "免责声明与用户守则" } == null }
+    }
+
     private fun await(condition: () -> Boolean) {
         val deadline = SystemClock.uptimeMillis() + 12_000
         while (SystemClock.uptimeMillis() < deadline) {
@@ -323,10 +424,10 @@ class LocalRuntimeTest {
         it.text?.contains(text) == true || it.contentDescription?.contains(text) == true
     }
 
-    private fun scrollToText(text: String) {
-        repeat(8) {
-            if (find(automation.rootInActiveWindow) { it.text?.toString() == text } != null) return
-            awaitNode { it.isScrollable }.performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD)
+    private fun scrollToText(text: String, direction: Int = AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) {
+        repeat(16) {
+            if (find(automation.rootInActiveWindow) { it.text?.toString() == text || it.contentDescription?.toString() == text } != null) return
+            awaitNode { it.isScrollable }.performAction(direction)
             SystemClock.sleep(250)
         }
         awaitText(text)
