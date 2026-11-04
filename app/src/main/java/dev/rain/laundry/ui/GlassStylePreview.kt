@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 
 /** A local scene, sampled by the same renderer as the real navigation bar; no login needed. */
 @Composable
-internal fun GlassStylePreview(level: GlassLevel) {
+internal fun GlassStylePreview(level: GlassLevel, tabs: List<dev.rain.laundry.core.NavigationTab>) {
     val colors = MaterialTheme.colorScheme
     val backdrop = rememberGraphicsLayer()
     var origin by remember { mutableStateOf(Offset.Zero) }
-    var selected by remember { mutableIntStateOf(2) }
+    var selected by remember(tabs) { mutableIntStateOf(tabs.lastIndex) }
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text("悬浮底栏交互预览", Modifier.padding(horizontal = 6.dp),
@@ -48,7 +48,7 @@ internal fun GlassStylePreview(level: GlassLevel) {
             }
             GlassNavigationBar(backdrop, selected, { selected = it },
                 Modifier.align(Alignment.BottomCenter).padding(horizontal = 4.dp),
-                glassLevel = level, backdropOrigin = origin)
+                glassLevel = level, backdropOrigin = origin, tabs = tabs)
         }
     }
 }

@@ -96,7 +96,7 @@ fun AboutScreen(onBack: () -> Unit) {
                         style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                 }
 
-                Text("使用 Kotlin 与 Jetpack Compose 构建的独立 Android 洗衣客户端。",
+                Text("使用 Kotlin 与 Jetpack Compose 构建的独立 Android 洗衣与饮水客户端。",
                     style = MaterialTheme.typography.bodyLarge)
 
                 OutlinedCard(onClick = {

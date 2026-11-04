@@ -53,14 +53,15 @@ fun GlassNavigationBar(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     glassLevel: GlassLevel = GlassLevel.FULL,
-    backdropOrigin: Offset = Offset.Zero
+    backdropOrigin: Offset = Offset.Zero,
+    tabs: List<dev.rain.laundry.core.NavigationTab> = dev.rain.laundry.core.visibleNavigationTabs()
 ) {
     var positionInRoot by remember { mutableStateOf(Offset.Zero) }
     val origin = positionInRoot - backdropOrigin
-    var pressed by remember { mutableStateOf(false) }
-    var touching by remember { mutableStateOf(false) }
+    var pressed by remember(tabs) { mutableStateOf(false) }
+    var touching by remember(tabs) { mutableStateOf(false) }
     val pointer = remember { mutableFloatStateOf(0f) }
-    var previewIndex by remember { mutableIntStateOf(selected) }
+    var previewIndex by remember(tabs) { mutableIntStateOf(selected.coerceIn(tabs.indices)) }
     val currentSelected by rememberUpdatedState(selected)
     val currentOnSelect by rememberUpdatedState(onSelect)
     val haptic = LocalHapticFeedback.current
@@ -108,17 +109,17 @@ fun GlassNavigationBar(
         val hostHeight = with(density) { 84.dp.toPx() }
         val trackTop = with(density) { 12.dp.toPx() }
         val paddingPx = with(density) { 5.dp.toPx() }
-        val tabCount = laundryTabs.size
+        val tabCount = tabs.size
         val slot = (widthPx - paddingPx * 2) / tabCount
         fun indexAt(x: Float) = ((x - paddingPx) / slot).toInt().coerceIn(0, tabCount - 1)
         fun center(index: Int) = paddingPx + slot * (index + .5f)
-        val desiredCenter = if (pressed) pointer.floatValue.coerceIn(center(0) - 5f, center(tabCount - 1) + 5f) else center(selected)
+        val desiredCenter = if (pressed) pointer.floatValue.coerceIn(center(0) - 5f, center(tabCount - 1) + 5f) else center(selected.coerceIn(tabs.indices))
         val animatedCenter = animateFloatAsState(desiredCenter,
             spring(dampingRatio = if (pressed) .69f else .51f, stiffness = if (pressed) 760f else 430f), label = "glassPosition")
-        val visualCenter = remember(animatedCenter, widthPx) {
+        val visualCenter = remember(animatedCenter, widthPx, tabCount) {
             derivedStateOf { animatedCenter.value.coerceIn(center(0), center(tabCount - 1)) }
         }
-        val active = if (pressed) previewIndex else selected
+        val active = (if (pressed) previewIndex else selected).coerceIn(tabs.indices)
 
         Box(Modifier.fillMaxWidth().height(60.dp).align(Alignment.Center)
             .shadow(12.dp, trackShape, ambientColor = Color.Black.copy(alpha = .10f), spotColor = Color.Black.copy(alpha = .14f))
@@ -129,7 +130,7 @@ fun GlassNavigationBar(
                 } else drawContent()
             }
             .clip(trackShape)
-            .pointerInput(enabled, widthPx, glassLevel) {
+            .pointerInput(enabled, widthPx, glassLevel, tabs) {
                 if (!enabled) return@pointerInput
                 coroutineScope {
                     val gestureScope = this
@@ -195,20 +196,21 @@ fun GlassNavigationBar(
                 }
                 .background(scheme.primary.copy(alpha = if (dark) .15f else .105f), RoundedCornerShape(25.dp)))
             Row(Modifier.fillMaxSize().padding(5.dp)) {
-                laundryTabs.forEachIndexed { index, (title, icon) ->
+                tabs.forEachIndexed { index, tab ->
                     val color = if (active == index) scheme.primary else scheme.onSurfaceVariant
                     Column(Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(25.dp))
                         .semantics(mergeDescendants = true) {
                             role = Role.Tab
+                            contentDescription = "${tab.title}导航"
                             this.selected = selected == index
                             if (!enabled) disabled()
-                            onClick(label = title) {
+                            onClick(label = tab.title) {
                                 if (enabled) { select(index); true } else false
                             }
                         }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-                        Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
+                        Icon(tab.icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.height(2.dp))
-                        Text(title, color = color, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
+                        Text(tab.title, color = color, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
                     }
                 }
             }

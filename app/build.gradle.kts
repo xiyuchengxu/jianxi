@@ -11,10 +11,10 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 18
-        versionName = "1.0.1"
-        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.17\"")
-        manifestPlaceholders["internalVersion"] = "0.1.17"
+        versionCode = 20
+        versionName = "1.0.3"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.19\"")
+        manifestPlaceholders["internalVersion"] = "0.1.19"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

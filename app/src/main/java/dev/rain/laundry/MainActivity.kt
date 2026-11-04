@@ -18,16 +18,25 @@ import kotlinx.coroutines.*
 class MainActivity : ComponentActivity() {
     private val consent by lazy { ConsentStore(applicationContext) }
     private val vm by lazy { ViewModelProvider(this)[LaundryViewModel::class.java] }
+    private var pendingLocationAction: String? = null
     private val scanner = registerForActivityResult(ScanContract()) { result ->
-        if (consent.isAccepted()) result.contents?.let(vm::scan)
+        if (consent.isAccepted()) result.contents?.let { raw ->
+            val settings = ThemePreferences(this).settings
+            vm.scan(raw, settings.laundryEnabled, settings.waterEnabled)
+        }
     }
     private val permission = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
         if (consent.isAccepted()) {
-            if (LocationProvider(this).permitted()) vm.pay() else vm.notice("允许本次定位后，才能继续付款")
+            val action = pendingLocationAction
+            pendingLocationAction = null
+            if (LocationProvider(this).permitted()) {
+                when (action) { "water" -> vm.startWater(); "laundry" -> vm.pay() }
+            } else vm.notice("允许本次定位后，才能继续操作")
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        pendingLocationAction = savedInstanceState?.getString("pending_location_action")
         enableEdgeToEdge()
         setContent {
             val appearance = remember { ThemePreferences(this@MainActivity) }
@@ -46,14 +55,27 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                     LaundryApp(model, onScan = {
-                        scanner.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("扫描洗衣机二维码")
+                        scanner.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("扫描洗衣机或饮水机二维码")
                             .setBeepEnabled(false).setOrientationLocked(false))
                     }, onPay = {
                         if (LocationProvider(this).permitted()) model.pay()
-                        else permission.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+                        else {
+                            pendingLocationAction = "laundry"
+                            permission.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+                        }
+                    }, onWaterStart = {
+                        if (LocationProvider(this).permitted()) model.startWater()
+                        else {
+                            pendingLocationAction = "water"
+                            permission.launch(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+                        }
                     }, settings = appearance.settings, onThemeChange = appearance::update)
                 }
             }
         }
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putString("pending_location_action", pendingLocationAction)
+        super.onSaveInstanceState(outState)
     }
 }

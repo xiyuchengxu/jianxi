@@ -11,9 +11,9 @@ import kotlin.math.abs
 
 /** Runs on the content viewport. The scrollable child gets first chance to consume vertical drags. */
 @Composable
-internal fun Modifier.pageSwipeNavigation(enabled: Boolean, selected: Int, onSelect: (Int) -> Unit): Modifier {
+internal fun Modifier.pageSwipeNavigation(enabled: Boolean, selected: Int, tabCount: Int, onSelect: (Int) -> Unit): Modifier {
     val currentOnSelect by rememberUpdatedState(onSelect)
-    return pointerInput(enabled, selected) {
+    return pointerInput(enabled, selected, tabCount) {
         if (!enabled) return@pointerInput
         var distance = 0f
         val threshold = (size.width * .18f).coerceIn(56.dp.toPx(), 96.dp.toPx())
@@ -24,7 +24,7 @@ internal fun Modifier.pageSwipeNavigation(enabled: Boolean, selected: Int, onSel
             onDragEnd = {
                 if (abs(distance) >= threshold) {
                     val target = selected + if (distance < 0f) 1 else -1
-                    if (target in laundryTabs.indices) currentOnSelect(target)
+                    if (target in 0 until tabCount) currentOnSelect(target)
                 }
                 distance = 0f
             }

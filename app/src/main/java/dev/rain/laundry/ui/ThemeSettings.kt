@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import dev.rain.laundry.core.visibleNavigationTabs
 
 enum class ThemeMode(val title: String) { SYSTEM("跟随系统"), LIGHT("浅色"), DARK("深色") }
 enum class ThemePalette(val title: String) {
@@ -24,8 +25,12 @@ data class ThemeSettings(
     val animation: PageAnimation = PageAnimation.SLIDE,
     val dynamicColor: Boolean = false,
     val swipeNavigation: Boolean = true,
-    val glassLevel: GlassLevel = GlassLevel.FULL
-)
+    val glassLevel: GlassLevel = GlassLevel.FULL,
+    val laundryEnabled: Boolean = true,
+    val waterEnabled: Boolean = true
+) {
+    val visibleTabs get() = visibleNavigationTabs(laundryEnabled, waterEnabled)
+}
 
 /** UI preferences are independent of the encrypted login/order store. */
 class ThemePreferences(context: Context) {
@@ -39,7 +44,9 @@ class ThemePreferences(context: Context) {
         animation = savedEnum("animation", PageAnimation.SLIDE),
         dynamicColor = preferences.getBoolean("dynamic_color", false),
         swipeNavigation = preferences.getBoolean("swipe_navigation", true),
-        glassLevel = savedEnum("glass_level", GlassLevel.FULL)
+        glassLevel = savedEnum("glass_level", GlassLevel.FULL),
+        laundryEnabled = preferences.getBoolean("laundry_enabled", true),
+        waterEnabled = preferences.getBoolean("water_enabled", true)
     ))
         private set
 
@@ -55,6 +62,8 @@ class ThemePreferences(context: Context) {
             .putBoolean("dynamic_color", value.dynamicColor)
             .putBoolean("swipe_navigation", value.swipeNavigation)
             .putString("glass_level", value.glassLevel.name)
+            .putBoolean("laundry_enabled", value.laundryEnabled)
+            .putBoolean("water_enabled", value.waterEnabled)
             .apply()
     }
 

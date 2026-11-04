@@ -18,7 +18,7 @@ object DeviceCodes {
         } catch (_: IllegalArgumentException) { throw ClientError("二维码编码无效") }
         val keys = setOf("IMEI", "NQT", "SN")
         val matches = pairs.filter { it.first in keys }
-        if (matches.size != 1) throw ClientError("请使用包含 IMEI、SN 或 NQT 的洗衣机二维码")
+        if (matches.size != 1) throw ClientError("请使用包含 IMEI、SN 或 NQT 的设备二维码")
         val (key, value) = matches.single()
         if (!value.matches(Regex("[A-Za-z0-9_.-]{4,96}"))) throw ClientError("设备编号格式异常")
         return DeviceCode(key, value)

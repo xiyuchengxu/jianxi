@@ -8,6 +8,7 @@ local.properties
 *.p12
 !development-debug.p12
 release-signing-secrets.json
+*正式签名备份*.zip
 .android-sdk/
 .tools/
 artifacts/

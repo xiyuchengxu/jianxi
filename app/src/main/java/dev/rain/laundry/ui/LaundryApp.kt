@@ -28,6 +28,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import dev.rain.laundry.*
 import dev.rain.laundry.core.*
 import java.text.SimpleDateFormat
@@ -40,12 +45,14 @@ fun LaundryApp(
     vm: LaundryViewModel,
     onScan: () -> Unit,
     onPay: () -> Unit,
+    onWaterStart: () -> Unit = { vm.startWater() },
     settings: ThemeSettings = ThemeSettings(),
     onThemeChange: (ThemeSettings) -> Unit = {}
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     var aboutOpen by rememberSaveable { mutableStateOf(false) }
     var themeOpen by rememberSaveable { mutableStateOf(false) }
+    var settingsOpen by rememberSaveable { mutableStateOf(false) }
     if (aboutOpen) {
         AboutScreen(onBack = { aboutOpen = false })
         return
@@ -56,29 +63,64 @@ fun LaundryApp(
     var logoutOpen by rememberSaveable { mutableStateOf(false) }
     val pageStates = rememberSaveableStateHolder()
     val colors = MaterialTheme.colorScheme
+    val tabs = remember(settings.laundryEnabled, settings.waterEnabled) { settings.visibleTabs }
+    val defaultPage = when { settings.laundryEnabled -> Page.HOME; settings.waterEnabled -> Page.WATER; else -> Page.ORDERS }
+    val visiblePage = when {
+        !settings.laundryEnabled && state.page in listOf(Page.HOME, Page.DEVICE, Page.CHECKOUT) -> defaultPage
+        !settings.waterEnabled && state.page == Page.WATER -> defaultPage
+        else -> state.page
+    }
+    LaunchedEffect(state.loggedIn, state.page, state.busy, visiblePage) {
+        if (state.loggedIn && !state.busy && state.page != visiblePage) vm.navigate(visiblePage)
+    }
     val screen = when {
         themeOpen -> AppScreen.THEME
+        settingsOpen -> AppScreen.SETTINGS
         !state.loggedIn -> AppScreen.LOGIN
-        state.page == Page.HOME -> AppScreen.HOME
-        state.page == Page.DEVICE -> AppScreen.DEVICE
-        state.page == Page.CHECKOUT -> AppScreen.CHECKOUT
+        visiblePage == Page.HOME -> AppScreen.HOME
+        visiblePage == Page.DEVICE -> AppScreen.DEVICE
+        visiblePage == Page.CHECKOUT -> AppScreen.CHECKOUT
+        visiblePage == Page.WATER -> AppScreen.WATER
         else -> AppScreen.ORDERS
     }
-    val selectedTab = if (themeOpen) 2 else if (state.page == Page.ORDERS) 1 else 0
+    val currentTab = when {
+        themeOpen || settingsOpen -> NavigationTab.SETTINGS
+        visiblePage == Page.WATER -> NavigationTab.WATER
+        visiblePage == Page.ORDERS -> NavigationTab.ORDERS
+        else -> NavigationTab.LAUNDRY
+    }
+    val selectedTab = tabs.indexOf(currentTab).coerceAtLeast(0)
     val selectTab: (Int) -> Unit = { index ->
-        when (index) {
-            2 -> if (!themeOpen) themeOpen = true
-            0, 1 -> {
-                val destination = if (index == 0) Page.HOME else Page.ORDERS
-                if (themeOpen || state.page != destination) {
+        if (!state.busy) when (val tab = tabs.getOrNull(index)) {
+            NavigationTab.SETTINGS -> { settingsOpen = true; themeOpen = false }
+            NavigationTab.LAUNDRY, NavigationTab.WATER, NavigationTab.ORDERS -> {
+                val destination = when (tab) { NavigationTab.LAUNDRY -> Page.HOME; NavigationTab.WATER -> Page.WATER; else -> Page.ORDERS }
+                if (settingsOpen || themeOpen || state.page != destination) {
+                    settingsOpen = false
                     themeOpen = false
                     vm.navigate(destination)
                 }
             }
+            null -> Unit
+        }
+    }
+    val openWater: () -> Unit = {
+        if (settings.waterEnabled) { settingsOpen = false; themeOpen = false; vm.navigate(Page.WATER) }
+        else {
+            settingsOpen = true; themeOpen = false
+            vm.notice("请先开启饮水入口，再查看饮水记录")
         }
     }
     val swipeEnabled = settings.swipeNavigation && state.loggedIn && !state.busy &&
-        screen in listOf(AppScreen.HOME, AppScreen.ORDERS, AppScreen.THEME)
+        screen in listOf(AppScreen.HOME, AppScreen.WATER, AppScreen.ORDERS, AppScreen.SETTINGS)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner, screen, state.waterSession?.startedAt, state.waterSession?.active) {
+        if (screen == AppScreen.WATER && state.waterSession?.active == true) {
+            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while (isActive) { delay(3000); vm.refreshWater(silent = true) }
+            }
+        }
+    }
     // Scaffold already supplies the system navigation inset; reserve only the bar itself here.
     val navigationSpace = if (!state.loggedIn) 0.dp else if (settings.bottomBar == BottomBarStyle.FLOATING) 96.dp else 80.dp
     val glassUnderlay = state.loggedIn && settings.bottomBar == BottomBarStyle.FLOATING && settings.glassLevel != GlassLevel.NONE
@@ -93,10 +135,11 @@ fun LaundryApp(
             if (vm.state.value.message == message) vm.clearMessage()
         }
     }
-    BackHandler(state.loggedIn && !themeOpen && state.page !in listOf(Page.HOME, Page.ORDERS) && !state.busy) {
+    BackHandler(state.loggedIn && !settingsOpen && !themeOpen && state.page !in listOf(Page.HOME, Page.WATER, Page.ORDERS) && !state.busy) {
         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
     }
-    BackHandler(themeOpen) { themeOpen = false }
+    BackHandler(!state.loggedIn && settingsOpen && !themeOpen) { settingsOpen = false }
+    BackHandler(themeOpen) { themeOpen = false; settingsOpen = true }
     val backdropModifier = if (glassUnderlay) {
         Modifier.drawWithContent {
             backdrop.record { this@drawWithContent.drawContent() }
@@ -108,18 +151,21 @@ fun LaundryApp(
             Scaffold(containerColor = colors.background, topBar = {
                 TopAppBar(title = {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(if (themeOpen) Icons.Outlined.Palette else Icons.Outlined.LocalLaundryService, null, tint = colors.primary)
-                        Text(if (themeOpen) "主题" else "简洗", fontWeight = FontWeight.Bold)
+                        Icon(when { themeOpen -> Icons.Outlined.Palette; settingsOpen -> Icons.Outlined.Settings; visiblePage == Page.WATER -> Icons.Outlined.WaterDrop;
+                            else -> Icons.Outlined.LocalLaundryService }, null, tint = colors.primary)
+                        Text(when { themeOpen -> "主题"; settingsOpen -> "设置"; visiblePage == Page.WATER -> "饮水"; else -> "简洗" }, fontWeight = FontWeight.Bold)
                     }
                 }, navigationIcon = {
-                    if (themeOpen) IconButton(onClick = { themeOpen = false }) {
+                    if (themeOpen) IconButton(onClick = { themeOpen = false; settingsOpen = true }) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回")
-                    } else if (state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
+                    } else if (settingsOpen && !state.loggedIn) IconButton(onClick = { settingsOpen = false }) {
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回")
+                    } else if (!settingsOpen && state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
                         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
                     }, enabled = !state.busy) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回") }
                 }, actions = {
-                    if (!state.loggedIn && !themeOpen) IconButton(onClick = { themeOpen = true }) {
-                        Icon(Icons.Outlined.Palette, contentDescription = "主题设置")
+                    if (!state.loggedIn && !themeOpen && !settingsOpen) IconButton(onClick = { settingsOpen = true }) {
+                        Icon(Icons.Outlined.Settings, contentDescription = "设置")
                     }
                     IconButton(onClick = { aboutOpen = true }, enabled = !state.busy) {
                         Icon(Icons.Outlined.Info, contentDescription = "关于简洗")
@@ -130,7 +176,7 @@ fun LaundryApp(
                 AnimatedContent(targetState = screen,
                     modifier = Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)
                         .padding(bottom = if (glassUnderlay) 0.dp else navigationSpace).imePadding()
-                        .pageSwipeNavigation(swipeEnabled, selectedTab, selectTab),
+                        .pageSwipeNavigation(swipeEnabled, selectedTab, tabs.size, selectTab),
                     transitionSpec = {
                         when (settings.animation) {
                             PageAnimation.SLIDE -> {
@@ -160,9 +206,12 @@ fun LaundryApp(
                                 when (displayed) {
                                     AppScreen.LOGIN -> LoginScreen(state, vm::sendCode, vm::login)
                                     AppScreen.HOME -> HomeScreen(state, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
+                                    AppScreen.SETTINGS -> SettingsScreen(settings, onThemeChange, { themeOpen = true }, !state.busy)
+                                    AppScreen.WATER -> WaterScreen(state, onScan, { inputOpen = true }, vm::selectWaterOutlet,
+                                        onWaterStart, vm::endWater, { vm.refreshWater() }, { vm.navigate(Page.ORDERS) })
                                     AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
                                     AppScreen.CHECKOUT -> CheckoutScreen(state, vm::selectPayment, onPay)
-                                    AppScreen.ORDERS -> OrdersScreen(state, vm::refreshOrder, vm::resumePayment, vm::cancelOrder)
+                                    AppScreen.ORDERS -> OrdersScreen(state, vm::refreshOrder, vm::resumePayment, vm::cancelOrder, openWater)
                                     AppScreen.THEME -> Unit
                                 }
                             }
@@ -173,17 +222,19 @@ fun LaundryApp(
         }
         if (state.loggedIn) LaundryNavigationBar(backdrop, selectedTab, selectTab,
             style = settings.bottomBar, modifier = Modifier.align(Alignment.BottomCenter),
-            enabled = !state.busy, glassLevel = settings.glassLevel)
+            enabled = !state.busy, glassLevel = settings.glassLevel, tabs = tabs)
     }
     if (inputOpen) {
         var raw by rememberSaveable { mutableStateOf("") }
         AlertDialog(onDismissRequest = { inputOpen = false }, icon = { Icon(Icons.Outlined.QrCode, null) },
             title = { Text("粘贴设备码") }, text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("粘贴洗衣机二维码的完整内容。")
+                    Text("粘贴洗衣机或饮水机二维码的完整内容。")
                     OutlinedTextField(raw, { raw = it.take(4096) }, label = { Text("二维码内容") }, minLines = 3, maxLines = 5)
                 }
-            }, confirmButton = { TextButton(onClick = { inputOpen = false; vm.scan(raw) }, enabled = raw.isNotBlank()) { Text("识别设备") } },
+            }, confirmButton = { TextButton(onClick = {
+                inputOpen = false; vm.scan(raw, settings.laundryEnabled, settings.waterEnabled)
+            }, enabled = raw.isNotBlank()) { Text("识别设备") } },
             dismissButton = { TextButton(onClick = { inputOpen = false }) { Text("取消") } })
     }
     if (logoutOpen) AlertDialog(onDismissRequest = { logoutOpen = false }, title = { Text("退出登录？") },
@@ -192,7 +243,7 @@ fun LaundryApp(
         dismissButton = { TextButton(onClick = { logoutOpen = false }) { Text("取消") } })
 }
 
-private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, ORDERS, THEME }
+private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, WATER, ORDERS, SETTINGS, THEME }
 
 @Composable
 private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, String) -> Unit) {
@@ -202,7 +253,7 @@ private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, 
     Spacer(Modifier.height(12.dp))
     HeroIcon(Icons.Outlined.LocalLaundryService)
     Text("把洗衣，\n变简单。", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
-    Text("登录洗衣账户，开始一次轻松的洗衣。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("登录平台账户，使用洗衣和饮水服务。", color = MaterialTheme.colorScheme.onSurfaceVariant)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Text("手机号登录", style = MaterialTheme.typography.titleLarge)
@@ -223,7 +274,7 @@ private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, 
                 modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("登录", style = MaterialTheme.typography.titleMedium) }
         }
     }
-    Text("简洗是独立客户端。短信和洗衣服务由原平台提供。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("简洗是独立客户端。短信、洗衣和饮水服务由原平台提供。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
@@ -306,13 +357,26 @@ private fun CheckoutScreen(state: UiState, choose: (PayRoute) -> Unit, pay: () -
 }
 
 @Composable
-private fun OrdersScreen(state: UiState, refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit) {
+private fun OrdersScreen(state: UiState, refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit, water: () -> Unit) {
     Text("我的订单", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    state.waterSession?.let { session ->
+        OutlinedCard(onClick = water, shape = RoundedCornerShape(24.dp)) {
+            Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Outlined.WaterDrop, null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Text(if (session.active) "饮水记录 · 状态待确认" else "最近一次饮水记录")
+                    Text(session.device.name + " · " + session.outlet.name, style = MaterialTheme.typography.bodySmall)
+                }
+                Icon(Icons.Outlined.ChevronRight, "查看饮水记录")
+            }
+        }
+    }
     val order = state.order
     if (order == null) {
         Spacer(Modifier.height(28.dp)); HeroIcon(Icons.AutoMirrored.Outlined.ReceiptLong)
-        Text("还没有洗衣订单", style = MaterialTheme.typography.titleLarge)
-        Text("从底栏进入洗衣，扫描设备即可开始。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("还没有订单", style = MaterialTheme.typography.titleLarge)
+        Text("在这里查看本机订单和付款进度。", color = MaterialTheme.colorScheme.onSurfaceVariant)
         return
     }
     val paid = order.phase == OrderPhase.PAID
@@ -333,7 +397,7 @@ private fun OrdersScreen(state: UiState, refresh: () -> Unit, resume: () -> Unit
         OrderPhase.REFUNDING -> "退款处理中"
         OrderPhase.REFUNDED -> "订单已退款"
     }, style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
-    Text(if (closed) "订单已超时或失效，可以返回洗衣重新选择模式。" else if (order.phase == OrderPhase.COMPLETED) "本次洗衣已结束。" else if (order.phase == OrderPhase.REFUNDING) "平台正在处理退款，请在原应用查看进度。" else if (order.phase == OrderPhase.REFUNDED) "平台已标记退款完成，请核对到账情况。" else if (paid) "请查看洗衣机运行状态。" else if (cancelled || rejected) "可以返回洗衣，重新选择模式。" else if (order.orderNo.isBlank()) "请先在原应用核对这笔订单，避免重复下单。" else if (order.phase == OrderPhase.CREATED) "订单已创建，可以继续付款；若已在原应用付款，请刷新状态。" else "付款结果尚未确认，请先查询订单状态。",
+    Text(if (order.isWater) "这是按实际用量生成的饮水结算账单；付款状态以平台查询结果为准。" else if (closed) "订单已超时或失效，可以返回洗衣重新选择模式。" else if (order.phase == OrderPhase.COMPLETED) "本次洗衣已结束。" else if (order.phase == OrderPhase.REFUNDING) "平台正在处理退款，请在原应用查看进度。" else if (order.phase == OrderPhase.REFUNDED) "平台已标记退款完成，请核对到账情况。" else if (paid) "请查看洗衣机运行状态。" else if (cancelled || rejected) "可以返回洗衣，重新选择模式。" else if (order.orderNo.isBlank()) "请先在原应用核对这笔订单，避免重复下单。" else if (order.phase == OrderPhase.CREATED) "订单已创建，可以继续付款；若已在原应用付款，请刷新状态。" else "付款结果尚未确认，请先查询订单状态。",
         color = MaterialTheme.colorScheme.onSurfaceVariant)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
@@ -346,7 +410,7 @@ private fun OrdersScreen(state: UiState, refresh: () -> Unit, resume: () -> Unit
     if (order.orderNo.isNotBlank() && !cancelled) OutlinedButton(onClick = refresh, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("刷新订单状态") }
     if (!order.phase.finished && order.orderNo.isNotBlank() && (order.payMethod == PayMethod.ALIPAY || order.phase == OrderPhase.CREATED))
         Button(onClick = resume, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("继续付款") }
-    if (!order.phase.finished && order.orderId.isNotBlank()) TextButton(onClick = { cancelDialog = true }, enabled = !state.busy) { Text("取消未付款订单") }
+    if (!order.isWater && !order.phase.finished && order.orderId.isNotBlank()) TextButton(onClick = { cancelDialog = true }, enabled = !state.busy) { Text("取消未付款订单") }
     Text("这里保留本机最近一笔订单。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     if (cancelDialog) AlertDialog(onDismissRequest = { cancelDialog = false }, title = { Text("取消这笔订单？") },
         text = { Text("会先核对订单详情和付款状态，确认订单仍可取消后再申请。") },

@@ -17,12 +17,14 @@ class LaundryApi(
         .followRedirects(false).followSslRedirects(false).build(),
     private val baseUrl: HttpUrl = "https://userapi.qiekj.com/".toHttpUrl(),
     private val now: () -> Long = System::currentTimeMillis
-) : PurchaseGateway {
+) : PurchaseGateway, WaterGateway {
     companion object {
         private val ANONYMOUS_PATHS = setOf("common/sms/sendCode", "user/reg")
         val ALLOWED_PATHS = setOf("common/sms/sendCode", "user/reg", "goods/scan/v2", "goods/normal/details",
             "goods/normal/skus", "trade/preview/v4", "trade/create", "payChannelRoute/prePay",
-            "pay/unify/prePay", "pay/unify/pay", "order/pay_status", "order/detail", "order/sync", "order/cancel", "appoint/checkMachineCanUse")
+            "pay/unify/prePay", "pay/unify/pay", "order/pay_status", "order/detail", "order/sync", "order/cancel", "appoint/checkMachineCanUse",
+            "goods/water/unlock", "goods/water/sync", "goods/endWater", "machine/msg/sync",
+            "payChannelRoute/afterPay", "payChannelRoute/addUserAfterPayChannel", "order/afterPay/creating")
         private val PAYMENT_OPERATIONS = mapOf(
             "appoint/checkMachineCanUse" to "核对设备状态失败",
             "trade/preview/v4" to "核对洗衣金额失败",
@@ -32,7 +34,14 @@ class LaundryApi(
             "pay/unify/pay" to "余额付款未完成",
             "order/pay_status" to "查询付款状态失败",
             "order/detail" to "查询订单详情失败",
-            "order/cancel" to "取消订单失败"
+            "order/cancel" to "取消订单失败",
+            "goods/water/unlock" to "启动饮水机失败",
+            "goods/water/sync" to "查询饮水状态失败",
+            "goods/endWater" to "结束用水未确认",
+            "machine/msg/sync" to "查询启动指令失败",
+            "payChannelRoute/afterPay" to "查询饮水支付方式失败",
+            "payChannelRoute/addUserAfterPayChannel" to "选择余额支付失败",
+            "order/afterPay/creating" to "查询饮水结算失败"
         )
     }
 
@@ -88,10 +97,27 @@ class LaundryApi(
         return result.text("token").takeIf { it.isNotBlank() } ?: throw ClientError("登录响应缺少会话信息")
     }
     suspend fun device(code: DeviceCode): Device {
+        val (scan, detail) = deviceDetails(code)
+        return laundryDevice(scan, detail)
+    }
+    suspend fun scanDevice(code: DeviceCode): ScannedDevice {
+        val (scan, detail) = deviceDetails(code)
+        return if (detail.text("categoryCode", scan.text("categoryCode")) == "04") {
+            val skus = post("goods/normal/skus", mapOf("goodsId" to detail.text("goodsId")))
+            ScannedDevice.Water(WaterRules.device(detail, skus))
+        } else ScannedDevice.Laundry(laundryDevice(scan, detail))
+    }
+    private suspend fun deviceDetails(code: DeviceCode): Pair<JsonObject, JsonObject> {
         val scan = post("goods/scan/v2", mapOf(code.key to code.value)).asJsonObject
         if (scan.text("jumpToAlipayFlag2") == "true") throw ClientError("此二维码需要通过支付宝扫码，请使用支付宝扫描原二维码")
         val scanId = scan.text("id").ifBlank { throw ClientError("设备识别响应缺少编号") }
         val detail = post("goods/normal/details", mapOf("goodsId" to scanId)).asJsonObject
+        if (detail.text("goodsId").isBlank()) detail.addProperty("goodsId", scanId)
+        if (detail.text("categoryCode").isBlank()) detail.addProperty("categoryCode", scan.text("categoryCode"))
+        return scan to detail
+    }
+    private suspend fun laundryDevice(scan: JsonObject, detail: JsonObject): Device {
+        val scanId = scan.text("id")
         val id = detail.text("goodsId", scanId).ifBlank { throw ClientError("设备详情缺少编号") }
         val category = detail.text("categoryCode", scan.text("categoryCode"))
         if (category !in setOf("00", "01")) throw ClientError("当前版本仅支持洗衣机和洗鞋机")
@@ -200,5 +226,71 @@ class LaundryApi(
         val result = post("order/cancel", mapOf("orderId" to order.orderId))
         // The supplied APK declares ApiResponse<String>; code=0 plus string data is acknowledgement.
         if (!result.isJsonPrimitive || !result.asJsonPrimitive.isString) throw ClientError("取消结果尚未确认，请刷新订单")
+    }
+
+    suspend fun checkWaterBalanceChannel(device: WaterDevice) {
+        // AfterPayUseAct passes orgId as shopId here, just as the pre-pay cashier does.
+        val data = post("payChannelRoute/afterPay", mapOf("imei" to device.imei, "useTicket" to "0",
+            "shopId" to device.orgId, "goodsCategory" to "04"))
+        if (!data.isJsonArray) throw ClientError("饮水支付方式格式尚未适配")
+        val balance = data.asJsonArray.any { item -> item.isJsonObject && item.asJsonObject.let {
+            it.text("method") == "2" && it.text("isThird", "0") == "0" &&
+                it.text("needOpenFlag", "0") in setOf("0", "false") && it.text("thirdChannel").isBlank()
+        } }
+        if (!balance) throw ClientError("这台饮水机未提供可用的账户余额渠道，请先在原应用核对支付方式")
+    }
+
+    override suspend fun refreshWaterDevice(device: WaterDevice): WaterDevice {
+        val detail = post("goods/normal/details", mapOf("goodsId" to device.id))
+        if (!detail.isJsonObject) throw ClientError("饮水机详情格式尚未适配")
+        return WaterRules.device(detail.asJsonObject, post("goods/normal/skus", mapOf("goodsId" to device.id)))
+    }
+
+    override suspend fun waterStatus(outlet: WaterOutlet): WaterStatus =
+        WaterRules.status(post("goods/water/sync", mapOf("skuId" to outlet.id)))
+
+    override suspend fun startWater(device: WaterDevice, outlet: WaterOutlet, fix: LocationFix): WaterStart {
+        checkWaterBalanceChannel(device)
+        val selected = post("payChannelRoute/addUserAfterPayChannel", mapOf("method" to "2"))
+        if (!selected.isJsonPrimitive || !selected.asJsonPrimitive.isString) throw ClientError("余额支付方式尚未确认")
+        val riskDevice = Device(device.id, device.name, device.imei, "04", device.shopId, device.orgId, 0, emptyList())
+        val result = post("goods/water/unlock", mapOf("skuId" to outlet.id, "promotions" to WaterRules.promotions()),
+            riskDevice to fix)
+        if (!result.isJsonObject) throw ClientError("饮水启动结果尚未确认，请刷新状态")
+        val value = result.asJsonObject
+        val msgId = value.text("msgId").ifBlank { throw ClientError("饮水启动响应缺少指令编号，请刷新状态") }
+        return WaterStart(value.text("orderNo"), msgId)
+    }
+
+    suspend fun waterCommandAccepted(msgId: String): Boolean {
+        val result = post("machine/msg/sync", mapOf("msgId" to msgId))
+        if (!result.isJsonObject) return false
+        return result.asJsonObject.text("state").equals("OK", true)
+    }
+
+    override suspend fun endWater(device: WaterDevice) {
+        val result = post("goods/endWater", mapOf("goodsId" to device.id))
+        if (!result.isJsonPrimitive || !result.asJsonPrimitive.isBoolean || !result.asBoolean)
+            throw ClientError("结束用水结果尚未确认，请检查设备并刷新状态")
+    }
+
+    suspend fun waterSettlement(session: WaterSession): LocalOrder? {
+        if (session.identify.isBlank()) throw ClientError("饮水结算编号尚未确认，请稍后刷新")
+        val response = post("order/afterPay/creating", mapOf("orderNo" to session.identify))
+        if (response.isJsonNull) return null
+        if (!response.isJsonObject) throw ClientError("饮水结算数据格式尚未适配")
+        val id = response.asJsonObject.text("orderId")
+        if (id.isBlank()) return null
+        val detail = post("order/detail", mapOf("orderId" to id))
+        if (!detail.isJsonObject) throw ClientError("饮水账单详情尚未确认")
+        val data = detail.asJsonObject
+        if (data.text("id") != id || data.text("orderNo").isBlank()) throw ClientError("饮水账单编号不一致")
+        if (data.text("payType") != "2") throw ClientError("饮水账单支付方式发生变化，请先在原应用核对")
+        val status = data.text("orderStatus").toIntOrNull()?.let { code -> RemoteOrderStatus.entries.firstOrNull { it.wire == code } }
+            ?: throw ClientError("饮水账单状态尚未适配")
+        val order = LocalOrder(session.owner, session.device.name, session.outlet.name, money(data.text("payPrice")),
+            PayMethod.BALANCE, OrderPhase.CREATED, createdAt = session.startedAt, orderId = id,
+            orderNo = data.text("orderNo"), syncRequested = true, category = "04")
+        return OrderStates.apply(order, status)
     }
 }

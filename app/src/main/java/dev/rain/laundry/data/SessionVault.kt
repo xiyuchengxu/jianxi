@@ -49,4 +49,8 @@ class SessionVault(context: Context) {
     fun order(): LocalOrder? = get("order_" + owner())?.let { raw ->
         runCatching { Gson().fromJson(raw, LocalOrder::class.java) }.getOrNull()?.takeIf { it.owner == owner() }
     }
+    fun saveWater(session: WaterSession) { put("water_" + session.owner, Gson().toJson(session)) }
+    fun water(): WaterSession? = get("water_" + owner())?.let { raw ->
+        runCatching { Gson().fromJson(raw, WaterSession::class.java) }.getOrNull()?.takeIf { it.owner == owner() }
+    }
 }

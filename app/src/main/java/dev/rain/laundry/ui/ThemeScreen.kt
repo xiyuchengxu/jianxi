@@ -197,7 +197,7 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                     else "长按或拖动体验液态形变，轻点切换带弹性回弹。",
                     Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                     style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
-                GlassStylePreview(settings.glassLevel)
+                GlassStylePreview(settings.glassLevel, settings.visibleTabs)
             }
         }
 
@@ -208,7 +208,7 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                     Icon(Icons.Outlined.Swipe, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text("左右滑动翻页", style = MaterialTheme.typography.bodyLarge)
-                        Text("在洗衣、订单和主题之间切换", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                        Text("在底栏当前显示的页面之间切换", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
                     Switch(settings.swipeNavigation, { onChange(settings.copy(swipeNavigation = it)) },
                         modifier = Modifier.semantics { contentDescription = "左右滑动翻页" })
@@ -320,8 +320,8 @@ private fun ThemePreview(settings: ThemeSettings) {
                     Row(Modifier.fillMaxWidth().padding(horizontal = if (floating) 3.dp else 0.dp)
                         .background(colors.surfaceContainerHigh, RoundedCornerShape(if (floating) 16.dp else 3.dp)).padding(5.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly) {
-                        laundryTabs.forEachIndexed { index, (_, icon) ->
-                            Icon(icon, null, Modifier.size(13.dp), tint = if (index == 2) colors.primary else colors.onSurfaceVariant)
+                        settings.visibleTabs.forEach { tab ->
+                            Icon(tab.icon, null, Modifier.size(13.dp), tint = if (tab == dev.rain.laundry.core.NavigationTab.SETTINGS) colors.primary else colors.onSurfaceVariant)
                         }
                     }
                 }
