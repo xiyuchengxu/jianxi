@@ -349,3 +349,14 @@
 - 93 项单元测试通过，0 失败、0 错误；Optimized、Production 的 Lint 均无错误，8 项既有提示。
 - 模拟器相关检查通过：settingsServiceSwitchesPersistAndKeepNavigationStable、waterTabScansAndConfirmsRatesInBothBottomBarStyles、pastedDeviceReachesCheckoutWithNullPromotionLists。使用本地拦截响应，未发起真实业务付款。
 - 正式版与覆盖升级版签名分别延续原正式及测试签名；APK 包名、版本、非调试状态和签名验证通过。产物与截图位于 artifacts/release-1.0.3。
+
+## 1.0.4 安装器签名兼容验证（2026-11-04）
+
+- 对外版本 1.0.4，内部 0.1.20，versionCode 21；最低 API 26、目标 API 35 保持不变。
+- 用户报告 Mate 70 RS / HarmonyOS 4.3.0 提示“该安装包未包含任何证书”。检查两个 1.0.3 发布包：有有效 v2 签名，均不包含 v1 的 `META-INF/MANIFEST.MF`、`.SF` 和 `.RSA`。强制 v1 路径验证均失败，错误为 `Missing META-INF/MANIFEST.MF`。这提供了签名兼容问题的线索，尚未证明目标安装器的具体内部判定原因。
+- 两个 1.0.4 发布包均包含上述 JAR 签名文件，v1/v2/v3 三种签名全部通过。默认验证、将验签范围扩展至 API 23 的三方案验证、仅 API 23 的独立 v1 验证、ZIP CRC、包名、版本及非调试属性检查通过。这里的 API 23 仅用于强制测试 v1 路径，不代表降低应用的最低系统要求。
+- 正式证书 SHA-256 仍为 `74c2680384903d371b0a8a2e0ccd17de687ec3ecd12b4266c41faae30e565770`；覆盖升级证书仍为 `e381d632fcaca580539bad72a5193f1766129cc4a49e0ca7775e91b243417733`。
+- 新增 `scripts/verify_release_apk.py` 发布检查。两个旧 1.0.3 包均被其拦截，两个新包均通过；不再只依赖默认验签输出判断是否存在 v1 签名，因为最低 API 26 时默认验证可能跳过 v1。
+- Optimized 单元测试 93 项通过，0 失败、0 错误。Production、Optimized 的 Lint 均 0 错误，保留 8 项既有提示。
+- 隔离 Android 15 / API 35 模拟器中分别执行正式签名路线和覆盖升级签名路线的 1.0.3 → 1.0.4 安装更新，两者均成功启动。更新前后应用 UID 与首次安装时间一致，没有通过卸载来完成升级。
+- 尚未连接 Mate 70 RS 真机，本次验证不能代替 HarmonyOS 4.3.0 安装复测。产物与验证记录位于 `artifacts/release-1.0.4`。

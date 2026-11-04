@@ -1,8 +1,18 @@
 # 正式版与覆盖升级签名
 
-对外版本：1.0.3；内部版本：0.1.19；Android versionCode：20。
+对外版本：1.0.4；内部版本：0.1.20；Android versionCode：21。
 
 两条签名均延续 1.0.0，没有生成新密钥；正式版覆盖正式版，兼容包覆盖旧测试版或已有兼容包。
+
+从 1.0.4 起，两种安装包均显式启用 v1（JAR）、v2 和 v3 签名。v1 会生成 `META-INF/MANIFEST.MF`、`.SF` 和证书文件，供需要读取 JAR 证书的安装器检查；v2/v3 保持完整 APK 签名校验。增加签名方案不会更换证书。1.0.3 只有 v2 签名，华为 Mate 70 RS / HarmonyOS 4.3.0 的安装失败报告与缺少 v1 证书文件相符，但真机结果仍需复测。
+
+## 发布前验证
+
+构建后分别检查正式版和覆盖升级版，传入对应的原证书指纹。验证程序会要求三种签名全部通过，额外强制走 v1 验证路径，并检查版本、非调试状态及 ZIP 完整性：
+
+```sh
+python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --certificate-sha256 <对应原证书指纹> --version 1.0.4 --version-code 21
+```
 
 ## 两种安装包
 

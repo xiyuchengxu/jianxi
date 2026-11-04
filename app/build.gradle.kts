@@ -11,10 +11,10 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 20
-        versionName = "1.0.3"
-        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.19\"")
-        manifestPlaceholders["internalVersion"] = "0.1.19"
+        versionCode = 21
+        versionName = "1.0.4"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.20\"")
+        manifestPlaceholders["internalVersion"] = "0.1.20"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -35,6 +35,12 @@ android {
                 keyPassword = System.getenv("JIANXI_RELEASE_KEY_PASSWORD") ?: storePassword
                 storeType = "PKCS12"
             }
+        }
+        configureEach {
+            // Include JAR certificates for installers that inspect v1, while retaining modern signatures.
+            enableV1Signing = true
+            enableV2Signing = true
+            enableV3Signing = true
         }
     }
     compileOptions {
