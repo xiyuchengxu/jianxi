@@ -27,7 +27,7 @@ internal fun SettingsScreen(settings: ThemeSettings, onChange: (ThemeSettings) -
                 Spacer(Modifier.width(16.dp))
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("主题", style = MaterialTheme.typography.titleMedium)
-                    Text("外观、配色与底栏样式", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("外观、配色、开屏与底栏样式", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Icon(Icons.Outlined.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             }

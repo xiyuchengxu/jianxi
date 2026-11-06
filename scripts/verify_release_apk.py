@@ -9,6 +9,8 @@ import subprocess
 import sys
 import zipfile
 
+PRODUCTION_CERT_SHA256 = "74c2680384903d371b0a8a2e0ccd17de687ec3ecd12b4266c41faae30e565770"
+
 
 def run(*args):
     result = subprocess.run(args, capture_output=True, text=True, encoding="utf-8", errors="replace")
@@ -22,9 +24,7 @@ def verify(args):
     tool_dir = args.build_tools.resolve(strict=True)
     apksigner = tool_dir / ("apksigner.bat" if sys.platform == "win32" else "apksigner")
     aapt = tool_dir / ("aapt.exe" if sys.platform == "win32" else "aapt")
-    expected_cert = args.certificate_sha256.lower().replace(":", "")
-    if not re.fullmatch(r"[0-9a-f]{64}", expected_cert):
-        raise ValueError("Expected certificate fingerprint must be a SHA-256 digest")
+    expected_cert = PRODUCTION_CERT_SHA256
 
     run(str(apksigner), "verify", str(apk))
     # Default verification can skip v1 when minSdk >= 24 even if the JAR signature exists.
@@ -35,7 +35,7 @@ def verify(args):
             raise ValueError(f"APK must verify with {scheme} signing enabled\n{output}")
     certs = re.findall(r"^Signer #\d+ certificate SHA-256 digest: ([0-9a-f]+)$", output, re.MULTILINE)
     if certs != [expected_cert]:
-        raise ValueError(f"APK signer does not match the expected existing certificate: {certs}")
+        raise ValueError(f"APK signer does not match the original production certificate: {certs}")
 
     # Only the signature verification path is simulated; the app still requires API 26.
     run(str(apksigner), "verify", "--min-sdk-version", "23", "--max-sdk-version", "23", str(apk))
@@ -75,7 +75,6 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("apk", type=pathlib.Path)
     parser.add_argument("--build-tools", type=pathlib.Path, required=True)
-    parser.add_argument("--certificate-sha256", required=True)
     parser.add_argument("--version", required=True)
     parser.add_argument("--version-code", type=int, required=True)
     parser.add_argument("--json", type=pathlib.Path)

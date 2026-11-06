@@ -336,6 +336,34 @@ class LocalRuntimeTest {
     }
 
     @Suppress("UNCHECKED_CAST")
+    @Test fun alipayOnlyWaterMachineCanConfirmUseAfterHistoricalFailure() =
+        withLocalSession(waterDevice = true, waterAlipay = true, waterPriorFailure = true) { vm, calls ->
+            click("饮水")
+            awaitText("开始饮水")
+            click("粘贴饮水机设备码")
+            assertTrue(awaitNode { it.isEditable }.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, Bundle().apply {
+                putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    "https://h5.qiekj.com/skip?SN=867000000000001")
+            }))
+            click("识别设备")
+            await { vm.state.value.waterPaymentAllowed && !vm.state.value.busy }
+            assertEquals("15", vm.state.value.waterPayment?.wire)
+            assertEquals(PayMethod.ALIPAY, vm.state.value.waterPayment?.method)
+            assertTrue(vm.state.value.waterPayments.none { it.method == PayMethod.BALANCE })
+            assertTrue(vm.state.value.waterStatus?.available == true)
+            awaitText("出水口空闲，请重新确认用水")
+            scrollToText("开始用水")
+            capture("water-alipay-only-device")
+            click("开始用水")
+            awaitText("确认开始用水？")
+            awaitText("本次使用支付宝先享后付（免密）")
+            capture("water-alipay-confirm")
+            click("取消")
+            assertFalse(calls.contains("/payChannelRoute/addUserAfterPayChannel"))
+            assertFalse(calls.contains("/goods/water/unlock"))
+            assertFalse(calls.contains("/pay/unify/pay"))
+        }
+
     @Test fun ownWaterSessionStopsAndSettlesWithoutAnotherActivation() = withLocalSession(waterDevice = true, waterRunning = true) { vm, calls ->
         val outlet = WaterOutlet("local-water-sku", "常温水", "0.3 元/升")
         val water = WaterDevice("local-water-device", "本地测试饮水机", "LOCAL-WATER-IMEI", "water-shop", "3100001", listOf(outlet), true)
@@ -360,8 +388,87 @@ class LocalRuntimeTest {
         scrollToText("查看饮水账单")
         click("查看饮水账单")
         awaitText("我的订单")
-        awaitText("订单已完成")
+        scrollToText("饮水账单已完成")
         capture("water-05-settled")
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test fun orderGroupsSeparateLaundryFromWaterAndCanRecoverTheActiveSession() = withLocalSession(waterDevice = true, waterRunning = true) { vm, calls ->
+        val outlet = WaterOutlet("local-water-sku", "常温水", "0.3 元/升")
+        val water = WaterDevice("local-water-device", "分组测试饮水机", "LOCAL-WATER-IMEI", "water-shop", "3100001", listOf(outlet), true)
+        instrumentation.runOnMainSync {
+            val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
+            val status = WaterStatus(2, 2, "0.12", "local-water-usage")
+            mutable.value = mutable.value.copy(page = Page.ORDERS, waterDevice = null, waterOutlet = null,
+                order = LocalOrder("local-runtime-owner", "分组测试洗衣机", "单脱水", "1.00", PayMethod.ALIPAY, OrderPhase.CLOSED),
+                waterSession = WaterSession("local-runtime-owner", water, outlet, WaterPhase.USING, lastStatus = status))
+        }
+        awaitText("我的订单")
+        click("洗衣")
+        scrollToText("分组测试洗衣机")
+        assertNull(find(automation.rootInActiveWindow) { it.text?.toString() == "饮水进行中 · 查看或结束" })
+        scrollToText("全部", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+        click("饮水")
+        awaitText("饮水进行中 · 查看或结束")
+        assertNull(find(automation.rootInActiveWindow) { it.text?.toString() == "分组测试洗衣机" })
+        capture("orders-business-groups")
+        click("查看饮水记录")
+        awaitText("正在用水")
+        assertEquals(water, vm.state.value.waterDevice)
+        assertEquals(outlet, vm.state.value.waterOutlet)
+        assertFalse(calls.contains("/goods/water/unlock"))
+        assertFalse(calls.contains("/goods/endWater"))
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    @Test fun waterControlsKeepTheirScrollPositionDuringPollingAndForegroundProgress() {
+        val context = instrumentation.targetContext
+        val appearance = ThemePreferences(context)
+        val original = appearance.settings
+        try {
+            for (style in BottomBarStyle.entries) {
+                instrumentation.runOnMainSync { appearance.update(original.copy(bottomBar = style)) }
+                withLocalSession(waterDevice = true, waterRunning = true) { vm, calls ->
+                    val outlet = WaterOutlet("local-water-sku", "常温水", "0.3 元/升")
+                    val water = WaterDevice("local-water-device", "老校区3号楼1楼直饮机冷水", "LOCAL-WATER-IMEI",
+                        "water-shop", "3100001", listOf(outlet), true,
+                        announcement = (1..14).joinToString("\n") { "本地使用提示 $it：请准备好容器，结束后确认停止出水。" })
+                    val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
+                    instrumentation.runOnMainSync {
+                        val status = WaterStatus(2, 2, "0.12", "local-water-usage")
+                        mutable.value = mutable.value.copy(page = Page.WATER, waterDevice = water, waterOutlet = outlet, waterStatus = status,
+                            waterSession = WaterSession("local-runtime-owner", water, outlet, WaterPhase.USING,
+                                lastStatus = status, observedRunning = true))
+                    }
+                    awaitText(water.name)
+                    capture("water-compact-header-${style.name.lowercase()}")
+                    scrollToText("结束用水")
+                    fun stopBounds(): Rect {
+                        val node = awaitText("结束用水")
+                        assertTrue("Read current accessibility bounds", node.refresh())
+                        return Rect().also(node::getBoundsInScreen)
+                    }
+                    val before = stopBounds()
+                    val previousReads = calls.count { it == "/goods/water/sync" }
+                    instrumentation.runOnMainSync { vm.refreshWater(silent = true) }
+                    await { calls.count { it == "/goods/water/sync" } >= previousReads + 3 && !vm.state.value.busy }
+                    instrumentation.waitForIdleSync()
+                    val afterPolls = stopBounds()
+                    assertTrue("Background polling moved the controls: $style", kotlin.math.abs(before.centerY() - afterPolls.centerY()) <= 8)
+                    instrumentation.runOnMainSync { mutable.value = mutable.value.copy(busy = true, progress = "本地布局检查") }
+                    awaitText("本地布局检查")
+                    instrumentation.waitForIdleSync()
+                    SystemClock.sleep(300)
+                    val duringProgress = stopBounds()
+                    capture("water-foreground-progress-${style.name.lowercase()}")
+                    assertTrue("Progress changed the scroll layout: $style; before=$afterPolls after=$duringProgress",
+                        kotlin.math.abs(afterPolls.centerY() - duringProgress.centerY()) <= 8)
+                    instrumentation.runOnMainSync { mutable.value = mutable.value.copy(busy = false, progress = "") }
+                    capture("water-scroll-preserved-${style.name.lowercase()}")
+                    assertFalse(calls.contains("/goods/water/unlock"))
+                }
+            }
+        } finally { instrumentation.runOnMainSync { appearance.update(original) } }
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -464,6 +571,8 @@ class LocalRuntimeTest {
         allowPrepay: Boolean = false,
         waterDevice: Boolean = false,
         waterRunning: Boolean = false,
+        waterAlipay: Boolean = false,
+        waterPriorFailure: Boolean = false,
         test: (LaundryViewModel, CopyOnWriteArrayList<String>) -> Unit
     ) {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
@@ -497,13 +606,18 @@ class LocalRuntimeTest {
                     val response = when (path) {
                         "/goods/scan/v2" -> if (waterDevice) """{"code":0,"data":{"id":"local-water-device","categoryCode":"04"}}"""
                             else """{"code":0,"data":{"id":"local-device","categoryCode":"00"}}"""
-                        "/goods/normal/details" -> if (waterDevice) """{"code":0,"data":{"goodsId":"local-water-device","name":"本地测试饮水机","imei":"LOCAL-WATER-IMEI","categoryCode":"04","shopId":"water-shop","orgId":3100001,"payment":"after","isBluetooth":0,"supportAppUserFinish":true,"extAttr":"{\"flowmeter\":1}"}}"""
+                        "/goods/normal/details" -> if (waterDevice) """{"code":0,"data":{"goodsId":"local-water-device","name":"本地测试饮水机","imei":"LOCAL-WATER-IMEI","categoryCode":"04","shopId":"water-shop","orgId":3100001,"tradeMain":1,"payment":"after","isBluetooth":0,"supportAppUserFinish":true,"extAttr":"{\"flowmeter\":1}"}}"""
                             else """{"code":0,"data":{"goodsId":"local-device","name":"本地测试洗衣机","imei":"LOCAL-TEST-IMEI","categoryCode":"00","shopId":"b6da19d1-118b-4f68-967a-000000000001","orgId":3100001,"payment":"before","isBluetooth":0,"remainTime":0}}"""
                         "/goods/normal/skus" -> if (waterDevice) """{"code":0,"data":[{"skuId":"local-water-sku","name":"常温水","extAttr":"{\"level\":[{\"price\":0.3}]}"}]}"""
                             else """{"code":0,"data":[{"skuId":"local-sku","name":"标准洗","price":"4.00","scanAvailable":true}]}"""
                         "/goods/water/sync" -> if (running.get()) """{"code":0,"data":{"status":2,"workStatus":2,"amount":"0.12","identify":"local-water-usage"}}"""
+                            else if (waterPriorFailure) """{"code":0,"data":{"status":6,"workStatus":1,"amount":"0","identify":"previous-failed-usage"}}"""
                             else """{"code":0,"data":{"status":3,"workStatus":1,"amount":"0.15","identify":"local-water-usage"}}"""
-                        "/payChannelRoute/afterPay" -> """{"code":0,"data":[{"method":2,"needOpenFlag":false,"isThird":0}]}"""
+                        "/payChannelRoute/afterPay" -> if (waterAlipay)
+                            """{"code":0,"data":[{"method":15,"methodName":"支付宝支付","isThird":0,"needOpenFlag":true,"defaultFlag":true},{"method":53,"methodName":"云闪付免密支付"}]}"""
+                            else """{"code":0,"data":[{"method":2,"needOpenFlag":false,"isThird":0}]}"""
+                        "/popup/shop" -> """{"code":0,"data":[]}"""
+                        "/alipay/signUrl/pinpoint" -> """{"code":0,"data":{"url":"https://openapi.alipay.com/gateway.do?app_id=fixture&sign=fixture"}}"""
                         "/goods/endWater" -> { running.set(false); """{"code":0,"data":true}""" }
                         "/order/afterPay/creating" -> """{"code":0,"data":{"orderId":"local-water-bill","orderNo":"local-water-bill-no","payType":2,"orderStatus":3}}"""
                         "/appoint/checkMachineCanUse" -> """{"code":0,"data":true}"""

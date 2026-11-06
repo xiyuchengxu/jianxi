@@ -49,6 +49,12 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
         item(key = "preview") { ThemePreview(settings) }
 
+        item(key = "splash") {
+            SettingGroup("开屏看板娘", Icons.Outlined.PhotoLibrary) {
+                SplashSettings(settings, onChange)
+            }
+        }
+
         item(key = "mode") {
             SettingGroup("主题模式", Icons.Outlined.Brightness6) {
                 ThemeMode.entries.forEachIndexed { index, mode ->

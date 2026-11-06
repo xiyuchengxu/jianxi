@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scanner_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#101820"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="52dp"
+        android:paddingHorizontal="8dp">
+        <Button
+            android:id="@+id/scanner_close"
+            android:layout_width="72dp"
+            android:layout_height="48dp"
+            android:text="@string/scanner_close" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingHorizontal="8dp"
+            android:text="@string/scanner_title"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/zxing_barcode_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:contentDescription="@string/scanner_title" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="8dp">
+        <RadioGroup
+            android:id="@+id/scanner_modes"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/scanner_normal_mode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:buttonTint="#B5D7F4"
+                android:text="@string/scanner_normal"
+                android:textColor="#FFFFFF" />
+            <RadioButton
+                android:id="@+id/scanner_screen_mode"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:buttonTint="#B5D7F4"
+                android:text="@string/scanner_screen"
+                android:textColor="#FFFFFF" />
+        </RadioGroup>
+        <LinearLayout
+            android:id="@+id/scanner_brightness_controls"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="center_vertical"
+            android:visibility="invisible">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scanner_brighter"
+                android:textColor="#E5ECF2" />
+            <SeekBar
+                android:id="@+id/scanner_brightness"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/scanner_brightness_accessibility"
+                android:max="11"
+                android:progress="5"
+                android:progressTint="#B5D7F4"
+                android:thumbTint="#B5D7F4" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/scanner_darker"
+                android:textColor="#E5ECF2" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/scanner_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:minHeight="36dp"
+            android:text="@string/scanner_waiting"
+            android:textColor="#E5ECF2"
+            android:textSize="13sp" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,6 +1,8 @@
 package dev.rain.laundry.ui
 
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
@@ -89,7 +91,7 @@ fun laundryColorScheme(settings: ThemeSettings, dark: Boolean): ColorScheme {
 
 @Composable
 @Suppress("DEPRECATION")
-fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), content: @Composable () -> Unit) {
+fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), darkSystemBars: Boolean = false, content: @Composable () -> Unit) {
     val systemDark = isSystemInDarkTheme()
     val dark = when (settings.mode) {
         ThemeMode.SYSTEM -> systemDark
@@ -112,17 +114,24 @@ fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), content: @Composable
     }
     val view = LocalView.current
     if (!view.isInEditMode) SideEffect {
-        (view.context as? Activity)?.window?.let { window ->
+        themeActivity(view.context)?.window?.let { window ->
             // Older edge-to-edge navigation scrims were selected only once from the system theme.
-            if (Build.VERSION.SDK_INT < 29) window.navigationBarColor = scheme.background.toArgb()
+            if (Build.VERSION.SDK_INT < 29) window.navigationBarColor =
+                if (darkSystemBars) Color(0xFF111918).toArgb() else scheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !dark
-                isAppearanceLightNavigationBars = !dark
+                isAppearanceLightStatusBars = !dark && !darkSystemBars
+                isAppearanceLightNavigationBars = !dark && !darkSystemBars
             }
         }
     }
     CompositionLocalProvider(LocalLaundryDarkTheme provides dark, LocalWallpaperColorInfo provides wallpaper) {
         MaterialTheme(colorScheme = scheme, content = content)
     }
+}
+
+internal tailrec fun themeActivity(context: Context): Activity? = when (context) {
+    is Activity -> context
+    is ContextWrapper -> if (context.baseContext !== context) themeActivity(context.baseContext) else null
+    else -> null
 }
 

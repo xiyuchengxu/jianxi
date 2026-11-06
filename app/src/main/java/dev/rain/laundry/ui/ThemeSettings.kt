@@ -5,6 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dev.rain.laundry.core.visibleNavigationTabs
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 enum class ThemeMode(val title: String) { SYSTEM("跟随系统"), LIGHT("浅色"), DARK("深色") }
 enum class ThemePalette(val title: String) {
@@ -27,14 +33,25 @@ data class ThemeSettings(
     val swipeNavigation: Boolean = true,
     val glassLevel: GlassLevel = GlassLevel.FULL,
     val laundryEnabled: Boolean = true,
-    val waterEnabled: Boolean = true
+    val waterEnabled: Boolean = true,
+    val splashEnabled: Boolean = true,
+    val splashImages: List<String> = emptyList(),
+    val splashDurationMs: Int = DEFAULT_SPLASH_DURATION_MS
 ) {
     val visibleTabs get() = visibleNavigationTabs(laundryEnabled, waterEnabled)
 }
 
 /** UI preferences are independent of the encrypted login/order store. */
 class ThemePreferences(context: Context) {
+    private companion object {
+        val cleanupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+        val cleanupLock = Any()
+        val sequenceLock = Any()
+        var processCleanup: Job? = null
+    }
+
     private val preferences = context.applicationContext.getSharedPreferences("appearance", Context.MODE_PRIVATE)
+    private val splashImageStore = SplashImageStore(context)
     var settings by mutableStateOf(ThemeSettings(
         mode = savedEnum("mode", ThemeMode.SYSTEM),
         palette = savedEnum("palette", ThemePalette.SLATE),
@@ -46,13 +63,35 @@ class ThemePreferences(context: Context) {
         swipeNavigation = preferences.getBoolean("swipe_navigation", true),
         glassLevel = savedEnum("glass_level", GlassLevel.FULL),
         laundryEnabled = preferences.getBoolean("laundry_enabled", true),
-        waterEnabled = preferences.getBoolean("water_enabled", true)
+        waterEnabled = preferences.getBoolean("water_enabled", true),
+        splashEnabled = runCatching { preferences.getBoolean("splash_enabled", true) }.getOrDefault(true),
+        splashImages = decodeSplashImages(runCatching { preferences.getString("splash_images", null) }.getOrNull()),
+        splashDurationMs = savedSplashDurationMs(runCatching {
+            preferences.getInt("splash_duration_ms", DEFAULT_SPLASH_DURATION_MS)
+        }.getOrNull())
     ))
         private set
 
+    private val initialCleanup = synchronized(cleanupLock) {
+        processCleanup ?: cleanupScope.launch {
+            try {
+                val retained = decodeSplashImages(runCatching { preferences.getString("splash_images", null) }.getOrNull())
+                splashImageStore.pruneUnused(retained)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                // Cleanup is best effort and must not prevent startup.
+            }
+        }.also { processCleanup = it }
+    }
+
     fun update(value: ThemeSettings) {
-        settings = value
-        preferences.edit()
+        val previousImages = settings.splashImages
+        settings = value.copy(
+            splashImages = normalizeSplashImageNames(value.splashImages),
+            splashDurationMs = normalizeSplashDurationMs(value.splashDurationMs)
+        )
+        val editor = preferences.edit()
             .putString("mode", value.mode.name)
             .putString("palette", value.palette.name)
             .putString("color_style", value.colorStyle.name)
@@ -64,7 +103,35 @@ class ThemePreferences(context: Context) {
             .putString("glass_level", value.glassLevel.name)
             .putBoolean("laundry_enabled", value.laundryEnabled)
             .putBoolean("water_enabled", value.waterEnabled)
-            .apply()
+            .putBoolean("splash_enabled", value.splashEnabled)
+            .putString("splash_images", encodeSplashImages(settings.splashImages))
+            .putInt("splash_duration_ms", settings.splashDurationMs)
+        if (previousImages != settings.splashImages) editor.putInt("splash_next_index", 0)
+        editor.apply()
+        if (previousImages != settings.splashImages) cleanupScope.launch {
+            // An empty commit waits for preceding apply() writes, without overwriting newer settings.
+            // Failed persistence keeps the old files available for whichever preference version survived.
+            try {
+                initialCleanup.join()
+                if (preferences.edit().commit()) {
+                    val retained = decodeSplashImages(runCatching { preferences.getString("splash_images", null) }.getOrNull())
+                    splashImageStore.discardPrevious(previousImages, retained)
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                // A later cold start can retry cleanup without risking the current images.
+            }
+        }
+    }
+
+    /** Call once when a new cold-start splash is created, never for recomposition or preview. */
+    fun takeNextSplashImage(): String = synchronized(sequenceLock) {
+        val images = effectiveSplashImages(settings.splashImages)
+        val savedIndex = runCatching { preferences.getInt("splash_next_index", 0) }.getOrNull()
+        val (current, next) = splashSequenceStep(savedIndex, images.size)
+        preferences.edit().putInt("splash_next_index", next).apply()
+        images[current]
     }
 
     private inline fun <reified T : Enum<T>> savedEnum(key: String, fallback: T): T =

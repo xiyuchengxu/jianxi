@@ -1,0 +1,16 @@
+<resources>
+    <string name="scanner_title">扫描洗衣机或饮水机二维码</string>
+    <string name="scanner_close">返回</string>
+    <string name="scanner_normal">普通码</string>
+    <string name="scanner_screen">屏幕码</string>
+    <string name="scanner_brighter">较亮</string>
+    <string name="scanner_darker">较暗</string>
+    <string name="scanner_brightness_accessibility">屏幕码降亮度</string>
+    <string name="scanner_waiting">正在打开相机…</string>
+    <string name="scanner_normal_hint">将完整二维码放入取景框；屏幕太亮时切换“屏幕码”</string>
+    <string name="scanner_screen_hint">慢慢调整亮度，直到二维码纹理清楚；稍微移远可帮助对焦</string>
+    <string name="scanner_limit_hint">已到相机降亮度下限；请稍微改变角度或降低设备屏幕亮度</string>
+    <string name="scanner_unsupported_hint">此相机不支持降低曝光，仍可扫码；请改变角度或降低设备屏幕亮度</string>
+    <string name="scanner_rejected_hint">相机未接受亮度调整，仍可扫码；请改变角度或降低设备屏幕亮度</string>
+    <string name="scanner_camera_error">相机暂不可用，请返回后重试</string>
+</resources>

@@ -110,7 +110,7 @@ fun AboutScreen(onBack: () -> Unit) {
                         horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                         Icon(Icons.Outlined.Groups, null, tint = colors.primary)
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text("负反馈群", style = MaterialTheme.typography.titleMedium)
+                            Text("反馈群", style = MaterialTheme.typography.titleMedium)
                             Text("QQ 群：${UsageDocuments.FEEDBACK_GROUP}", style = MaterialTheme.typography.bodyMedium)
                             Text("点击复制群号", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                         }

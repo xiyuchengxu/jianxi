@@ -11,22 +11,15 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 21
-        versionName = "1.0.4"
-        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.20\"")
-        manifestPlaceholders["internalVersion"] = "0.1.20"
+        versionCode = 29
+        versionName = "4.1.0"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.28\"")
+        manifestPlaceholders["internalVersion"] = "0.1.28"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
     buildFeatures { compose = true; buildConfig = true }
     signingConfigs {
-        getByName("debug") {
-            storeFile = rootProject.file("development-debug.p12")
-            storePassword = "android"
-            keyAlias = "simplelaundrydebug"
-            keyPassword = "android"
-            storeType = "PKCS12"
-        }
         create("production") {
             System.getenv("JIANXI_RELEASE_STORE_FILE")?.takeIf { it.isNotBlank() }?.let {
                 storeFile = file(it)
@@ -50,32 +43,43 @@ android {
     kotlinOptions { jvmTarget = "17" }
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-        }
-        create("optimized") {
-            initWith(getByName("release"))
-            // Same upgrade signature and field names as previous test builds, without debugger/tooling overhead.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("production")
             isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
-            matchingFallbacks += listOf("release")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         create("production") {
-            initWith(getByName("optimized"))
-            signingConfig = signingConfigs.getByName("production")
+            initWith(getByName("release"))
+            matchingFallbacks += listOf("release")
         }
     }
     packaging { resources.excludes += "/META-INF/{AL2.0,LGPL2.1}" }
     testOptions { unitTests.isReturnDefaultValues = true }
+}
+
+val verifyProductionSigning by tasks.registering {
+    group = "verification"
+    description = "Require production signing credentials before packaging a distributable APK."
+    doLast {
+        val signing = android.signingConfigs.getByName("production")
+        check(signing.storeFile?.isFile == true &&
+            !signing.storePassword.isNullOrBlank() &&
+            !signing.keyAlias.isNullOrBlank() &&
+            !signing.keyPassword.isNullOrBlank()) {
+            "Configure the production signing environment variables described in RELEASE_SIGNING.md."
+        }
+    }
+}
+tasks.matching { it.name == "packageProduction" || it.name == "packageRelease" }.configureEach {
+    dependsOn(verifyProductionSigning)
 }
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2025.02.00")
     implementation(composeBom)
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.activity:activity-compose:1.10.0")
+    implementation("androidx.exifinterface:exifinterface:1.4.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.compose.ui:ui")

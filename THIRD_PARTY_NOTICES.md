@@ -5,6 +5,7 @@
 | 组件 | 版本 | 官方项目或发布信息 |
 |---|---|---|
 | AndroidX / Jetpack Compose / Material 3 | 见 `app/build.gradle.kts` | [AndroidX](https://android.googlesource.com/platform/frameworks/support/) |
+| AndroidX ExifInterface | 1.4.2 | [Android 官方发布说明](https://developer.android.com/jetpack/androidx/releases/exifinterface) |
 | Material Color Utilities（HCT / tonal palette Java 子集） | `bd811e4ca2ab94c4ce3cadc89c19b1820b9704b3` | [Google 官方源码](https://github.com/material-foundation/material-color-utilities/tree/bd811e4ca2ab94c4ce3cadc89c19b1820b9704b3/java)、[Apache-2.0 全文](app/src/main/res/raw/material_color_utilities_license.txt) |
 | Kotlin | 2.0.21 | [JetBrains/kotlin](https://github.com/JetBrains/kotlin) |
 | Kotlin Coroutines | 由 Gradle 解析；测试依赖 1.9.0 | [Kotlin/kotlinx.coroutines](https://github.com/Kotlin/kotlinx.coroutines) |
@@ -20,3 +21,7 @@ JUnit、MockWebServer 和 Kotlin Coroutines Test 仅用于测试；Android Gradl
 Material Color Utilities 的七个源文件保留原始版权和许可头；仅调整 Java 包名和对应 import，以避免命名冲突，没有修改颜色算法。上游提交、文件范围与修改说明见 `app/src/main/java/dev/rain/laundry/vendor/material/PROVENANCE.md`。完整 Apache-2.0 许可随 APK 打包，可在关于页的“配色组件开源许可”离线查看。
 
 本工程不包含胖乖生活原版应用的图标、广告组件或整包反编译源码。原服务平台及支付服务的名称和商标归各自权利人所有。
+
+## 开屏图片
+
+`app/src/main/res/drawable-nodpi/splash_mascot_1.png` 与 `splash_mascot_2.png` 为作者提供插画经内置 ImageGen 背景提取后的透明人物立绘，保留主体人物、随身道具及与主体重叠的署名。图片版权归原权利人，不包含在项目代码的 MIT 授权中。自定义开屏图片由用户在本机选择并保存。

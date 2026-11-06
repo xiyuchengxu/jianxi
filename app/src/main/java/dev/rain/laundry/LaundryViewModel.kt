@@ -9,6 +9,7 @@ import dev.rain.laundry.data.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
+import java.util.UUID
 
 enum class Page { HOME, DEVICE, CHECKOUT, ORDERS, WATER }
 data class UiState(
@@ -19,9 +20,19 @@ data class UiState(
     val payMethod: PayRoute? = null, val order: LocalOrder? = null,
     val waterDevice: WaterDevice? = null, val waterOutlet: WaterOutlet? = null,
     val waterStatus: WaterStatus? = null, val waterSession: WaterSession? = null,
-    val waterBalanceAllowed: Boolean = false, val waterUpdateError: String? = null
-)
+    val waterPayments: List<WaterPayRoute> = emptyList(), val waterPayment: WaterPayRoute? = null,
+    val waterPaymentError: String? = null, val waterUpdateError: String? = null,
+    val waterAuthorizationPending: Boolean = false, val waterAuthorizationMessage: String? = null
+) {
+    val waterPaymentAllowed: Boolean get() = waterPayment != null && waterPayment in waterPayments &&
+        waterPaymentError == null && !waterAuthorizationPending
+}
 data class PaymentLaunch(val orderNo: String, val payload: String)
+data class WaterAuthorizationLaunch(
+    val id: String, val owner: String, val deviceId: String, val routeWire: String,
+    val authorization: WaterAlipayAuthorization, val deviceImei: String, val orgId: String,
+    val deviceTradeMain: Int? = authorization.tradeMain, val deviceShopId: String = ""
+)
 
 class LaundryViewModel(application: Application) : AndroidViewModel(application) {
     private val vault = SessionVault(application)
@@ -29,18 +40,27 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private val location = LocationProvider(application)
     private val _state = MutableStateFlow(UiState(loggedIn = vault.token().isNotEmpty(), phoneLabel = vault.phoneLabel(),
         order = vault.order()?.let { if (it.phase == OrderPhase.CREATING) it.copy(phase = OrderPhase.UNCONFIRMED) else it },
-        waterSession = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it },
-        waterDevice = vault.water()?.device, waterOutlet = vault.water()?.outlet))
+        waterSession = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }))
     val state = _state.asStateFlow()
     private val launchChannel = Channel<PaymentLaunch>(Channel.BUFFERED)
+    private val waterAuthorizationChannel = Channel<WaterAuthorizationLaunch>(Channel.BUFFERED)
+    private var pendingWaterAuthorization: WaterAuthorizationLaunch? = null
+    // One explicit confirmation may continue past an optional prompt after returning, as in the original client.
+    // This is not a signed flag; device requirements and the activation response are always checked again.
+    private var returnedWaterAuthorization: WaterAuthorizationLaunch? = null
+    private var waterAuthorizationVerification: Job? = null
+    private var waterRefreshJob: Job? = null
+    private var foregroundRevision = 0L
     private var smsJob: Job? = null
     val paymentLaunches = launchChannel.receiveAsFlow()
+    val waterAuthorizationLaunches = waterAuthorizationChannel.receiveAsFlow()
     private val workflow = OrderWorkflow(api, { _state.value.order }, ::saveOrder)
     private val waterWorkflow = WaterWorkflow(api, { _state.value.waterSession }, ::saveWater)
     private val paymentWorkflow = PaymentWorkflow(
         queryPaid = { order ->
             _state.update { it.copy(progress = "正在查询付款状态") }
-            api.paid(order)
+            if (order.isWater && OrderStates.apply(order, api.orderStatus(order)).phase in
+                setOf(OrderPhase.PAID, OrderPhase.COMPLETED)) true else api.paid(order)
         },
         onPaid = ::confirmPaid,
         startPayment = ::payExisting,
@@ -54,17 +74,34 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     }
     fun clearMessage() { _state.update { it.copy(message = null) } }
     fun notice(message: String) { _state.update { it.copy(message = message) } }
-    fun navigate(page: Page) { if (!state.value.busy) _state.update { it.copy(page = page) } }
+    fun navigate(page: Page) {
+        if (state.value.busy) return
+        if (!state.value.waterAuthorizationPending && state.value.waterSession?.active != true &&
+            (page == Page.WATER || state.value.page == Page.WATER)) {
+            clearWaterAuthorization()
+            _state.update { it.copy(page = page, waterDevice = null, waterOutlet = null, waterStatus = null,
+                waterPayments = emptyList(), waterPayment = null, waterPaymentError = null, waterUpdateError = null) }
+        } else _state.update { it.copy(page = page) }
+    }
+    /** A transaction record is restored only by explicitly opening it, never as a remembered scan target. */
+    fun openWaterSession() {
+        if (state.value.busy || state.value.waterAuthorizationPending) return
+        val session = state.value.waterSession?.takeIf { it.active } ?: return
+        _state.update { it.copy(page = Page.WATER, waterDevice = session.device, waterOutlet = session.outlet,
+            waterStatus = session.lastStatus, waterPayments = emptyList(), waterPayment = session.payment,
+            waterPaymentError = null, waterUpdateError = null) }
+    }
     fun selectMode(mode: WashMode) { if (!state.value.busy) _state.update { it.copy(mode = mode, quote = null) } }
     fun selectPayment(method: PayRoute) { if (!state.value.busy && method in state.value.methods) _state.update { it.copy(payMethod = method) } }
 
     private fun work(progress: String, silent: Boolean = false, task: suspend () -> Unit) {
         if (state.value.busy) return
+        foregroundRevision++
         _state.update { it.copy(busy = true, progress = progress) }
         viewModelScope.launch {
             try { task() }
             catch (e: CancellationException) { throw e }
-            catch (_: SessionExpired) { vault.logout(); _state.update { UiState(message = "登录已过期，请重新登录") } }
+            catch (_: SessionExpired) { clearWaterAuthorization(); vault.logout(); _state.update { UiState(message = "登录已过期，请重新登录") } }
             catch (e: QuoteChanged) { _state.update { it.copy(quote = e.quote, message = "价格已更新，请重新确认", page = Page.CHECKOUT) } }
             catch (e: Exception) { val message = when (e) {
                 is BusinessRejected -> e.displayMessage
@@ -88,19 +125,21 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         if (!phone.matches(Regex("1[3-9]\\d{9}")) || !code.matches(Regex("\\d{4,8}"))) { notice("请填写手机号和短信验证码"); return }
         work("正在登录") {
             val token = api.login(phone, code)
+            clearWaterAuthorization()
             vault.login(phone, token)
             smsJob?.cancel()
             val water = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }
             _state.update { UiState(loggedIn = true, phoneLabel = vault.phoneLabel(), order = vault.order(),
-                waterSession = water, waterDevice = water?.device, waterOutlet = water?.outlet) }
+                waterSession = water) }
         }
     }
-    fun logout() { if (!state.value.busy) { smsJob?.cancel(); vault.logout(); _state.value = UiState() } }
+    fun logout() { if (!state.value.busy) { clearWaterAuthorization(); smsJob?.cancel(); vault.logout(); _state.value = UiState() } }
     fun scan(raw: String, laundryEnabled: Boolean = true, waterEnabled: Boolean = true) {
         work("正在识别设备") {
             when (val scanned = api.scanDevice(DeviceCodes.parse(raw))) {
                 is ScannedDevice.Laundry -> {
                     if (!laundryEnabled) throw ClientError("洗衣功能已关闭，请先在设置中开启")
+                    clearWaterAuthorization()
                     _state.update { it.copy(device = scanned.device,
                         mode = scanned.device.modes.firstOrNull(), quote = null, page = Page.DEVICE) }
                 }
@@ -109,37 +148,152 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
                     val active = state.value.waterSession?.takeIf { it.active }
                     if (active != null && active.device.id != scanned.device.id) throw ClientError("请先处理正在进行的饮水会话")
                     val outlet = active?.outlet ?: scanned.device.outlets.first()
+                    clearWaterAuthorization()
                     _state.update { it.copy(waterDevice = scanned.device, waterOutlet = outlet, waterStatus = null,
-                        waterBalanceAllowed = false, waterUpdateError = null, page = Page.WATER) }
+                        waterPayments = emptyList(), waterPayment = null, waterPaymentError = null,
+                        waterUpdateError = null, page = Page.WATER) }
+                    loadWaterPayments(scanned.device)
                     reconcileWater()
-                    try {
-                        api.checkWaterBalanceChannel(scanned.device)
-                        _state.update { it.copy(waterBalanceAllowed = true) }
-                    } catch (error: ClientError) { _state.update { it.copy(waterUpdateError = error.message) } }
                 }
             }
         }
     }
     fun selectWaterOutlet(outlet: WaterOutlet) {
         val device = state.value.waterDevice ?: return
-        if (state.value.waterSession?.active == true || outlet !in device.outlets) return
+        if (state.value.waterSession?.active == true || state.value.waterAuthorizationPending || outlet !in device.outlets) return
         work("正在查询出水口") {
             _state.update { it.copy(waterOutlet = outlet, waterStatus = null, waterUpdateError = null) }
             reconcileWater()
         }
     }
+    fun selectWaterPayment(payment: WaterPayRoute) {
+        if (!state.value.busy && !state.value.waterAuthorizationPending && state.value.waterSession?.active != true && payment in state.value.waterPayments)
+            _state.update { it.copy(waterPayment = payment, waterAuthorizationMessage = null) }
+    }
     fun startWater() {
         val device = state.value.waterDevice ?: return
         val outlet = state.value.waterOutlet ?: return
         if (!state.value.loggedIn || vault.owner().isBlank()) { notice("请先登录后使用饮水机"); return }
+        if (state.value.waterAuthorizationPending) { notice("请先完成支付宝授权并返回核验"); return }
         if (state.value.order?.phase?.finished == false) { notice("请先处理未完成的订单"); return }
-        if (!state.value.waterBalanceAllowed) { notice("请先刷新并确认饮水机的余额支付方式"); return }
+        val payment = state.value.waterPayment
+        if (!state.value.waterPaymentAllowed || payment == null) { notice("请先刷新并选择饮水支付方式"); return }
         if (!location.permitted()) { notice("开始用水前需要定位，用于确认设备所在位置"); return }
         work("正在启动饮水机") {
-            waterWorkflow.start(device, outlet, vault.owner(), location.current())
+            val returned = returnedWaterAuthorization?.takeIf { matchesWaterAuthorization(it, requirePending = false) }
+            returnedWaterAuthorization = null
+            try {
+                waterWorkflow.start(device, outlet, vault.owner(), location.current(), payment, returned?.authorization?.tradeMain)
+            } catch (error: WaterStartNotSent) {
+                val authorization = error.authorization ?: throw error
+                val handoffDevice = state.value.waterDevice ?: throw ClientError("饮水机信息已变化，请重新扫码确认")
+                val launch = WaterAuthorizationLaunch(UUID.randomUUID().toString(), vault.owner(), handoffDevice.id,
+                    payment.wire, authorization, handoffDevice.imei, handoffDevice.orgId,
+                    handoffDevice.tradeMain, handoffDevice.shopId)
+                pendingWaterAuthorization = launch
+                _state.update { it.copy(waterAuthorizationPending = true,
+                    waterAuthorizationMessage = "需要先完成本设备的支付宝免密授权，正在打开支付宝。") }
+                waterAuthorizationChannel.send(launch)
+                return@work
+            }
+            _state.update { it.copy(waterAuthorizationMessage = null) }
             notice("启动指令已提交，请等待饮水机响应")
             reconcileWater()
         }
+    }
+
+    private fun matchesWaterAuthorization(launch: WaterAuthorizationLaunch, requirePending: Boolean = true): Boolean =
+        (!requirePending || pendingWaterAuthorization?.id == launch.id) && state.value.loggedIn && vault.owner() == launch.owner &&
+            state.value.waterDevice?.id == launch.deviceId && state.value.waterDevice?.imei == launch.deviceImei &&
+            state.value.waterDevice?.orgId == launch.orgId &&
+            state.value.waterDevice?.tradeMain == launch.deviceTradeMain &&
+            (launch.deviceShopId.isEmpty() || state.value.waterDevice?.shopId == launch.deviceShopId) &&
+            state.value.waterPayment?.wire == launch.routeWire &&
+            state.value.waterSession?.active != true
+
+    fun canLaunchWaterAuthorization(launch: WaterAuthorizationLaunch): Boolean =
+        pendingWaterAuthorization?.id == launch.id && matchesWaterAuthorization(launch) &&
+            waterAuthorizationVerification?.isActive != true
+
+    fun discardWaterAuthorization(id: String) {
+        if (pendingWaterAuthorization?.id == id) clearWaterAuthorization()
+    }
+
+    private fun clearWaterAuthorization() {
+        pendingWaterAuthorization = null
+        returnedWaterAuthorization = null
+        waterAuthorizationVerification?.cancel()
+        waterAuthorizationVerification = null
+        _state.update { it.copy(waterAuthorizationPending = false, waterAuthorizationMessage = null) }
+    }
+
+    /** A bridge return is not proof of signing, and can never start water automatically. */
+    fun waterAuthorizationReturned(id: String, bridgeMessage: String? = null) {
+        val launch = pendingWaterAuthorization?.takeIf { it.id == id } ?: return
+        if (waterAuthorizationVerification?.isActive == true) return
+        if (matchesWaterAuthorization(launch)) returnedWaterAuthorization = launch
+        waterAuthorizationVerification = viewModelScope.launch {
+            var ownsBusy = false
+            try {
+                // The bridge can fail immediately while the original start task is still unwinding.
+                while (state.value.busy) delay(50)
+                if (!matchesWaterAuthorization(launch)) return@launch
+                val device = state.value.waterDevice ?: return@launch
+                _state.update { it.copy(busy = true, progress = "正在核验支付宝免密授权") }
+                ownsBusy = true
+                val remaining = recheckWaterAlipay(device) { matchesWaterAuthorization(launch) } ?: return@launch
+                if (!matchesWaterAuthorization(launch)) return@launch
+                val message = if (!remaining.needsSigning) "平台未再要求签约，请重新确认用水。"
+                    else listOfNotNull(bridgeMessage, if (remaining.forcedByDevice)
+                        "平台仍要求本设备完成免密开通，请稍后刷新核验。"
+                        else "账户授权状态尚未同步。可再次确认用水，由平台核对；不会自动开始出水。").joinToString("\n")
+                _state.update { it.copy(waterAuthorizationMessage = message) }
+                notice(message)
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: SessionExpired) {
+                vault.logout()
+                _state.update { UiState(message = "登录已过期，请重新登录") }
+            } catch (error: Exception) {
+                if (matchesWaterAuthorization(launch)) {
+                    val detail = when (error) {
+                        is BusinessRejected -> error.displayMessage
+                        is ClientError -> error.message.orEmpty()
+                        else -> "暂时无法核验"
+                    }
+                    val message = "支付宝授权状态尚未确认：$detail。请刷新后重新确认用水。"
+                    _state.update { it.copy(waterAuthorizationMessage = message) }
+                    notice(message)
+                }
+            } finally {
+                if (pendingWaterAuthorization?.id == launch.id) {
+                    pendingWaterAuthorization = null
+                    _state.update { it.copy(waterAuthorizationPending = false) }
+                }
+                if (ownsBusy) _state.update { it.copy(busy = false, progress = "") }
+            }
+        }
+    }
+
+    /** Retry only read-only checks after returning to the app, never selection/unlock or signing launch. */
+    private suspend fun recheckWaterAlipay(device: WaterDevice, isCurrent: () -> Boolean): WaterAlipayRequirement? {
+        repeat(3) { attempt ->
+            if (!isCurrent()) return null
+            try {
+                val fresh = api.refreshWaterDevice(device)
+                if (fresh.id != device.id || fresh.imei != device.imei || fresh.orgId != device.orgId ||
+                    fresh.shopId != device.shopId || fresh.tradeMain != device.tradeMain)
+                    throw ClientError("饮水机或商户信息已变化，请重新扫码确认")
+                if (!isCurrent()) return null
+                val requirement = api.waterAlipayRequirement(fresh)
+                if (!isCurrent()) return null
+                return requirement
+            } catch (error: NetworkUnavailable) {
+                if (attempt == 2) throw error
+                delay(if (attempt == 0) 500 else 1000)
+            }
+        }
+        return null
     }
     fun endWater() {
         work("正在结束用水") {
@@ -148,32 +302,93 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         }
     }
     fun refreshWater(silent: Boolean = false) {
-        if (state.value.waterDevice == null) return
+        if (state.value.waterDevice == null || state.value.waterAuthorizationPending) return
+        if (silent) {
+            if (state.value.busy || waterRefreshJob?.isActive == true) return
+            val owner = vault.owner()
+            val device = state.value.waterDevice
+            val outlet = state.value.waterOutlet
+            val revision = foregroundRevision
+            val isCurrent = { foregroundRevision == revision && !state.value.busy &&
+                state.value.loggedIn && vault.owner() == owner && state.value.page == Page.WATER &&
+                state.value.waterDevice?.id == device?.id && state.value.waterOutlet?.id == outlet?.id }
+            // Polling updates data in place and never toggles the page-wide busy/progress layout.
+            waterRefreshJob = viewModelScope.launch {
+                try { reconcileWater(isCurrent) }
+                catch (error: CancellationException) { throw error }
+                catch (_: SessionExpired) {
+                    if (isCurrent()) { clearWaterAuthorization(); vault.logout(); _state.value = UiState(message = "登录已过期，请重新登录") }
+                } catch (error: Exception) {
+                    if (isCurrent()) _state.update { it.copy(waterUpdateError = when (error) {
+                        is BusinessRejected -> error.displayMessage
+                        is ClientError -> error.message.orEmpty()
+                        else -> "饮水状态暂时无法刷新，请稍后重试"
+                    }) }
+                }
+            }
+            return
+        }
         work(if (silent) "" else "正在刷新饮水状态", silent) {
+            if (!silent) loadWaterPayments(state.value.waterDevice!!)
             reconcileWater()
-            if (!silent) {
-                api.checkWaterBalanceChannel(state.value.waterDevice!!)
-                _state.update { it.copy(waterBalanceAllowed = true) }
+            if (!silent && state.value.waterPaymentError == null &&
+                state.value.waterSession?.active != true && state.value.waterPayment?.requiresAlipayAgreement == true) {
+                val device = state.value.waterDevice ?: return@work
+                val owner = vault.owner()
+                val isCurrent = { state.value.loggedIn && vault.owner() == owner && state.value.waterDevice == device &&
+                    state.value.waterPayment?.requiresAlipayAgreement == true && !state.value.waterAuthorizationPending &&
+                    state.value.waterSession?.active != true }
+                _state.update { it.copy(waterAuthorizationMessage = null) }
+                try {
+                    val requirement = recheckWaterAlipay(device, isCurrent) ?: return@work
+                    _state.update { it.copy(waterAuthorizationMessage = if (requirement.needsSigning)
+                        "平台仍提示本设备需要免密授权，请稍后核验；确认用水后将打开支付宝。"
+                        else "平台未再要求签约，请重新确认用水。") }
+                } catch (error: CancellationException) { throw error
+                } catch (error: SessionExpired) { throw error
+                } catch (error: Exception) {
+                    if (isCurrent()) _state.update { it.copy(waterAuthorizationMessage =
+                        "支付宝授权状态尚未确认，请稍后刷新核验。") }
+                    throw error
+                }
+            } else if (!silent && !state.value.waterAuthorizationPending) {
+                _state.update { it.copy(waterAuthorizationMessage = null) }
             }
         }
     }
-    private suspend fun reconcileWater() {
+    private suspend fun loadWaterPayments(device: WaterDevice) {
+        val previous = state.value.waterPayment ?: state.value.waterSession?.takeIf { it.device.id == device.id }?.payment
+        _state.update { it.copy(waterPayments = emptyList(), waterPaymentError = null) }
+        try {
+            val methods = api.waterPaymentRoutes(device)
+            val selected = methods.firstOrNull { it.wire == previous?.wire } ?: methods.firstOrNull { it.preferred }
+                ?: methods.firstOrNull { it.method == PayMethod.BALANCE } ?: methods.first()
+            _state.update { it.copy(waterPayments = methods, waterPayment = selected) }
+        } catch (error: ClientError) {
+            _state.update { it.copy(waterPaymentError = error.message) }
+        }
+    }
+    private suspend fun reconcileWater(isCurrent: () -> Boolean = { true }) {
         val outlet = state.value.waterOutlet ?: return
         val device = state.value.waterDevice ?: return
         val status = api.waterStatus(outlet)
+        if (!isCurrent()) return
         _state.update { it.copy(waterStatus = status, waterUpdateError = null) }
         var session = state.value.waterSession?.takeIf { it.device.id == device.id && it.outlet.id == outlet.id && it.active }
         if (session == null && status.mine && vault.owner().isNotBlank()) {
-            session = WaterSession(vault.owner(), device, outlet, WaterPhase.USING, lastStatus = status)
+            session = WaterSession(vault.owner(), device, outlet, WaterPhase.USING, lastStatus = status, recovered = true)
         }
         if (session == null) return
         var current = WaterRules.apply(session, status)
         saveWater(current)
-        if (current.phase == WaterPhase.WAITING && current.msgId.isNotBlank() && api.waterCommandAccepted(current.msgId)) {
-            current = current.copy(msgId = ""); saveWater(current)
+        if (current.phase == WaterPhase.WAITING && current.msgId.isNotBlank()) {
+            val accepted = api.waterCommandAccepted(current.msgId)
+            if (!isCurrent()) return
+            if (accepted) { current = current.copy(msgId = ""); saveWater(current) }
         }
         if (current.phase == WaterPhase.SETTLING) {
             val order = api.waterSettlement(current) ?: return
+            if (!isCurrent()) return
             saveOrder(order)
             saveWater(current.copy(phase = WaterPhase.ENDED, amount = order.amount, settlementOrder = order))
             notice(if (order.phase.finished) "饮水已结束，平台已返回结算账单" else "饮水已结束，请在订单中确认并支付账单")
@@ -209,15 +424,17 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         }
     }
     private suspend fun payExisting(order: LocalOrder) {
+        val payable = api.waterBillPaymentRoute(order)
+        if (payable != order) saveOrder(payable)
         _state.update { it.copy(progress = if (order.payMethod == PayMethod.BALANCE) "正在提交余额付款" else "正在获取支付信息") }
         if (order.payMethod == PayMethod.BALANCE) {
-            val pending = order.copy(phase = OrderPhase.PAYMENT_PENDING); saveOrder(pending)
+            val pending = payable.copy(phase = OrderPhase.PAYMENT_PENDING); saveOrder(pending)
             api.balancePay(pending)
             poll(pending)
         } else {
-            val payload = api.prepay(order)
+            val payload = api.prepay(payable)
             PurchaseRules.verifyAlipay(payload, order.amount)
-            saveOrder(order.copy(phase = OrderPhase.PAYMENT_PENDING))
+            saveOrder(payable.copy(phase = OrderPhase.PAYMENT_PENDING))
             launchChannel.send(PaymentLaunch(order.orderNo, payload))
         }
     }

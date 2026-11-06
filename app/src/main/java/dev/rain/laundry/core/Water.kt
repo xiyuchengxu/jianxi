@@ -7,9 +7,16 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 data class WaterOutlet(val id: String, val name: String, val rate: String = "", val feature: String = "")
+data class WaterPayRoute(val wire: String, val method: PayMethod, val preferred: Boolean = false) {
+    val requiresAlipayAgreement: Boolean get() = wire == "15" && method == PayMethod.ALIPAY
+    val title: String get() = if (requiresAlipayAgreement) "支付宝先享后付（免密）"
+        else if (method == PayMethod.ALIPAY) "支付宝支付" else method.title
+    companion object { val BALANCE = WaterPayRoute("2", PayMethod.BALANCE) }
+}
 data class WaterDevice(
     val id: String, val name: String, val imei: String, val shopId: String, val orgId: String,
-    val outlets: List<WaterOutlet>, val supportAppFinish: Boolean, val error: String = "", val announcement: String = ""
+    val outlets: List<WaterOutlet>, val supportAppFinish: Boolean, val error: String = "", val announcement: String = "",
+    val tradeMain: Int? = null
 )
 sealed interface ScannedDevice {
     data class Laundry(val device: Device) : ScannedDevice
@@ -18,19 +25,53 @@ sealed interface ScannedDevice {
 data class WaterStatus(val status: Int, val workStatus: Int, val amount: String = "", val identify: String = "") {
     val ended: Boolean get() = status == 3 || status == 5
     val mine: Boolean get() = workStatus == 2 && !ended && status != 6
+    // status describes a usage result; workStatus describes whether the outlet is available now.
+    val available: Boolean get() = workStatus == 1
 }
 enum class WaterPhase { STARTING, WAITING, USING, ENDING, SETTLING, ENDED, UNKNOWN, REJECTED }
 data class WaterSession(
     val owner: String, val device: WaterDevice, val outlet: WaterOutlet, val phase: WaterPhase,
     val orderNo: String = "", val msgId: String = "", val amount: String = "", val identify: String = "",
     val startedAt: Long = System.currentTimeMillis(), val lastStatus: WaterStatus? = null,
-    val settlementOrder: LocalOrder? = null, val initialIdentify: String = "", val observedRunning: Boolean = false
+    val settlementOrder: LocalOrder? = null, val initialIdentify: String = "", val observedRunning: Boolean = false,
+    val payment: WaterPayRoute? = null, val recovered: Boolean = false
 ) {
     val active: Boolean get() = phase != WaterPhase.ENDED && phase != WaterPhase.REJECTED
 }
 data class WaterStart(val orderNo: String, val msgId: String)
+class WaterStartNotSent(message: String, val authorization: WaterAlipayAuthorization? = null) : ClientError(message)
 
 object WaterRules {
+    private fun falseFlag(value: String) = value in setOf("", "0", "false")
+
+    fun paymentRoutes(data: JsonElement): List<WaterPayRoute> {
+        if (!data.isJsonArray) throw ClientError("饮水支付方式格式尚未适配")
+        val routes = data.asJsonArray.mapNotNull { item ->
+            if (!item.isJsonObject) return@mapNotNull null
+            val row = item.asJsonObject
+            if (!falseFlag(row.text("isThird", "0")) || row.text("thirdChannel").isNotBlank() ||
+                row.text("pgVipType", "0") !in setOf("", "0") || row.text("canChecked", "true") in setOf("0", "false"))
+                return@mapNotNull null
+            val wire = row.text("method")
+            val method = when (wire) {
+                "2" -> if (falseFlag(row.text("needOpenFlag", "0"))) PayMethod.BALANCE else null
+                // AfterPayUseAct uses 15 for Alipay, including the option to continue without signing up.
+                // needOpenFlag on this row is also used for the original client's ticket preference.
+                "13", "15", "103" -> PayMethod.ALIPAY
+                else -> null
+            } ?: return@mapNotNull null
+            WaterPayRoute(wire, method, row.text("defaultFlag") in setOf("1", "true"))
+        }.distinctBy { it.wire }.groupBy { it.method }.values.map { choices ->
+            choices.firstOrNull { it.preferred } ?: choices.first()
+        }
+        if (routes.isEmpty()) {
+            val unionPay = data.asJsonArray.any { it.isJsonObject && it.asJsonObject.text("method") == "53" }
+            throw ClientError(if (unionPay) "这台饮水机当前仅提供云闪付免密等未适配渠道，请先在原应用使用"
+                else "这台饮水机暂未提供可用的余额或支付宝渠道，请在原应用核对支付方式")
+        }
+        return routes
+    }
+
     // Explicit no-coupon/no-water-card/no-points choices from AfterPayUseAct.unLock, APK 1.144.0.
     fun promotions(): String = listOf("-6", "-7", "-8").map { type -> JsonObject().apply {
         addProperty("promotionId", "0"); addProperty("promotionType", type); addProperty("assetId", "0")
@@ -85,7 +126,8 @@ object WaterRules {
         }
         if (outlets.isEmpty()) throw ClientError("饮水机当前没有可用出水口")
         return WaterDevice(id, detail.text("name", "饮水机"), imei, detail.text("shopId"), orgId, outlets,
-            detail.text("supportAppUserFinish") == "true", detail.text("deviceErrorMsg"), detail.text("announcementContent"))
+            detail.text("supportAppUserFinish") == "true", detail.text("deviceErrorMsg"), detail.text("announcementContent"),
+            detail.text("tradeMain").toIntOrNull()?.takeIf { it >= 0 })
     }
 
     fun status(data: JsonElement): WaterStatus {
@@ -121,27 +163,36 @@ object WaterRules {
 interface WaterGateway {
     suspend fun refreshWaterDevice(device: WaterDevice): WaterDevice
     suspend fun waterStatus(outlet: WaterOutlet): WaterStatus
-    suspend fun startWater(device: WaterDevice, outlet: WaterOutlet, fix: LocationFix): WaterStart
+    suspend fun startWater(device: WaterDevice, outlet: WaterOutlet, fix: LocationFix,
+        payment: WaterPayRoute = WaterPayRoute.BALANCE): WaterStart
+    suspend fun startWaterAfterAuthorization(device: WaterDevice, outlet: WaterOutlet, fix: LocationFix,
+        payment: WaterPayRoute, returnedTradeMain: Int): WaterStart = startWater(device, outlet, fix, payment)
     suspend fun endWater(device: WaterDevice)
 }
 
 /** Store an attempt before sending a start command. Timeouts are reconciled by reading, never replayed. */
 class WaterWorkflow(private val gateway: WaterGateway, private val read: () -> WaterSession?, private val save: (WaterSession) -> Unit) {
     private val mutex = Mutex()
-    suspend fun start(device: WaterDevice, outlet: WaterOutlet, owner: String, fix: LocationFix): WaterSession = mutex.withLock {
+    suspend fun start(device: WaterDevice, outlet: WaterOutlet, owner: String, fix: LocationFix,
+        payment: WaterPayRoute = WaterPayRoute.BALANCE, returnedAuthorizationTradeMain: Int? = null): WaterSession = mutex.withLock {
         if (read()?.active == true) throw ClientError("请先确认上一次饮水的状态")
         if (outlet !in device.outlets || device.error.isNotBlank()) throw ClientError("饮水机当前不可用，请刷新设备")
         val fresh = gateway.refreshWaterDevice(device)
-        if (fresh.id != device.id || fresh.imei != device.imei || fresh.orgId != device.orgId || fresh.error.isNotBlank() ||
+        if (fresh.id != device.id || fresh.imei != device.imei || fresh.orgId != device.orgId || fresh.shopId != device.shopId ||
+            (returnedAuthorizationTradeMain != null && fresh.tradeMain != device.tradeMain) || fresh.error.isNotBlank() ||
             fresh.outlets.firstOrNull { it.id == outlet.id } != outlet)
             throw ClientError("饮水机状态或计费标准已更新，请重新扫码确认")
         val status = gateway.waterStatus(outlet)
-        if (status.workStatus != 1 || status.status == 6) throw ClientError("饮水机正在使用或状态异常，请先刷新状态")
-        val attempt = WaterSession(owner, device, outlet, WaterPhase.STARTING, lastStatus = status, initialIdentify = status.identify)
+        if (!status.available) throw ClientError("饮水机正在使用或状态尚未确认，请先刷新状态")
+        val attempt = WaterSession(owner, fresh, outlet, WaterPhase.STARTING, lastStatus = status,
+            initialIdentify = status.identify, payment = payment)
         save(attempt)
         try {
-            val result = gateway.startWater(device, outlet, fix)
+            val result = if (returnedAuthorizationTradeMain != null) gateway.startWaterAfterAuthorization(fresh, outlet, fix, payment, returnedAuthorizationTradeMain)
+                else gateway.startWater(fresh, outlet, fix, payment)
             attempt.copy(phase = WaterPhase.WAITING, orderNo = result.orderNo, msgId = result.msgId).also(save)
+        } catch (error: WaterStartNotSent) {
+            save(attempt.copy(phase = WaterPhase.REJECTED)); throw error
         } catch (error: BusinessRejected) {
             save(attempt.copy(phase = WaterPhase.REJECTED)); throw error
         } catch (error: Exception) {

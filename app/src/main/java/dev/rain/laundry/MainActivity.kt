@@ -13,12 +13,15 @@ import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanOptions
 import dev.rain.laundry.ui.*
 import dev.rain.laundry.data.ConsentStore
+import dev.rain.laundry.scanner.ScreenCodeCaptureActivity
+import dev.rain.laundry.payments.WaterAlipayAuthorizationActivity
 import kotlinx.coroutines.*
 
 class MainActivity : ComponentActivity() {
     private val consent by lazy { ConsentStore(applicationContext) }
     private val vm by lazy { ViewModelProvider(this)[LaundryViewModel::class.java] }
     private var pendingLocationAction: String? = null
+    private var pendingWaterAuthorizationId: String? = null
     private val scanner = registerForActivityResult(ScanContract()) { result ->
         if (consent.isAccepted()) result.contents?.let { raw ->
             val settings = ThemePreferences(this).settings
@@ -34,15 +37,36 @@ class MainActivity : ComponentActivity() {
             } else vm.notice("允许本次定位后，才能继续操作")
         }
     }
+    private val waterAuthorization = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val requestId = result.data?.getStringExtra(WaterAlipayAuthorizationActivity.EXTRA_REQUEST_ID)
+            ?.takeIf { it.isNotBlank() } ?: pendingWaterAuthorizationId
+        if (requestId == pendingWaterAuthorizationId) pendingWaterAuthorizationId = null
+        if (consent.isAccepted() && requestId != null) {
+            vm.waterAuthorizationReturned(requestId,
+                result.data?.getStringExtra(WaterAlipayAuthorizationActivity.EXTRA_MESSAGE))
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         pendingLocationAction = savedInstanceState?.getString("pending_location_action")
+        pendingWaterAuthorizationId = savedInstanceState?.getString("pending_water_authorization_id")
         enableEdgeToEdge()
         setContent {
             val appearance = remember { ThemePreferences(this@MainActivity) }
             var accepted by remember { mutableStateOf(consent.isAccepted()) }
+            // An Activity recreation (rotation, picker or payment return) must not replay the introduction.
+            val splashImage = remember {
+                if (savedInstanceState == null && appearance.settings.splashEnabled) appearance.takeNextSplashImage()
+                else null
+            }
+            var showingSplash by remember {
+                mutableStateOf(splashImage != null)
+            }
             LaundryTheme(if (accepted) appearance.settings else appearance.settings.copy(dynamicColor = false)) {
-                if (!accepted) {
+                if (showingSplash) {
+                    SplashScreen(requireNotNull(splashImage), appearance.settings.splashDurationMs,
+                        onFinished = { showingSplash = false })
+                } else if (!accepted) {
                     FirstLaunchAgreement(consent, onAccepted = { accepted = true }, onExit = { finishAndRemoveTask() })
                 } else {
                     val model = remember { vm }
@@ -54,8 +78,24 @@ class MainActivity : ComponentActivity() {
                             finally { model.sdkReturned(launch.orderNo, status) }
                         }
                     }
+                    LaunchedEffect(model) {
+                        model.waterAuthorizationLaunches.collect { launch ->
+                            if (!consent.isAccepted() || !model.canLaunchWaterAuthorization(launch)) {
+                                model.discardWaterAuthorization(launch.id)
+                            } else if (pendingWaterAuthorizationId != launch.id) {
+                                pendingWaterAuthorizationId = launch.id
+                                try {
+                                    waterAuthorization.launch(WaterAlipayAuthorizationActivity.intent(this@MainActivity, launch))
+                                } catch (_: Exception) {
+                                    pendingWaterAuthorizationId = null
+                                    model.waterAuthorizationReturned(launch.id, "无法打开支付宝授权，请稍后重试。")
+                                }
+                            }
+                        }
+                    }
                     LaundryApp(model, onScan = {
                         scanner.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("扫描洗衣机或饮水机二维码")
+                            .setCaptureActivity(ScreenCodeCaptureActivity::class.java)
                             .setBeepEnabled(false).setOrientationLocked(false))
                     }, onPay = {
                         if (LocationProvider(this).permitted()) model.pay()
@@ -76,6 +116,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("pending_location_action", pendingLocationAction)
+        outState.putString("pending_water_authorization_id", pendingWaterAuthorizationId)
         super.onSaveInstanceState(outState)
     }
 }
