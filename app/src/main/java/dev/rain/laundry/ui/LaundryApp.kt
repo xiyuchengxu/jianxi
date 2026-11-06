@@ -219,7 +219,7 @@ fun LaundryApp(
                                             onWaterStart, vm::endWater, { vm.refreshWater() }, { vm.navigate(Page.ORDERS) }, vm::selectWaterPayment)
                                         AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
                                         AppScreen.CHECKOUT -> CheckoutScreen(state, vm::selectPayment, onPay)
-                                        AppScreen.ORDERS -> OrdersScreen(state, vm::refreshOrder, vm::resumePayment, vm::cancelOrder, openWater)
+                                        AppScreen.ORDERS -> OrdersScreen(state, { vm.refreshOrder(it) }, { vm.resumePayment(it) }, { vm.cancelOrder(it) }, openWater)
                                         AppScreen.THEME -> Unit
                                     }
                                 }
@@ -389,61 +389,124 @@ private fun CheckoutScreen(state: UiState, choose: (PayRoute) -> Unit, pay: () -
 private enum class OrderGroup(val label: String) { ALL("全部"), LAUNDRY("洗衣"), WATER("饮水") }
 
 @Composable
-private fun OrdersScreen(state: UiState, refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit, water: () -> Unit) {
+private fun OrdersScreen(
+    state: UiState, refresh: (LocalOrder) -> Unit, resume: (LocalOrder) -> Unit,
+    cancel: (LocalOrder) -> Unit, water: () -> Unit
+) {
     var group by rememberSaveable { mutableStateOf(OrderGroup.ALL) }
-    var cancelDialog by remember { mutableStateOf(false) }
-    val order = state.order
+    var cancelTarget by remember { mutableStateOf<LocalOrder?>(null) }
+    val owner = state.orderHistory.firstOrNull()?.owner ?: state.order?.owner ?: state.waterSession?.owner.orEmpty()
+    // The pointer / legacy settlement are migration fallbacks. Saved history has the latest bill state.
+    val history = OrderHistory.merge(owner,
+        listOfNotNull(state.waterSession?.settlementOrder, state.order) + state.orderHistory)
+    var expandedKey by rememberSaveable(owner) {
+        mutableStateOf(state.order?.takeIf { !it.phase.finished }?.let(OrderHistory::key))
+    }
     val session = state.waterSession
-    val laundryOrder = order?.takeIf { !it.isWater }
-    val waterOrder = order?.takeIf { it.isWater }
-    val hasLaundry = laundryOrder != null
-    val hasWater = session != null || waterOrder != null
+    val pendingOutsideHistory = state.order?.takeIf { current ->
+        !current.phase.finished && history.none { OrderHistory.sameOrder(it, current) }
+    }
 
     Text("我的订单", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-    // A saveable business filter keeps the selected grouping while the page and its
-    // scroll position are retained; both sections are shown by default.
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OrderGroup.entries.forEach { candidate ->
             FilterChip(selected = group == candidate, onClick = { group = candidate },
                 label = { Text(candidate.label) }, enabled = !state.busy)
         }
     }
-    Text("按类型查看本机最近的订单和用水记录。", style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text("当前账号在本机保留最近 ${OrderHistory.LIMIT} 条订单，洗衣与饮水合计，按周一至周日归类。",
+        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
-    if (!hasLaundry && !hasWater) {
+    // An old unresolved intent remains actionable even if it predates the bounded history.
+    pendingOutsideHistory?.takeIf {
+        group == OrderGroup.ALL || (it.isWater && group == OrderGroup.WATER) || (!it.isWater && group == OrderGroup.LAUNDRY)
+    }?.let { pending ->
+        Text("待处理订单", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        OrderHistoryCard(pending, state.busy, expandedKey == OrderHistory.key(pending),
+            { expandedKey = if (expandedKey == OrderHistory.key(pending)) null else OrderHistory.key(pending) },
+            { refresh(pending) }, { resume(pending) }, { cancelTarget = pending })
+    }
+
+    if (history.isEmpty() && session == null && pendingOutsideHistory == null) {
         Spacer(Modifier.height(20.dp)); HeroIcon(Icons.AutoMirrored.Outlined.ReceiptLong)
         Text(when (group) {
             OrderGroup.WATER -> "还没有饮水记录"
             OrderGroup.LAUNDRY -> "还没有洗衣订单"
             OrderGroup.ALL -> "还没有订单"
         }, style = MaterialTheme.typography.titleLarge)
-        Text("在这里查看本机最近订单、用水记录和付款进度。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("在这里查看本机订单、用水记录和付款进度。", color = MaterialTheme.colorScheme.onSurfaceVariant)
         return
     }
 
+    @Composable
+    fun records(orders: List<LocalOrder>) {
+        OrderHistory.weeklyGroups(orders).forEach { week ->
+            Text(week.title, style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+            week.orders.forEach { order ->
+                val identity = OrderHistory.key(order)
+                key(identity) {
+                    OrderHistoryCard(order, state.busy, expandedKey == identity,
+                        { expandedKey = if (expandedKey == identity) null else identity },
+                        { refresh(order) }, { resume(order) }, { cancelTarget = order })
+                }
+            }
+        }
+    }
     if (group != OrderGroup.WATER) {
-        OrderGroupHeader(Icons.Outlined.LocalLaundryService, "洗衣", if (hasLaundry) "最近一笔" else "暂无记录")
-        if (laundryOrder != null) OrderDetail(laundryOrder, state.busy, refresh, resume) { cancelDialog = true }
-        else Text("本机暂无可显示的洗衣订单；扫描洗衣机后，最近一笔洗衣订单会显示在这里。",
+        val laundry = history.filterNot { it.isWater }
+        OrderGroupHeader(Icons.Outlined.LocalLaundryService, "洗衣", "${laundry.size} 条")
+        if (laundry.isEmpty()) Text("本机暂无可显示的洗衣订单。",
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        else records(laundry)
     }
-
     if (group != OrderGroup.LAUNDRY) {
-        OrderGroupHeader(Icons.Outlined.WaterDrop, "饮水", if (hasWater) "用水记录与账单" else "暂无记录")
-        // Session and settlement bill are separate available records; show both as water records.
-        if (session != null) WaterSessionEntry(session, water)
-        if (waterOrder != null) OrderDetail(waterOrder, state.busy, refresh, resume) { cancelDialog = true }
-        if (!hasWater) Text("本机暂无可显示的饮水记录；完成一次饮水后，用水记录和结算账单会显示在这里。",
+        val bills = history.filter { it.isWater }
+        OrderGroupHeader(Icons.Outlined.WaterDrop, "饮水", "${bills.size} 条账单")
+        // A running session is separate from the 20 order records and is the only restorable entry.
+        if (session != null && (session.active || bills.isEmpty())) WaterSessionEntry(session, water)
+        if (bills.isEmpty() && session == null) Text("本机暂无可显示的饮水账单。",
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        else records(bills)
     }
+    cancelTarget?.let { target ->
+        AlertDialog(onDismissRequest = { cancelTarget = null }, title = { Text("取消这笔订单？") },
+            text = { Text("${target.deviceName} · ${target.modeName}\n会先核对订单详情和付款状态，确认订单仍可取消后再申请。") },
+            confirmButton = { TextButton(onClick = { cancelTarget = null; cancel(target) }, enabled = !state.busy) { Text("确认取消") } },
+            dismissButton = { TextButton(onClick = { cancelTarget = null }) { Text("保留订单") } })
+    }
+}
 
-    Text("本机保留最近一笔订单和最近一次饮水记录。", style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant)
-    if (cancelDialog && laundryOrder != null) AlertDialog(onDismissRequest = { cancelDialog = false }, title = { Text("取消这笔订单？") },
-        text = { Text("会先核对订单详情和付款状态，确认订单仍可取消后再申请。") },
-        confirmButton = { TextButton(onClick = { cancelDialog = false; cancel() }) { Text("确认取消") } },
-        dismissButton = { TextButton(onClick = { cancelDialog = false }) { Text("保留订单") } })
+@Composable
+private fun OrderHistoryCard(
+    order: LocalOrder, busy: Boolean, expanded: Boolean, toggle: () -> Unit,
+    refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit
+) {
+    OutlinedCard(shape = RoundedCornerShape(20.dp)) {
+        Row(Modifier.fillMaxWidth().clickable(onClick = toggle).padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(if (order.isWater) Icons.Outlined.WaterDrop else Icons.Outlined.LocalLaundryService,
+                null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(order.deviceName, style = MaterialTheme.typography.titleSmall)
+                Text(order.modeName, style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(orderHeadline(order), style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary)
+                Text(SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(Date(order.createdAt)),
+                    style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text("¥${order.amount}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+            Icon(if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
+                if (expanded) "收起订单详情" else "展开订单详情", modifier = Modifier.size(20.dp))
+        }
+        AnimatedVisibility(visible = expanded) {
+            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                OrderDetail(order, busy, refresh, resume, cancel)
+            }
+        }
+    }
 }
 
 @Composable
@@ -477,13 +540,10 @@ private fun WaterSessionEntry(session: WaterSession, open: () -> Unit) {
 
 @Composable
 private fun OrderDetail(order: LocalOrder, busy: Boolean, refresh: () -> Unit, resume: () -> Unit, requestCancel: () -> Unit) {
-    val paid = order.phase == OrderPhase.PAID
     val cancelled = order.phase == OrderPhase.CANCELLED
-    HeroIcon(if (paid) Icons.Outlined.CheckCircle else Icons.Outlined.Schedule)
-    Text(orderHeadline(order), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.SemiBold)
     Text(orderDescription(order), color = MaterialTheme.colorScheme.onSurfaceVariant)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
-        Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Line("设备", order.deviceName)
             Line(if (order.isWater) "出水口" else "模式", order.modeName)
             Line("金额", "¥${order.amount}")

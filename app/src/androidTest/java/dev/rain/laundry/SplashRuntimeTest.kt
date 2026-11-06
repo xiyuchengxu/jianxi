@@ -140,6 +140,8 @@ class SplashRuntimeTest {
                 awaitText("手机号登录")
                 click("设置")
                 click("主题设置")
+                scrollToText("展开开屏设置")
+                click("展开开屏设置")
                 scrollToText("保存时长")
                 setDurationText("50")
                 click("保存时长")
@@ -199,6 +201,47 @@ class SplashRuntimeTest {
             imported.forEach { File(File(context.filesDir, "splash_images"), it).delete() }
             fixtures.listFiles()?.forEach { it.delete() }
             fixtures.delete()
+        }
+    }
+
+    @Test fun splashSettingsCollapseIndependentlyOfTheSwitchAndKeepEdits() = withPreferences(enabled = false, durationMs = 700) { preferences ->
+        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+            awaitText("手机号登录")
+            click("设置")
+            click("主题设置")
+            scrollToText("展开开屏设置")
+            assertNull(findText("保存时长"))
+            assertNull(findText("预览开屏"))
+            capture("splash-settings-collapsed")
+            click("展开开屏设置")
+            scrollToText("保存时长")
+            assertFalse(preferences.settings.splashEnabled)
+            setDurationText("1200")
+            click("保存时长")
+            await { ThemePreferences(context).settings.splashDurationMs == 1200 }
+            scrollToText("收起开屏设置", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+            click("收起开屏设置")
+            await { findText("保存时长") == null }
+            assertFalse(ThemePreferences(context).settings.splashEnabled)
+            assertEquals(1200, ThemePreferences(context).settings.splashDurationMs)
+            await {
+                find(automation.rootInActiveWindow) {
+                    it.isVisibleToUser && it.isClickable && it.contentDescription?.toString() == "显示开屏看板娘"
+                }?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true
+            }
+            await { ThemePreferences(context).settings.splashEnabled }
+            assertNotNull(findText("展开开屏设置"))
+            assertNull(findText("保存时长"))
+            click("展开开屏设置")
+            awaitText("收起开屏设置")
+            captureNodeTree("splash-settings-reexpanded")
+            scrollToText("保存时长")
+            capture("splash-settings-expanded")
+            scenario.recreate()
+            awaitText("主题")
+            scrollToText("收起开屏设置", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+            assertNull(findText("展开开屏设置"))
+            assertEquals(1200, ThemePreferences(context).settings.splashDurationMs)
         }
     }
 

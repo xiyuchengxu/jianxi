@@ -13,6 +13,7 @@ import android.view.accessibility.AccessibilityNodeInfo
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.rain.laundry.data.SessionVault
 import dev.rain.laundry.data.LaundryApi
 import dev.rain.laundry.core.*
 import dev.rain.laundry.ui.GlassLevel
@@ -32,6 +33,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
 import java.net.URLEncoder
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.TemporalAdjusters
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicBoolean
@@ -41,6 +46,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class LocalRuntimeTest {
     private val instrumentation get() = InstrumentationRegistry.getInstrumentation()
     private val automation get() = instrumentation.uiAutomation
+    private val fixturePhone = "local-runtime-owner"
+    private val fixtureOwner = WireProtocol.sha256(fixturePhone)
     private val screenshots get() = File(instrumentation.targetContext.getExternalFilesDir(null), "runtime-checks").apply { mkdirs() }
 
     @Test fun glassControlsPersistAndFixedBarRetainsTheSelectedLevel() {
@@ -62,6 +69,7 @@ class LocalRuntimeTest {
                 SystemClock.sleep(180)
                 injectTouch(downTime, MotionEvent.ACTION_MOVE, preview.left + preview.width() * .2f, preview.bottom - 36f)
                 injectTouch(downTime, MotionEvent.ACTION_UP, preview.left + preview.width() * .2f, preview.bottom - 36f)
+                scrollToText("无", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
                 click("无")
                 await { ThemePreferences(context).settings.glassLevel == GlassLevel.NONE }
                 scrollToText("固定", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
@@ -371,7 +379,7 @@ class LocalRuntimeTest {
             val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
             val status = WaterStatus(2, 2, "0.12", "local-water-usage")
             mutable.value = mutable.value.copy(page = Page.WATER, waterDevice = water, waterOutlet = outlet, waterStatus = status,
-                waterSession = WaterSession("local-runtime-owner", water, outlet, WaterPhase.USING, lastStatus = status))
+                waterSession = WaterSession(fixtureOwner, water, outlet, WaterPhase.USING, lastStatus = status))
         }
         awaitText("正在用水")
         scrollToText("结束用水")
@@ -400,8 +408,8 @@ class LocalRuntimeTest {
             val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
             val status = WaterStatus(2, 2, "0.12", "local-water-usage")
             mutable.value = mutable.value.copy(page = Page.ORDERS, waterDevice = null, waterOutlet = null,
-                order = LocalOrder("local-runtime-owner", "分组测试洗衣机", "单脱水", "1.00", PayMethod.ALIPAY, OrderPhase.CLOSED),
-                waterSession = WaterSession("local-runtime-owner", water, outlet, WaterPhase.USING, lastStatus = status))
+                order = LocalOrder(fixtureOwner, "分组测试洗衣机", "单脱水", "1.00", PayMethod.ALIPAY, OrderPhase.CLOSED),
+                waterSession = WaterSession(fixtureOwner, water, outlet, WaterPhase.USING, lastStatus = status))
         }
         awaitText("我的订单")
         click("洗衣")
@@ -421,6 +429,40 @@ class LocalRuntimeTest {
     }
 
     @Suppress("UNCHECKED_CAST")
+    @Test fun orderHistoryShowsBusinessThenLocalWeeksWithoutReplacingTheCurrentOrder() = withLocalSession { vm, calls ->
+        val zone = ZoneId.systemDefault()
+        val monday = LocalDate.now(zone).with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        fun record(name: String, weeksAgo: Long, water: Boolean) = LocalOrder(fixtureOwner, name,
+            if (water) "常温水" else "标准洗", "1.00", PayMethod.ALIPAY, OrderPhase.COMPLETED,
+            createdAt = monday.minusWeeks(weeksAgo).atTime(12, 0).atZone(zone).toInstant().toEpochMilli(),
+            orderId = name, orderNo = "number-$name", category = if (water) "04" else null)
+        val current = record("本周洗衣机", 0, false)
+        val history = listOf(current, record("上周洗衣机", 1, false),
+            record("本周饮水机", 0, true), record("前周饮水机", 2, true))
+        instrumentation.runOnMainSync {
+            val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
+            mutable.value = mutable.value.copy(page = Page.ORDERS, order = current, orderHistory = history)
+        }
+        awaitText("我的订单")
+        click("洗衣")
+        scrollToText("本周 · $monday 至 ${monday.plusDays(6)}")
+        scrollToText("上周 · ${monday.minusWeeks(1)} 至 ${monday.minusDays(1)}")
+        scrollToText("上周洗衣机")
+        click("上周洗衣机")
+        assertEquals("Viewing history must preserve the current workflow pointer", current, vm.state.value.order)
+        capture("orders-weekly-laundry")
+        scrollToText("全部", AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD)
+        click("饮水")
+        scrollToText("本周饮水机")
+        assertNull(find(automation.rootInActiveWindow) { it.isVisibleToUser && it.text?.toString() == "本周洗衣机" })
+        scrollToText("${monday.minusWeeks(2)} 至 ${monday.minusWeeks(2).plusDays(6)}")
+        scrollToText("前周饮水机")
+        capture("orders-weekly-water")
+        assertEquals(current, vm.state.value.order)
+        assertTrue("Reading history must not issue business requests", calls.isEmpty())
+    }
+
+    @Suppress("UNCHECKED_CAST")
     @Test fun waterControlsKeepTheirScrollPositionDuringPollingAndForegroundProgress() {
         val context = instrumentation.targetContext
         val appearance = ThemePreferences(context)
@@ -437,7 +479,7 @@ class LocalRuntimeTest {
                     instrumentation.runOnMainSync {
                         val status = WaterStatus(2, 2, "0.12", "local-water-usage")
                         mutable.value = mutable.value.copy(page = Page.WATER, waterDevice = water, waterOutlet = outlet, waterStatus = status,
-                            waterSession = WaterSession("local-runtime-owner", water, outlet, WaterPhase.USING,
+                            waterSession = WaterSession(fixtureOwner, water, outlet, WaterPhase.USING,
                                 lastStatus = status, observedRunning = true))
                     }
                     awaitText(water.name)
@@ -554,7 +596,7 @@ class LocalRuntimeTest {
         instrumentation.runOnMainSync {
             val state = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }
                 .get(vm) as MutableStateFlow<UiState>
-            state.value = state.value.copy(page = Page.ORDERS, order = LocalOrder("local-runtime-owner",
+            state.value = state.value.copy(page = Page.ORDERS, order = LocalOrder(fixtureOwner,
                 "本地测试洗衣机", "标准洗", "4.00", PayMethod.ALIPAY, OrderPhase.CREATED,
                 orderId = "local-order-id", orderNo = "local-trade-no"))
         }
@@ -586,10 +628,8 @@ class LocalRuntimeTest {
             val detailRequests = AtomicInteger()
             val running = AtomicBoolean(waterRunning)
             val preferences = instrumentation.targetContext.getSharedPreferences("laundry_vault", 0)
-            val fixtureKey = "order_local-runtime-owner"
-            val previousFixture = preferences.getString(fixtureKey, null)
-            val waterFixtureKey = "water_local-runtime-owner"
-            val previousWaterFixture = preferences.getString(waterFixtureKey, null)
+            val previousVault = preferences.all.toMap()
+            SessionVault(instrumentation.targetContext).login(fixturePhone, "local-fixture-token")
             val clientField = LaundryApi::class.java.getDeclaredField("client").apply { isAccessible = true }
             scenario.onActivity { activity ->
                 vm = MainActivity::class.java.getDeclaredMethod("getVm").apply { isAccessible = true }.invoke(activity) as LaundryViewModel
@@ -647,7 +687,7 @@ class LocalRuntimeTest {
                         .body(response.toResponseBody("application/json; charset=utf-8".toMediaType())).build()
                 }.build()
                 clientField.set(api, localClient)
-                state.value = initial.copy(loggedIn = true, phoneLabel = "本地模拟账户", page = Page.HOME)
+                state.value = UiState(loggedIn = true, phoneLabel = "本地模拟账户", page = Page.HOME)
             }
             try { test(vm, calls) }
             finally {
@@ -655,9 +695,17 @@ class LocalRuntimeTest {
                     state.value = initial
                     clientField.set(api, oldClient)
                 }
-                preferences.edit().apply {
-                    if (previousFixture == null) remove(fixtureKey) else putString(fixtureKey, previousFixture)
-                    if (previousWaterFixture == null) remove(waterFixtureKey) else putString(waterFixtureKey, previousWaterFixture)
+                preferences.edit().clear().apply {
+                    previousVault.forEach { (key, value) ->
+                        when (value) {
+                            is String -> putString(key, value)
+                            is Boolean -> putBoolean(key, value)
+                            is Int -> putInt(key, value)
+                            is Long -> putLong(key, value)
+                            is Float -> putFloat(key, value)
+                            is Set<*> -> putStringSet(key, value.filterIsInstance<String>().toSet())
+                        }
+                    }
                 }.commit()
             }
         }
@@ -710,10 +758,45 @@ class LocalRuntimeTest {
     }
 
     private fun scrollToText(text: String, direction: Int = AccessibilityNodeInfo.ACTION_SCROLL_FORWARD) {
-        repeat(16) {
-            if (find(automation.rootInActiveWindow) { it.text?.toString() == text || it.contentDescription?.toString() == text } != null) return
-            awaitNode { it.isScrollable }.performAction(direction)
-            SystemClock.sleep(250)
+        instrumentation.waitForIdleSync()
+        SystemClock.sleep(350)
+        repeat(36) {
+            if (find(automation.rootInActiveWindow) {
+                it.isVisibleToUser && (it.text?.toString() == text || it.contentDescription?.toString() == text)
+            } != null) return
+            // Theme picture rows and filter transitions can expose another scroll node first.
+            // Scroll the visible vertical list in overlapping steps so compact headers are not skipped.
+            var list: AccessibilityNodeInfo? = null
+            var largestArea = 0L
+            fun visit(node: AccessibilityNodeInfo?) {
+                if (node == null) return
+                if (node.isVisibleToUser && node.isScrollable && node.actionList.any {
+                    it.id == AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_DOWN.id ||
+                        it.id == AccessibilityNodeInfo.AccessibilityAction.ACTION_SCROLL_UP.id
+                }) {
+                    val bounds = Rect().also(node::getBoundsInScreen)
+                    val area = bounds.width().toLong() * bounds.height()
+                    if (area > largestArea) { list = node; largestArea = area }
+                }
+                for (index in 0 until node.childCount) visit(node.getChild(index))
+            }
+            visit(automation.rootInActiveWindow)
+            list?.let { node ->
+                val bounds = Rect().also(node::getBoundsInScreen)
+                val forward = direction == AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+                val start = bounds.top + bounds.height() * if (forward) .7f else .3f
+                val distance = minOf(420f, bounds.height() * .25f)
+                val end = start + if (forward) -distance else distance
+                val down = SystemClock.uptimeMillis()
+                injectTouch(down, MotionEvent.ACTION_DOWN, bounds.left + 24f, start)
+                for (step in 1..6) {
+                    SystemClock.sleep(25)
+                    injectTouch(down, MotionEvent.ACTION_MOVE, bounds.left + 24f, start + (end - start) * step / 6)
+                }
+                SystemClock.sleep(100)
+                injectTouch(down, MotionEvent.ACTION_UP, bounds.left + 24f, end)
+            }
+            SystemClock.sleep(180)
         }
         awaitText(text)
     }

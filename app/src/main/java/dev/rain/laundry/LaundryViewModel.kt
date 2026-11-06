@@ -18,6 +18,7 @@ data class UiState(
     val smsCooldown: Int = 0, val smsPhone: String = "", val device: Device? = null,
     val mode: WashMode? = null, val quote: Quote? = null, val methods: List<PayRoute> = emptyList(),
     val payMethod: PayRoute? = null, val order: LocalOrder? = null,
+    val orderHistory: List<LocalOrder> = emptyList(),
     val waterDevice: WaterDevice? = null, val waterOutlet: WaterOutlet? = null,
     val waterStatus: WaterStatus? = null, val waterSession: WaterSession? = null,
     val waterPayments: List<WaterPayRoute> = emptyList(), val waterPayment: WaterPayRoute? = null,
@@ -40,6 +41,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private val location = LocationProvider(application)
     private val _state = MutableStateFlow(UiState(loggedIn = vault.token().isNotEmpty(), phoneLabel = vault.phoneLabel(),
         order = vault.order()?.let { if (it.phase == OrderPhase.CREATING) it.copy(phase = OrderPhase.UNCONFIRMED) else it },
+        orderHistory = vault.orders().map(::restoreOrder),
         waterSession = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }))
     val state = _state.asStateFlow()
     private val launchChannel = Channel<PaymentLaunch>(Channel.BUFFERED)
@@ -54,7 +56,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private var smsJob: Job? = null
     val paymentLaunches = launchChannel.receiveAsFlow()
     val waterAuthorizationLaunches = waterAuthorizationChannel.receiveAsFlow()
-    private val workflow = OrderWorkflow(api, { _state.value.order }, ::saveOrder)
+    private val workflow = OrderWorkflow(api, { unfinishedOrder() ?: _state.value.order }, ::saveOrder)
     private val waterWorkflow = WaterWorkflow(api, { _state.value.waterSession }, ::saveWater)
     private val paymentWorkflow = PaymentWorkflow(
         queryPaid = { order ->
@@ -66,7 +68,42 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         startPayment = ::payExisting,
         onBalancePending = { notice("余额付款结果尚未确认，请稍后刷新订单") }
     )
-    private fun saveOrder(order: LocalOrder) { vault.saveOrder(order); _state.update { it.copy(order = order) } }
+    private fun restoreOrder(order: LocalOrder): LocalOrder =
+        if (order.phase == OrderPhase.CREATING) order.copy(phase = OrderPhase.UNCONFIRMED) else order
+    private fun unfinishedOrder(): LocalOrder? = state.value.order?.takeIf { !it.phase.finished }
+        ?: state.value.orderHistory.firstOrNull { !it.phase.finished }
+    private fun saveOrder(order: LocalOrder) {
+        if (order.owner != vault.owner()) throw SessionExpired()
+        vault.saveOrder(order)
+        val history = vault.orders().map(::restoreOrder)
+        _state.update { state ->
+            val current = state.order
+            val updateCurrent = current == null || OrderHistory.sameOrder(current, order) ||
+                (current.phase.finished && order.createdAt >= current.createdAt)
+            state.copy(order = if (updateCurrent) order else current, orderHistory = history)
+        }
+    }
+    /** Viewing history never changes the workflow pointer. Only an explicit action may promote a record. */
+    private fun orderForAction(requested: LocalOrder, promote: Boolean = false): LocalOrder? {
+        if (state.value.busy) return null
+        val owner = vault.owner()
+        if (!state.value.loggedIn || owner.isBlank() || requested.owner != owner) {
+            notice("请登录订单所属账号后再操作"); return null
+        }
+        val target = state.value.order?.takeIf { OrderHistory.sameOrder(it, requested) }
+            ?: state.value.orderHistory.firstOrNull { OrderHistory.sameOrder(it, requested) }
+            ?: run { notice("这笔订单已不在本机记录中"); return null }
+        if (promote && !target.phase.finished) {
+            val conflict = (state.value.orderHistory + listOfNotNull(state.value.order)).any {
+                !it.phase.finished && !OrderHistory.sameOrder(it, target)
+            }
+            if (conflict) { notice("请先处理当前未完成的订单"); return null }
+            try { vault.selectOrder(target) }
+            catch (failure: Exception) { notice(failure.message ?: "无法读取本地订单，请稍后重试"); return null }
+            _state.update { it.copy(order = target) }
+        }
+        return target
+    }
     private fun saveWater(session: WaterSession) {
         vault.saveWater(session)
         _state.update { it.copy(waterSession = session, waterDevice = session.device, waterOutlet = session.outlet,
@@ -129,8 +166,8 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             vault.login(phone, token)
             smsJob?.cancel()
             val water = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }
-            _state.update { UiState(loggedIn = true, phoneLabel = vault.phoneLabel(), order = vault.order(),
-                waterSession = water) }
+            _state.update { UiState(loggedIn = true, phoneLabel = vault.phoneLabel(), order = vault.order()?.let(::restoreOrder),
+                orderHistory = vault.orders().map(::restoreOrder), waterSession = water) }
         }
     }
     fun logout() { if (!state.value.busy) { clearWaterAuthorization(); smsJob?.cancel(); vault.logout(); _state.value = UiState() } }
@@ -175,7 +212,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         val outlet = state.value.waterOutlet ?: return
         if (!state.value.loggedIn || vault.owner().isBlank()) { notice("请先登录后使用饮水机"); return }
         if (state.value.waterAuthorizationPending) { notice("请先完成支付宝授权并返回核验"); return }
-        if (state.value.order?.phase?.finished == false) { notice("请先处理未完成的订单"); return }
+        if (unfinishedOrder() != null) { notice("请先处理未完成的订单"); return }
         val payment = state.value.waterPayment
         if (!state.value.waterPaymentAllowed || payment == null) { notice("请先刷新并选择饮水支付方式"); return }
         if (!location.permitted()) { notice("开始用水前需要定位，用于确认设备所在位置"); return }
@@ -414,8 +451,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             paymentWorkflow.startOrResume(order)
         }
     }
-    fun resumePayment() {
-        val order = state.value.order ?: return
+    fun resumePayment() { state.value.order?.let(::resumePayment) }
+    fun resumePayment(requested: LocalOrder) {
+        val order = orderForAction(requested, promote = true) ?: return
         if (order.orderNo.isEmpty() || order.phase.finished) return
         work("正在核对付款状态") {
             val current = synchronizeOrderState(order)
@@ -448,8 +486,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
-    fun cancelOrder() {
-        val order = state.value.order ?: return
+    fun cancelOrder() { state.value.order?.let(::cancelOrder) }
+    fun cancelOrder(requested: LocalOrder) {
+        val order = orderForAction(requested, promote = true) ?: return
         if (order.isWater) { notice("这是已用水的结算账单，请核对金额后支付"); return }
         if (order.orderId.isBlank() || order.phase.finished) return
         work("正在取消订单") {
@@ -471,8 +510,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             notice("订单已取消")
         }
     }
-    fun refreshOrder() {
-        val order = state.value.order ?: return
+    fun refreshOrder() { state.value.order?.let(::refreshOrder) }
+    fun refreshOrder(requested: LocalOrder) {
+        val order = orderForAction(requested) ?: return
         if (order.orderId.isBlank() && order.orderNo.isBlank()) { notice("上一次下单结果未确认，请先在原应用核对订单"); return }
         work("正在查询订单") { noticeOrderState(synchronizeOrderState(order)) }
     }

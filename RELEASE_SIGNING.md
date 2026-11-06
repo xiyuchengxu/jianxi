@@ -1,8 +1,9 @@
 # 正式版签名
 
-当前发布版本：4.1.0；内部版本：0.1.28；Android versionCode：29。
+当前发布版本：5.0.0；内部版本：0.1.29；Android versionCode：30。
 
-4.1.0 调整饮水与订单界面及滚动保持，保留屏幕二维码扫码、透明开屏及饮水签约修复。正式包支持覆盖原正式证书版本。
+
+5.0.0 新增最近 20 条本机订单与周分组、主题开屏设置折叠，保留屏幕二维码扫码、透明开屏及饮水签约修复。正式包支持覆盖原正式证书版本。
 
 后续发布只提供正式签名 APK 和源码 ZIP，按 [发布与版本规则](RELEASE_POLICY.md) 执行。正式版继续沿用 1.0.0 起使用的同一份私有正式密钥，证书 SHA-256 为：
 
@@ -42,7 +43,7 @@ JIANXI_RELEASE_KEY_PASSWORD=<密钥密码>
 发布验证程序固定校验上述原正式证书，同时要求 v1/v2/v3 全部有效、独立 v1 验证通过、包名及版本匹配，APK 非调试且 ZIP 完整。将参数替换成实际发布版本和构建号：
 
 ```sh
-python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --version 4.1.0 --version-code 29
+python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --version 5.0.0 --version-code 30
 ```
 
 ## 旧覆盖升级版的迁移
