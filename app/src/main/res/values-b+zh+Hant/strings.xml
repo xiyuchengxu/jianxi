@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="msg_001914d23f0c" formatted="false">"霧藍"</string>
+    <string name="msg_00612aad0812" formatted="false">"將要求飲水機停止本次用水，並查詢平台結算帳單。請同時確認機器已停止出水。"</string>
+    <string name="msg_00d78bd5bca3" formatted="false">"收合訂單詳情"</string>
+    <string name="msg_0121f8244bea" formatted="false">"裝置機構編號無效，請重新掃碼辨識裝置"</string>
+    <string name="msg_013ddbb797c5" formatted="false">"飲水計費資料異常，請重新整理裝置"</string>
+    <string name="msg_019293ad723c" formatted="false">"核對本裝置免密碼授權要求失敗"</string>
+    <string name="msg_01e7dcfb8bff" formatted="false">"付款已確認，請查看洗衣機運轉狀態"</string>
+    <string name="msg_029b46b17729" formatted="false">"正在查詢付款狀態"</string>
+    <string name="msg_03dd0c88d8ac" formatted="false">"目前配色 · 桌面桌布"</string>
+    <string name="msg_055ff46ac059" formatted="false">"本次用水狀態異常，請重新整理並核對"</string>
+    <string name="msg_065e184d07a3" formatted="false">"下單結果待確認"</string>
+    <string name="msg_069619c91b97" formatted="false">"此裝置有未付款訂單，請先在原 App 處理"</string>
+    <string name="msg_06e43ba08011" formatted="false">"目前帳戶正在用水，請重新整理以恢復工作階段"</string>
+    <string name="msg_073fcb8f4117" formatted="false">"付款前需要定位，用於確認裝置所在位置"</string>
+    <string name="msg_07a3c2feadd0" formatted="false">"請選擇眼前飲水機的出水口"</string>
+    <string name="msg_07b375304298" formatted="false">"訂單不屬於目前帳號"</string>
+    <string name="msg_083c5e6e61a7" formatted="false">"重新整理飲水狀態"</string>
+    <string name="msg_0841fa3cbaff" formatted="false">"請在機器上操作出水，離開前確認已停止。"</string>
+    <string name="msg_088dce96a836" formatted="false">"左右滑動翻頁"</string>
+    <string name="msg_0910213a8f05" formatted="false">"報價項目與所選洗衣模式不一致"</string>
+    <string name="msg_0951f3233237">"%1$s 元/%2$s"</string>
+    <string name="msg_096a1a09a313" formatted="false">"需要先完成本裝置的支付寶免密碼授權，正在開啟支付寶。"</string>
+    <string name="msg_09b6b52a8ffc" formatted="false">"確認開始用水？"</string>
+    <string name="msg_0b0aa02f64fd" formatted="false">"今天，也要乾乾淨淨。"</string>
+    <string name="msg_0b29f93e5076" formatted="false">"八、責任界線與合法權益\n在適用法律允許的範圍內，本軟體依現狀提供，不作超出明示說明的保證。使用者應對其自行實施的越權、違法、侵害他人權益或違反平台規則的行為承擔相應責任。本聲明不排除或限制依法不能免除的責任，不剝奪使用者依法享有的權利，也不撤銷任何已合法取得的開源授權權利。"</string>
+    <string name="msg_0b2f1558771b">"第 %1$s 張向前移動"</string>
+    <string name="msg_0b6e2d0e2cdc">"預計 %1$s 結束 · 剩餘時間僅供參考"</string>
+    <string name="msg_0b8351751e94" formatted="false">"依桌面桌布產生主題，關閉後恢復手動色板"</string>
+    <string name="msg_0baa295b60a1" formatted="false">"付款結果尚未確認，請先查詢訂單狀態。"</string>
+    <string name="msg_0c1af104f3dc" formatted="false">"查詢飲水狀態失敗"</string>
+    <string name="msg_0d2366e40efe" formatted="false">"正在查詢訂單"</string>
+    <string name="msg_0d262993e8d5" formatted="false">"價格已更新，請重新確認"</string>
+    <string name="msg_0dc111847321" formatted="false">"自訂圖片"</string>
+    <string name="msg_0dcc32f22104" formatted="false">"支付狀態格式尚未支援"</string>
+    <string name="msg_0e5d45e9456f" formatted="false">"多喝溫水～"</string>
+    <string name="msg_0ee6972c135c" formatted="false">"飲水帳單未成功產生，請返回飲水頁核對裝置狀態。"</string>
+    <string name="msg_0eea89fa9937" formatted="false">"洗衣功能已關閉，請先在設定中開啟"</string>
+    <string name="msg_0f4d2cd6e467" formatted="false">"本次飲水已結束，帳單已完成。"</string>
+    <string name="msg_0f7345aa9d28" formatted="false">"訂單狀態尚未確認，請先核對訂單"</string>
+    <string name="msg_0fee128df8c6" formatted="false">"本次請求遭平台拒絕，請稍後再試（403）"</string>
+    <string name="msg_0ffd6956dde5" formatted="false">"此裝置使用先用後付，目前版本暫不支援"</string>
+    <string name="msg_10085fb8523f" formatted="false">"無法讀取本機訂單，請稍後再試"</string>
+    <string name="msg_109b1efb4f46" formatted="false">"下單未成功"</string>
+    <string name="msg_119a288b74a7" formatted="false">"這筆訂單已不在最近 20 筆紀錄中"</string>
+    <string name="msg_12052867974c" formatted="false">"正在結束用水"</string>
+    <string name="msg_1213ea2e1fb5" formatted="false">"登入已過期"</string>
+    <string name="msg_12515926f77d" formatted="false">"圖片匯入失敗"</string>
+    <string name="msg_1354a76ef3f2" formatted="false">"報價缺少洗衣項目"</string>
+    <string name="msg_13758a0f2e76" formatted="false">"請先結束並確認本次飲水，再建立新訂單"</string>
+    <string name="msg_138a7e077b76" formatted="false">"松綠"</string>
+    <string name="msg_13c1f4bc5d91" formatted="false">"未取得桌布顏色，暫用系統配色"</string>
+    <string name="msg_13c5cfb46dc9" formatted="false">"平台確認洗衣結束後提醒。剩餘時間僅供參考，背景通知可能因省電或網路延遲。"</string>
+    <string name="msg_13cc658e15e3" formatted="false">"支付寶支付產品碼格式尚未支援"</string>
+    <string name="msg_13cd457fb578" formatted="false">"四、遵守原服務規則\n使用者須自行確認對帳戶、裝置服務及支付操作擁有合法權限，並遵守適用法律、原平台有效規則及學校或場所的管理要求。如不具備授權，或有關規則不允許此類使用，應停止使用。本軟體不能替代原平台授予使用者權限，也不應被用於規避身分驗證、風險控管或付款義務。"</string>
+    <string name="msg_13dabacb2def" formatted="false">"飲水帳單付款結果尚未確認，請先重新整理訂單狀態。"</string>
+    <string name="msg_13ee5f6fac47" formatted="false">"Jianxi 是獨立開源專案，與原服務平台無隸屬關係。"</string>
+    <string name="msg_15970fc99c94" formatted="false">"承諾聲明：我已閱讀免責聲明，保證遵守使用者條款"</string>
+    <string name="msg_15d2dda731b4" formatted="false">"正在等待裝置結束用水"</string>
+    <string name="msg_15d8fa4535c2" formatted="false">"使用者守則（使用者條款）"</string>
+    <string name="msg_15dee3b19c6e" formatted="false">"目前支付寶無法開啟此授權，請更新支付寶後再試。"</string>
+    <string name="msg_16b6d5550fa5" formatted="false">"尚未確認這是你的用水工作階段，請先重新整理狀態"</string>
+    <string name="msg_16de867a06ae">"確認支付 ¥%1$s"</string>
+    <string name="msg_16e194579f97" formatted="false">"訂單狀態格式尚未支援，請先在原 App 核對"</string>
+    <string name="msg_17ec083a8fcc" formatted="false">"支付寶免密碼簽約狀態尚未確認，請重新整理後再試"</string>
+    <string name="msg_18e6bb3f9968" formatted="false">"簡訊驗證碼"</string>
+    <string name="msg_18fa003268e3" formatted="false">"飲水支付方式確認回應格式尚未支援，請重新整理後再試"</string>
+    <string name="msg_1ad91bc551f7">"目前帳號在本機保留最近 %1$s 筆訂單，洗衣與飲水合計，依週一至週日分類。"</string>
+    <string name="msg_1b205f76c96d" formatted="false">"配色元件開源授權"</string>
+    <string name="msg_1bd91a7d0c53" formatted="false">"已儲存"</string>
+    <string name="msg_1c8a94e1b712" formatted="false">"貼上洗衣機或飲水機 QR Code 的完整內容。"</string>
+    <string name="msg_1cecf188f254" formatted="false">"已套用桌布顏色"</string>
+    <string name="msg_1d1d1e02bdf7" formatted="false">"尚未確認付款，可稍後再次查詢"</string>
+    <string name="msg_1d4fe6ba00ce" formatted="false">"在底部導覽列目前顯示的頁面之間切換"</string>
+    <string name="msg_1e027e8f269f" formatted="false">"本裝置免密碼授權要求尚未確認，請重新整理後再試"</string>
+    <string name="msg_1e2df9c3075a" formatted="false">"登入"</string>
+    <string name="msg_1e75a9bc677c" formatted="false">"下單時間"</string>
+    <string name="msg_1ea9145b3d9d" formatted="false">"餘額付款未完成"</string>
+    <string name="scanner_unsupported_hint" formatted="false">"此相機不支援降低曝光，仍可掃碼；請改變角度或降低裝置螢幕亮度"</string>
+    <string name="msg_1f405289ff28">"%1$s 筆帳單"</string>
+    <string name="msg_1f407ac21f14" formatted="false">"五、服務與付款風險\n網路、平台 API、系統相容性、裝置狀態、營運方維護等變化可能造成登入失敗、報價變動、付款狀態延遲或裝置未啟動。作者不承諾服務永久可用、絕無錯誤或必然啟動裝置。付款前請核對裝置、項目、金額及支付管道；結果異常時先核對訂單或聯絡營運方，避免重複付款。交易履行、退款及爭議處理以有關服務方的有效規則和適用法律為準。"</string>
+    <string name="msg_1fd81704a521">"移除第 %1$s 張圖片"</string>
+    <string name="msg_2007f308d3da" formatted="false">"查詢啟動指令失敗"</string>
+    <string name="msg_2050c192dabd" formatted="false">"掃描洗衣機上的 QR Code，\n選擇模式後付款。"</string>
+    <string name="msg_208e9e1652bf" formatted="false">"飲水帳單已支付"</string>
+    <string name="msg_217cfe7db1e3" formatted="false">"跟隨系統"</string>
+    <string name="msg_2198a0a4adaf" formatted="false">"這台飲水機目前未提供可用的餘額或支付寶管道，請在原 App 核對支付方式"</string>
+    <string name="msg_21b69b59b6c5" formatted="false">"本裝置免密碼授權要求格式尚未支援"</string>
+    <string name="msg_21d35783ad6d" formatted="false">"訂單回傳內容不完整，請核對訂單後再繼續"</string>
+    <string name="msg_21f2cb8d89a7" formatted="false">"平台正在處理飲水帳單退款，請在原 App 查看進度。"</string>
+    <string name="msg_225342a2ef09" formatted="false">"GitHub · 專案原始碼"</string>
+    <string name="msg_22739db68677" formatted="false">"出水口閒置，請重新確認用水"</string>
+    <string name="msg_228cd0b0f24b" formatted="false">"暫時無法核對"</string>
+    <string name="msg_22c8f9f73dc0" formatted="false">"我同意使用此手機號碼登入本人既有的胖乖生活帳戶。"</string>
+    <string name="msg_23a79ee9fdd7">"請求失敗（%1$s）"</string>
+    <string name="msg_24634c517963" formatted="false">"飲水機狀態或計費標準已更新，請重新掃碼確認"</string>
+    <string name="msg_247ab5060860" formatted="false">"僅在深色主題下生效"</string>
+    <string name="msg_247ca01ae280" formatted="false">"通知設定"</string>
+    <string name="msg_2490b9b14fe5" formatted="false">"選擇 App 顯示語言"</string>
+    <string name="msg_24c899792f14" formatted="false">"查看付款進度"</string>
+    <string name="msg_24e93eeda994" formatted="false">"請先開啟手機的位置服務"</string>
+    <string name="msg_276a8bc45803" formatted="false">"支付寶"</string>
+    <string name="msg_280af617c87f" formatted="false">"免責聲明"</string>
+    <string name="msg_298186c3f519" formatted="false">"圖片匯入失敗，請選擇有效的圖片後再試。原有圖片已保留。"</string>
+    <string name="msg_2a28f5ad7c38" formatted="false">"飲水帳單支付管道格式尚未支援"</string>
+    <string name="msg_2a4973a587ae" formatted="false">"登入失效"</string>
+    <string name="msg_2b207da009d1" formatted="false">"Jianxi"</string>
+    <string name="msg_2c1288e1d9f3" formatted="false">"驗證碼已傳送"</string>
+    <string name="msg_2c47626fe8e8" formatted="false">"平台正在處理退款，請在原 App 查看進度。"</string>
+    <string name="msg_2c581506e729" formatted="false">"正在啟動飲水機"</string>
+    <string name="msg_2c5b2c20873e" formatted="false">"請先在支付寶完成先享後付（免密碼）簽約"</string>
+    <string name="msg_2c5f66a724fd" formatted="false">"飲水帳單已退款"</string>
+    <string name="msg_2cbcfc25120f" formatted="false">"飲水啟動回應缺少指令編號，請重新整理狀態"</string>
+    <string name="msg_2cc8c71e5e19" formatted="false">"啟動飲水機失敗"</string>
+    <string name="msg_2cd0f3be8738" formatted="false">"取消"</string>
+    <string name="msg_2d0222b61b9a" formatted="false">"QR Code 內容"</string>
+    <string name="msg_2d264ece4497" formatted="false">"收合啟動畫面設定"</string>
+    <string name="msg_2d65f1558d6f" formatted="false">"飲水機詳情格式尚未支援"</string>
+    <string name="msg_2dbf7aacc433" formatted="false">"洗衣結束通知已開啟"</string>
+    <string name="msg_2dda33f41051" formatted="false">"無法儲存啟動畫面圖片"</string>
+    <string name="msg_2ded5acf5f36" formatted="false">"飲水進行中 · 查看或結束"</string>
+    <string name="msg_2e1f7be3bcfa" formatted="false">"付款已取消，可在訂單中繼續付款"</string>
+    <string name="msg_3080976c784d" formatted="false">"請在支付寶中核對並完成簽約。返回後會重新查詢本裝置的簽約要求，不會自動開始出水。"</string>
+    <string name="msg_3098a02a0c34" formatted="false">"平台已標記飲水帳單退款完成，請核對入帳情況。"</string>
+    <string name="msg_30b6558e1ec2" formatted="false">"分頁動畫"</string>
+    <string name="msg_321554ba3c42" formatted="false">"這台裝置請使用機身停止按鈕結束出水，再重新整理狀態。"</string>
+    <string name="msg_323af04842ad" formatted="false">"長按或拖曳以體驗液態形變，輕點切換並帶有彈性回彈。"</string>
+    <string name="msg_325527570302" formatted="false">"支付寶訂單內容無法確認"</string>
+    <string name="msg_33a072bb43bc" formatted="false">"平台仍提示本裝置需要免密碼授權，請稍後核對；確認用水後將開啟支付寶。"</string>
+    <string name="msg_33cdc95be001" formatted="false">"二、本人帳戶與合法授權\n僅操作本人或已獲合法授權的帳戶、裝置服務及訂單，不盜用身分、借用他人驗證碼、竊取權杖或冒用支付帳戶。未經授權不得查詢、儲存或傳播他人的帳戶、訂單、裝置使用及個人資訊。"</string>
+    <string name="msg_33df16b4afab" formatted="false">"待核對"</string>
+    <string name="msg_3465dd4a34e0">"第 %1$s 張向後移動"</string>
+    <string name="msg_34aa2e852e28" formatted="false">"登入回應缺少工作階段資訊"</string>
+    <string name="msg_35cf44ac0fcb" formatted="false">"1 次"</string>
+    <string name="scanner_waiting" formatted="false">"正在開啟相機…"</string>
+    <string name="msg_37bacd3c428f" formatted="false">"儲存首頁文案"</string>
+    <string name="msg_37e717d5998d" formatted="false">"柔和"</string>
+    <string name="msg_37f64a4b3e45" formatted="false">"文案"</string>
+    <string name="msg_381f5b6b8dba" formatted="false">"這台飲水機需要藍牙連線，請先使用原 App 取水"</string>
+    <string name="msg_3834f9cf9f9b" formatted="false">"開啟通知"</string>
+    <string name="msg_3987423266ad" formatted="false">"八、不得冒名收費或誤導宣傳\n不得假冒作者、營運方或管理員販售不存在的授權、保證洗衣結果、承諾特殊權益、誘導轉帳或從事其他詐騙活動。作者提供的用戶端免費，自願贊助不影響功能和正常使用。對合法衍生專案的權利義務仍依適用授權處理，宣傳時不得誤導公眾認為獲得作者或原平台的背書。"</string>
+    <string name="msg_3988d0190748" formatted="false">"結束用水未確認"</string>
+    <string name="msg_399477e1d8d5">"%1$s：%2$s（錯誤碼 %3$s）"</string>
+    <string name="msg_3a153dab831f" formatted="false">"裝置編號格式異常"</string>
+    <string name="msg_3a65247b5242" formatted="false">"十、發現異常及時停止\n如發現價格、訂單、付款或裝置狀態異常，應先停止重複操作，透過訂單查詢、原平台或營運方核實，並向意見回饋群提供去識別化資訊。不得利用異常繼續獲利，不擅自擴大測試範圍或傳播他人的敏感資料。原平台和營運方的業務爭議應透過其正式管道處理。"</string>
+    <string name="msg_3a8a7bac9348" formatted="false">"選擇飲水支付方式失敗"</string>
+    <string name="msg_3b91d186d44e" formatted="false">"取得驗證碼"</string>
+    <string name="msg_3cb723dd618e" formatted="false">"飲水帳單退款處理中"</string>
+    <string name="msg_3cfa1efa202f" formatted="false">"請先閱讀並確認使用條款。"</string>
+    <string name="msg_3d3517709575" formatted="false">"授權請求已失效，請重新確認用水。"</string>
+    <string name="msg_3d3fce810de2" formatted="false">"首次使用，請完整閱讀以下內容，並輸入承諾後繼續。"</string>
+    <string name="msg_3d5436ea23d2" formatted="false">"訂單"</string>
+    <string name="msg_3d746aa6be41" formatted="false">"報價附加了未選擇的優惠，請先核對"</string>
+    <string name="msg_3d872b191e4e" formatted="false">"空值"</string>
+    <string name="msg_3e0d676d2d85" formatted="false">"首頁"</string>
+    <string name="msg_3eb2e1441f78" formatted="false">"飲水帳單未產生"</string>
+    <string name="msg_3ecd8517b211" formatted="false">"核對洗衣金額失敗"</string>
+    <string name="msg_3ed8f3a53bb1" formatted="false">"正在送出餘額付款"</string>
+    <string name="msg_3f2191b43607" formatted="false">"頁面切換"</string>
+    <string name="msg_3fd47edce45b" formatted="false">"關閉"</string>
+    <string name="msg_3fe8a0ad2114" formatted="false">"二、用戶端完全免費\n作者發布的 Jianxi 用戶端完全免費，不收取軟體使用費、會員費、訂閱費或功能解鎖費。自願贊助不作為使用條件，也不代表購買洗衣服務或額外權益。洗衣項目、帳戶餘額和第三方支付等實際服務費用，以營運方和支付管道顯示的合法訂單為準；「軟體免費」不代表洗衣服務免費。其他管道收取的費用並非作者的軟體收費。"</string>
+    <string name="msg_40368cbb8f34" formatted="false">"伺服器沒有回傳內容"</string>
+    <string name="msg_408b4f2cabcf" formatted="false">"開始用水前需要定位，用於確認裝置所在位置"</string>
+    <string name="msg_409b911feaf5" formatted="false">"目前沒有進行中的飲水紀錄"</string>
+    <string name="msg_409c4e104012" formatted="false">"洗衣已結束"</string>
+    <string name="msg_40b0aade58d7" formatted="false">"不同意並離開"</string>
+    <string name="msg_40ca838c072f" formatted="false">"清空或僅保留空白字元後儲存，會恢復預設文案。"</string>
+    <string name="scanner_title" formatted="false">"掃描洗衣機或飲水機 QR Code"</string>
+    <string name="msg_4167b9536d27" formatted="false">"請先檢查裝置並重新整理狀態。結果未確認時，不會再次送出啟動指令。"</string>
+    <string name="msg_4189cc4d71fe" formatted="false">"我已閱讀免責聲明，保證遵守使用者條款"</string>
+    <string name="msg_41b8dd731e63" formatted="false">"飲水帳單詳情尚未確認"</string>
+    <string name="msg_41c71d37f309">"首頁文案輸入框，最多 %1$s 個字元"</string>
+    <string name="scanner_normal" formatted="false">"一般碼"</string>
+    <string name="msg_43a112a16373" formatted="false">"平台可能依既有支付寶授權自動扣款；未付款帳單可在訂單中繼續支付。"</string>
+    <string name="msg_44fb814b166e" formatted="false">"主題模式"</string>
+    <string name="msg_453a3ff82d81">"支付寶授權狀態尚未確認：%1$s。請重新整理後再次確認用水。"</string>
+    <string name="msg_458e4ccaafb1" formatted="false">"從桌布取色"</string>
+    <string name="msg_46b676f80bdc" formatted="false">"請先處理目前未完成的訂單"</string>
+    <string name="msg_46bad67d0636" formatted="false">"深色外觀"</string>
+    <string name="msg_46e651c95c83" formatted="false">"複製群組號碼"</string>
+    <string name="msg_4741fddebad0" formatted="false">"語言變更會立即生效，並保留目前帳戶和訂單。"</string>
+    <string name="msg_475091a94a64">"%1$s · %2$s 張"</string>
+    <string name="msg_47528de26047" formatted="false">"飲水狀態格式尚未支援"</string>
+    <string name="msg_478a69f47b5e">"%1$s 筆"</string>
+    <string name="msg_47a270081ab2" formatted="false">"模式"</string>
+    <string name="msg_484d55613910" formatted="false">"無"</string>
+    <string name="msg_4948596875a4" formatted="false">"確認並進入"</string>
+    <string name="msg_498e1d59b4d7" formatted="false">"離開"</string>
+    <string name="msg_49e131043706" formatted="false">"千萬不要點"</string>
+    <string name="scanner_limit_hint" formatted="false">"已達相機降低亮度下限；請稍微改變角度或降低裝置螢幕亮度"</string>
+    <string name="msg_4a3a09acabd9" formatted="false">"請先登入後再使用飲水機"</string>
+    <string name="msg_4b6ded8a7f18" formatted="false">"通知"</string>
+    <string name="msg_4b77024928a1" formatted="false">"上一次下單結果未確認，請先在原 App 核對訂單"</string>
+    <string name="msg_4c0130832ac1">"%1$s配色"</string>
+    <string name="msg_4c4872c43ad4" formatted="false">"請使用包含 IMEI、SN 或 NQT 的裝置 QR Code"</string>
+    <string name="msg_4c5c6272eeb1" formatted="false">"飲水結算帳單已建立，可以繼續付款；若已在原 App 付款，請重新整理狀態。"</string>
+    <string name="msg_4c8eb5753a4e" formatted="false">"飲水帳單結果待確認"</string>
+    <string name="msg_4c9c54b14027" formatted="false">"報價訂單類型格式尚未支援"</string>
+    <string name="msg_4d29b30867a0" formatted="false">"配色風格"</string>
+    <string name="msg_4d506f9bd318" formatted="false">"報價優惠資料格式尚未支援"</string>
+    <string name="msg_4d6b40d659e5" formatted="false">"飲水機"</string>
+    <string name="msg_4d84a10ccdee" formatted="false">"實際金額以平台結算帳單為準"</string>
+    <string name="msg_4dca55259348" formatted="false">"重新掃描飲水機"</string>
+    <string name="msg_4decd6c42efc" formatted="false">"平台回傳的裝置授權要求尚未確認"</string>
+    <string name="msg_50d9f748385e" formatted="false">"支付寶簽約連結格式尚未支援，請在胖乖核對後再試"</string>
+    <string name="msg_50dab49f5bab" formatted="false">"飲水機目前無法使用，請重新整理裝置"</string>
+    <string name="msg_5108d2fa0bac" formatted="false">"訂單正在退款，請在原 App 查看進度"</string>
+    <string name="msg_5124eb2d64ae" formatted="false">"讓洗衣變簡單"</string>
+    <string name="msg_517e649764b1" formatted="false">"免責聲明與使用者守則"</string>
+    <string name="msg_5192dad3dee3" formatted="false">"預計時間已到，等待平台確認結束"</string>
+    <string name="msg_51ebba34a15f" formatted="false">"要取消這筆訂單嗎？"</string>
+    <string name="msg_51f0310e9d93" formatted="false">"訂單已完成"</string>
+    <string name="msg_52420fc5327e" formatted="false">"洗衣進行中 · 剩餘時間待同步"</string>
+    <string name="msg_525fba38cbee" formatted="false">"這筆飲水帳單目前未提供支付寶單次支付管道，請在原 App 完成支付後重新整理"</string>
+    <string name="msg_539a04f13653">"請選擇 1 至 %1$s 張圖片"</string>
+    <string name="msg_53da7f836186">"報價優惠選項格式尚未支援（%1$s：%2$s）"</string>
+    <string name="msg_53f92c063963" formatted="false">"物件"</string>
+    <string name="msg_542e9ae16505">"預設文案：%1$s"</string>
+    <string name="msg_54744c98c1d5" formatted="false">"Jianxi 是獨立的用戶端。簡訊、洗衣和飲水服務由原平台提供。"</string>
+    <string name="msg_54c9beed47d8" formatted="false">"未安裝支付寶，請安裝後重新確認用水。"</string>
+    <string name="msg_5509fe43c5e9" formatted="false">"飲水帳單付款已確認"</string>
+    <string name="msg_55ae9cf11f5d" formatted="false">"每張圖片不能超過 50 MB"</string>
+    <string name="msg_5642ebf21120" formatted="false">"退款處理中"</string>
+    <string name="msg_569001c47283">"最多使用 %1$s 張圖片，請減少選擇數量。"</string>
+    <string name="msg_56fe9a6dd1aa" formatted="false">"純黑模式"</string>
+    <string name="msg_570d60206779" formatted="false">"正在儲存"</string>
+    <string name="scanner_close" formatted="false">"返回"</string>
+    <string name="msg_580b9f75924d" formatted="false">"支付寶先享後付（免密碼）"</string>
+    <string name="msg_583465e2a15d" formatted="false">"使用支付寶掃一掃，或儲存圖片後辨識。"</string>
+    <string name="msg_59124bffa4c0" formatted="false">"付款已確認，已請求同步裝置，請查看機器是否啟動"</string>
+    <string name="msg_5a1a388ad40c" formatted="false">"核對裝置狀態失敗"</string>
+    <string name="msg_5a2665f54deb">"%1$s  Jianxi"</string>
+    <string name="msg_5bcd70afb28d" formatted="false">"讓洗衣，\n變簡單。"</string>
+    <string name="msg_5bdb9263878d" formatted="false">"正在用水"</string>
+    <string name="msg_5c22e569d581" formatted="false">"Jianxi 意見回饋群"</string>
+    <string name="msg_5c55a67935af" formatted="false">"全部"</string>
+    <string name="msg_5d3f476b86fd" formatted="false">"還沒有洗衣訂單"</string>
+    <string name="msg_5d5c5a7050f5" formatted="false">"待處理訂單"</string>
+    <string name="msg_5e29d121dda0" formatted="false">"數量"</string>
+    <string name="msg_5e7f0dec6dbe" formatted="false">"訂單已退款，請核對入帳情況"</string>
+    <string name="msg_5ecc022c1ca8" formatted="false">"目前配色 · 正在取色"</string>
+    <string name="msg_5ecee348e4b3">"%1$s。原有圖片已保留。"</string>
+    <string name="msg_5ee487891e56" formatted="false">"請先開啟飲水入口，再查看飲水紀錄"</string>
+    <string name="msg_5f386787584a" formatted="false">"用水已結束，正在核對帳單"</string>
+    <string name="msg_5f63b1959faf">"在底部導覽列顯示%1$s入口"</string>
+    <string name="msg_60404752f27e" formatted="false">"鮮明"</string>
+    <string name="msg_606b515644d2" formatted="false">"支付金額與確認金額不一致"</string>
+    <string name="msg_609c3bd23883" formatted="false">"起（階梯計費）"</string>
+    <string name="msg_610654391ab3" formatted="false">"九、理性回饋與保護他人\n加入意見回饋群和提供回饋均為自願。請尊重他人，客觀描述問題，不洗版、騷擾、辱罵、發布違法內容或散布未經查證的個人指控。提交截圖、日誌或 QR Code 前先去識別化；不要向任何群組成員提供簡訊驗證碼、權杖、支付密碼或其他可控制帳戶的資料。"</string>
+    <string name="msg_6132aaeef659" formatted="false">"訂單已逾時或失效，可以返回洗衣重新選擇模式。"</string>
+    <string name="scanner_brightness_accessibility" formatted="false">"螢幕碼降低亮度"</string>
+    <string name="scanner_screen" formatted="false">"螢幕碼"</string>
+    <string name="msg_61ec6116d1f5" formatted="false">"飲水功能已關閉，請先在設定中開啟"</string>
+    <string name="msg_62200c199491" formatted="false">"裝置可用狀態格式尚未支援"</string>
+    <string name="msg_6253728e4fa9" formatted="false">"繼續付款"</string>
+    <string name="msg_62be6c883399" formatted="false">"選擇洗衣模式"</string>
+    <string name="msg_62fe8a9e39d9" formatted="false">"這是已用水的結算帳單，請核對金額後支付"</string>
+    <string name="msg_6303308108a0" formatted="false">"選擇自己的圖片替換預設看板娘。多張圖片會依選擇順序在每次啟動時切換。"</string>
+    <string name="msg_630e2611df30" formatted="false">"取消訂單失敗"</string>
+    <string name="msg_63109ff6f1bb" formatted="false">"顯示啟動畫面看板娘"</string>
+    <string name="msg_6337e0867c00" formatted="false">"支付寶支付"</string>
+    <string name="msg_634bf913de99" formatted="false">"伺服器回傳格式變更，暫時無法處理"</string>
+    <string name="msg_63ccc6721672" formatted="false">"開啟洗衣結束通知"</string>
+    <string name="msg_6415984a1009" formatted="false">"掃一掃"</string>
+    <string name="msg_64328cd1a729" formatted="false">"本專案原始碼採用 MIT 開源授權條款。完整授權與著作權聲明可離線查看。"</string>
+    <string name="msg_643afd7f49a2" formatted="false">"Jianxi 免責聲明\n版本：1.0.0｜內部版本：0.1.16｜更新日期：2026年11月3日"</string>
+    <string name="msg_64f7d3d535d8" formatted="false">"閱讀完整條款"</string>
+    <string name="msg_65687255173c" formatted="false">"付款已確認"</string>
+    <string name="msg_657c50e3dcf5" formatted="false">"請登入訂單所屬帳號後再操作"</string>
+    <string name="msg_65d6f4d9ff07" formatted="false">"六、不擅自二次修改或冒名發布\n不得在修改 APK、植入其他內容或改變功能後，冒用原作者身分，或使用戶誤認為仍是作者發布的原版、正式版本或原服務平台的官方用戶端。不得以作者名義植入惡意程式碼、收費功能、廣告或虛假承諾。依開源授權進行修改和再發布時，應保留相應聲明，清楚標明修改者、變更及非原作者版本的性質，不得偽裝成官方發布。"</string>
+    <string name="msg_65e1d3722879" formatted="false">"目前為固定底部導覽列，不使用液態玻璃。所選等級會在切回懸浮底部導覽列後生效。"</string>
+    <string name="msg_660ffe0aeef5" formatted="false">"查詢飲水結算失敗"</string>
+    <string name="msg_661d94d78724" formatted="false">"正在取得支付資訊"</string>
+    <string name="scanner_normal_hint" formatted="false">"將完整 QR Code 放入取景框；螢幕太亮時切換「螢幕碼」"</string>
+    <string name="msg_670afc87ff0c" formatted="false">"三、遵守服務與付款規則\n依營運方、學校及場所的有效規定使用洗衣設備，確認衣物、設備、項目和金額後再付款。不得逃費、偽造優惠或付款結果、重複請求以謀取異常權益，不利用 API 差異繞過應有的使用限制。發生狀態不明時先核實訂單，不盲目重複下單或付款。"</string>
+    <string name="msg_67105fbcc14e" formatted="false">"請登入訂單所屬帳號後查看洗衣進度"</string>
+    <string name="scanner_screen_hint" formatted="false">"慢慢調整亮度，直到 QR Code 紋理清楚；稍微移遠可幫助對焦"</string>
+    <string name="msg_685bb17fdb2b" formatted="false">"陣列"</string>
+    <string name="msg_694111630619" formatted="false">"裝置資訊不完整，請重新掃碼確認"</string>
+    <string name="msg_6978239af3fb">"預設 %1$s ms，範圍 %2$s–%3$s ms"</string>
+    <string name="msg_698b0d6c12a4" formatted="false">"承諾確認"</string>
+    <string name="msg_69ca3b6b5f60" formatted="false">"飲水機目前沒有可用的出水口"</string>
+    <string name="msg_6aacc960bae8" formatted="false">"訂單詳情編號不一致，請先在原 App 核對"</string>
+    <string name="msg_6acfa1db6a62" formatted="false">"洗衣機"</string>
+    <string name="msg_6b1933e75c74" formatted="false">"單次付款"</string>
+    <string name="msg_6b30d72d0686" formatted="false">"所選檔案不是可讀取的圖片"</string>
+    <string name="msg_6b59ed9d733e" formatted="false">"查看進行中的飲水紀錄"</string>
+    <string name="msg_6bdb4435095e" formatted="false">"正在儲存…"</string>
+    <string name="msg_6be5a3ca9454" formatted="false">"飲水帳單已取消，請以平台紀錄為準。"</string>
+    <string name="msg_6bea77acefb3" formatted="false">"標準"</string>
+    <string name="msg_6c3a3a160315" formatted="false">"無法建立啟動畫面圖片資料夾"</string>
+    <string name="msg_6c61dc3a5f3d" formatted="false">"金額待同步"</string>
+    <string name="msg_6c6594023f60" formatted="false">"正在傳送驗證碼"</string>
+    <string name="msg_6cdb2ed0c44e" formatted="false">"柔和毛玻璃，輕微折射與形變"</string>
+    <string name="msg_6ce4fd181551" formatted="false">"確認結束用水"</string>
+    <string name="msg_6d1262e5d2e0" formatted="false">"平台回傳的結算金額"</string>
+    <string name="msg_6d1c3af7a838" formatted="false">"飲水狀態暫時無法重新整理，請稍後再試"</string>
+    <string name="msg_6d41d86f222f" formatted="false">"這台飲水機目前僅提供雲閃付免密碼等尚未支援的管道，請先在原 App 使用"</string>
+    <string name="msg_6ea618c519a2" formatted="false">"輸入承諾聲明"</string>
+    <string name="msg_6edae041a323" formatted="false">"飲水"</string>
+    <string name="msg_6f10af9918f8" formatted="false">"預設圖片"</string>
+    <string name="msg_6f2d708abb24" formatted="false">"飲水帳單狀態尚未支援"</string>
+    <string name="msg_6f52cc94db65" formatted="false">"手機號碼"</string>
+    <string name="msg_6faf7537a441" formatted="false">"目前回傳的不是支付寶單次付款"</string>
+    <string name="msg_7017c40cec9b" formatted="false">"四、不得攻擊或破壞網路與資料\n不得利用本軟體、原始碼或其衍生程式實施攻擊、惡意大量請求、壓力測試、刷單、繞過身分驗證、探測他人資料或破壞業務的行為。不得偽造業務資料、惡意修改訂單或餘額、攔截竊取隱私、干擾其他使用者和裝置的正常使用。安全研究須另行取得有關權利人的明確授權。"</string>
+    <string name="msg_708c97df7bec" formatted="false">"石墨"</string>
+    <string name="msg_70e229df2e66" formatted="false">"飲水狀態尚未確認，請稍後重新整理"</string>
+    <string name="msg_717d0bf23fb3" formatted="false">"出水口"</string>
+    <string name="msg_73ddd0a867c2" formatted="false">"支付寶贊助收款碼"</string>
+    <string name="msg_749b9fdc6f64" formatted="false">"付款前請確認機器內已放好衣物。"</string>
+    <string name="msg_7546a59d0f68" formatted="false">"查看訂單"</string>
+    <string name="msg_755f809f9c52">"目前配色 · %1$s"</string>
+    <string name="msg_75c526d48af0" formatted="false">"無動畫"</string>
+    <string name="msg_76057ded0624" formatted="false">"AndroidX / Jetpack Compose、Material Color Utilities、OkHttp、Gson、ZXing Embedded 和支付寶 Android SDK 等元件依各自的授權條款，詳見儲存庫中的 THIRD_PARTY_NOTICES.md。"</string>
+    <string name="msg_7647946e9f07" formatted="false">"啟動畫面時間（ms）"</string>
+    <string name="msg_76ee9a62d31e" formatted="false">"七、不外傳非公開與敏感資料\n未經有關權利人或資訊主體授權，不外傳驗證碼、權杖、付款憑證、隱私截圖、群組內非公開個人資訊、私有簽章金鑰或其他機密資料。明確標示為非公開且不屬於已獲開源授權範圍內的材料，應先核實傳播權限。此要求不應擴大為禁止依 MIT 等開源授權合法取得的公開原始碼和軟體的複製、修改或散布。"</string>
+    <string name="msg_7830ed883845" formatted="false">"飲水機資訊已變更，請重新掃碼確認"</string>
+    <string name="msg_788db1cfec2a" formatted="false">"主題"</string>
+    <string name="msg_788ef5156b41" formatted="false">"第三方元件"</string>
+    <string name="msg_7895f1bfe9af" formatted="false">"本次實付"</string>
+    <string name="msg_79080acb89b3" formatted="false">"外觀、配色、啟動畫面與底部導覽列樣式"</string>
+    <string name="msg_793dc584cf9d" formatted="false">"儲存時長"</string>
+    <string name="msg_79cea7bbcb4f" formatted="false">"等待飲水機回應"</string>
+    <string name="msg_7c315faa6c32" formatted="false">"平台未再要求簽約，請重新確認用水。"</string>
+    <string name="msg_7c7dea47f575" formatted="false">"我的訂單"</string>
+    <string name="msg_7daf2930ebfb">"使用中 · 約剩 %1$s 分鐘"</string>
+    <string name="msg_7db163039817" formatted="false">"正在確認價格"</string>
+    <string name="msg_7e1c2cd5e619" formatted="false">"已複製群組號碼，請在 QQ 中搜尋加入"</string>
+    <string name="msg_7ea56ad1e29f" formatted="false">"平台仍要求本裝置完成免密碼開通，請稍後重新整理並核對。"</string>
+    <string name="msg_7eb336e42cb5" formatted="false">"自動"</string>
+    <string name="msg_7eb9be087d93" formatted="false">"洗衣進度會自動同步，剩餘時間僅供參考。"</string>
+    <string name="msg_7f3cf008769d" formatted="false">"飲水機詳情缺少裝置識別碼"</string>
+    <string name="msg_7f48dd3aa586" formatted="false">"重新選擇圖片"</string>
+    <string name="msg_7f48fe35e1c4" formatted="false">"變更會立即生效並自動儲存。"</string>
+    <string name="msg_7f96511c0fa3">"顯示在首頁頂部，支援換行，最多 %1$s 個字元。"</string>
+    <string name="msg_800bba0b799c" formatted="false">"支付寶授權狀態尚未確認，請稍後重新整理並核對。"</string>
+    <string name="msg_801916710b48" formatted="false">"一、完整閱讀與遵守\n使用前應完整閱讀免責聲明、本守則以及適用的原平台規則和開源授權，確認理解後再使用。使用者承諾遵守這些規則及適用法律，不以「未閱讀」「學習研究」或輸入過承諾聲明作為違法、越權或侵權行為的理由。不能接受時應離開並停止使用。"</string>
+    <string name="msg_8032591e13e5" formatted="false">"掃描飲水機上的 QR Code，\n選擇出水口後開始用水。"</string>
+    <string name="msg_80a1a04791c5" formatted="false">"上週 · "</string>
+    <string name="msg_81f2e88ab5a7">"版本 %1$s (%2$s)"</string>
+    <string name="msg_822a8903fcb0" formatted="false">"本機目前沒有可顯示的飲水帳單。"</string>
+    <string name="msg_8279f6a35954" formatted="false">"贊助支持"</string>
+    <string name="msg_829614d0d5f9" formatted="false">"平台已標記退款完成，請核對入帳情況。"</string>
+    <string name="msg_8313f2a8cb24" formatted="false">"感謝你支持 Jianxi，贊助金額由你決定。"</string>
+    <string name="msg_832c13565546" formatted="false">"飲水結算帳單已支付，金額與狀態以平台紀錄為準。"</string>
+    <string name="msg_83e008eb7dc4" formatted="false">"滑動"</string>
+    <string name="msg_845461671a4e">"支付方式：%1$s · 依實際用量結算"</string>
+    <string name="msg_8481aa8b7737" formatted="false">"報價包含額外商品，請先在原 App 核對"</string>
+    <string name="msg_85312acee487">"首頁文案，目前內容：%1$s"</string>
+    <string name="msg_85c6e00d4cca" formatted="false">"此裝置目前未提供可用的單次支付管道"</string>
+    <string name="msg_86a84936749d" formatted="false">"飲水帳單已關閉"</string>
+    <string name="msg_874e82006913" formatted="false">"還沒有訂單"</string>
+    <string name="msg_87b7632a53e5" formatted="false">"須與上方文字完全一致，包含中文逗號，不含引號。"</string>
+    <string name="msg_87c4fd5fd71e" formatted="false">"洗衣結束提醒"</string>
+    <string name="msg_87da2d041151" formatted="false">"請查看洗衣機運轉狀態。"</string>
+    <string name="msg_87e0ca38b1f4" formatted="false">"暫時無法處理這份資料，請稍後再試"</string>
+    <string name="msg_87f08e0c0721" formatted="false">"支付寶免密碼授權"</string>
+    <string name="msg_87f4372ffa2c" formatted="false">"飲水機出水口資料格式尚未支援"</string>
+    <string name="msg_88c89cff1508" formatted="false">"網路連線失敗，請檢查網路後再試"</string>
+    <string name="msg_88ef220dbc2f" formatted="false">"開始飲水"</string>
+    <string name="msg_88f30d89d6d2" formatted="false">"飲水帳單支付方式尚未支援，請在原 App 核對"</string>
+    <string name="msg_8923664276ca" formatted="false">"這筆訂單已不在本機紀錄中"</string>
+    <string name="msg_894df8bd55a2" formatted="false">"底部導覽列"</string>
+    <string name="msg_89543c817609" formatted="false">"飲水帳單已取消"</string>
+    <string name="msg_898dcb67f920" formatted="false">"九、意見回饋與文件更新\n問題回饋 QQ 群：1124696181。請客觀描述問題並提供去識別化後的必要資訊，群組內交流不構成對服務效果或法律結果的保證。免責聲明和使用者守則全文可隨時在關於頁面查看；內容變更後，用戶端將要求重新閱讀並確認。"</string>
+    <string name="msg_8ac5f3bd798f" formatted="false">"請先處理未完成的訂單"</string>
+    <string name="msg_8bea5e0f6086" formatted="false">"請先在原 App 核對這筆訂單，避免重複下單。"</string>
+    <string name="msg_8c5635cc9269" formatted="false">"無法開啟支付寶授權，請稍後再試。"</string>
+    <string name="msg_8e878de7a527" formatted="false">"貼上裝置碼"</string>
+    <string name="msg_8f4733578d9c" formatted="false">"飲水支付管道已變更，請重新整理後重新選擇"</string>
+    <string name="msg_8fca8cee3982" formatted="false">"這台裝置不支援遠端結束，請按飲水機上的停止鍵"</string>
+    <string name="msg_8ffbad496815">"%1$s導覽"</string>
+    <string name="msg_900e6be64ccc" formatted="false">"以裝置和平台實際狀態為準"</string>
+    <string name="msg_9055c1d4ca6f" formatted="false">"結束用水"</string>
+    <string name="msg_91051a21e008" formatted="false">"取得支付方式失敗"</string>
+    <string name="msg_914133ec9e6e">"本次使用%1$s，依實際用量結算。請準備好容器，結束後確認機器已停止出水。"</string>
+    <string name="msg_91a1254d600f">"啟動畫面圖片 %1$s"</string>
+    <string name="msg_925fc2ded5b2" formatted="false">"十一、確認、更新與停止使用\n首次使用時須自行輸入用戶端顯示的完整承諾聲明，確認紀錄僅保存在本機。文件內容變更、重新安裝或清除資料後可能需要再次確認。不同意新內容時可以停止使用；停止使用不影響適用法律和開源授權已經賦予的權利或應履行的義務。"</string>
+    <string name="msg_92863c1ad1f0" formatted="false">"首頁文案"</string>
+    <string name="msg_93f6c90cc986" formatted="false">"辨識裝置"</string>
+    <string name="msg_93fb54ffd5d4" formatted="false">"正在查詢付款結果"</string>
+    <string name="msg_94654c53105c">"%1$s · %2$s\n會先核對訂單詳情和付款狀態，確認訂單仍可取消後再提出申請。"</string>
+    <string name="msg_9490a9f00e48" formatted="false">"懸浮底部導覽列互動預覽"</string>
+    <string name="msg_960aa8eb1c5d" formatted="false">"本次使用支付寶先享後付（免密碼），依實際用量由平台結算扣款。確認後會核對本裝置的簽約要求；需要簽約時將開啟支付寶，返回後須再次確認用水。未付款帳單請到訂單中核對金額和付款狀態。"</string>
+    <string name="msg_960e8d3fc1e1" formatted="false">"正在核對支付寶免密碼授權"</string>
+    <string name="scanner_camera_error" formatted="false">"相機暫時無法使用，請返回後再試"</string>
+    <string name="msg_976a1c14feb1" formatted="false">"飲水結算編號尚未確認，請稍後重新整理"</string>
+    <string name="msg_97c0474b816d" formatted="false">"確認開始用水"</string>
+    <string name="msg_97d1ee0dcbe2" formatted="false">"登入帳戶已變更，請重新確認用水"</string>
+    <string name="msg_98b03d8bcb49" formatted="false">"最近一次飲水紀錄"</string>
+    <string name="msg_98b8c83eb71c" formatted="false">"付款結果仍在確認，請稍後重新整理訂單"</string>
+    <string name="msg_996bbd1e69e4" formatted="false">"薔薇"</string>
+    <string name="msg_99ae219d44e9" formatted="false">"訂單裝置資訊已變更，請先在原 App 核對"</string>
+    <string name="msg_9a81c4e994ca" formatted="false">"繼續用水"</string>
+    <string name="msg_9b1cb6619d40" formatted="false">"洗衣模式"</string>
+    <string name="msg_9b3a9a53cd77" formatted="false">"我同意"</string>
+    <string name="msg_9d2e3d5ad46b" formatted="false">"正在儲存圖片…"</string>
+    <string name="msg_9d8fb9c546b1">"%1$s功能開關"</string>
+    <string name="msg_9da18b06f6bb" formatted="false">"飲水已結束，請在訂單中確認並支付帳單"</string>
+    <string name="msg_9dcdc2b289b9" formatted="false">"秒"</string>
+    <string name="msg_9e27d3fb2bfb" formatted="false">"正在登入"</string>
+    <string name="msg_9e2becfedaad" formatted="false">"飲水已結束，平台已回傳結算帳單"</string>
+    <string name="msg_9e4949bc0d52" formatted="false">"請填寫手機號碼和簡訊驗證碼"</string>
+    <string name="msg_9eaf7337eac7" formatted="false">"帳單時間"</string>
+    <string name="msg_9f0d4e4656ee" formatted="false">"新增圖片"</string>
+    <string name="msg_9f6fee1aba17" formatted="false">"語言"</string>
+    <string name="scanner_brighter" formatted="false">"較亮"</string>
+    <string name="msg_9ff5a9563ee2" formatted="false">"本次用水已結束"</string>
+    <string name="msg_a00234e52c02" formatted="false">"洗衣模式資料格式尚未支援，請保留 QR Code 供後續驗證"</string>
+    <string name="msg_a01fa2926a83">"訂單號 %1$s"</string>
+    <string name="msg_a0640541affa" formatted="false">"恢復預設首頁文案並儲存"</string>
+    <string name="msg_a0686c2646d6" formatted="false">"本週 · "</string>
+    <string name="msg_a07dc2446281" formatted="false">"裝置未提供商家簽約資訊，請重新掃碼或在胖乖核對"</string>
+    <string name="msg_a0aa4b780049" formatted="false">"還沒有飲水紀錄"</string>
+    <string name="msg_a0b44537c2b6" formatted="false">"七、下載、安裝與使用選擇\n請核實安裝包來源、版本和簽章，不安裝來源不明或被植入惡意內容的修改版 APK。瀏覽器、第三方下載連結和原平台內容由對應提供方負責。首次輸入承諾是您對閱讀並遵守規則的確認；不同意時請離開並停止使用。解除安裝、清除 App 資料或更換簽章可能導致本機紀錄無法恢復，請先在原平台核對未完成訂單。"</string>
+    <string name="msg_a158267356f5" formatted="false">"查詢飲水帳單支付方式失敗"</string>
+    <string name="msg_a24b2df2ec2f" formatted="false">"開始洗衣"</string>
+    <string name="msg_a2d0549991f7">"預計剩餘 %1$s 分 %2$s 秒"</string>
+    <string name="msg_a3030bf8f16d" formatted="false">"儲存"</string>
+    <string name="msg_a329dd6c8804" formatted="false">"訂單編號不完整，請先在原 App 核對"</string>
+    <string name="msg_a367880426a2" formatted="false">"編輯首頁文案"</string>
+    <string name="msg_a527127a2bc6" formatted="false">"平台已確認結束，請及時取衣。"</string>
+    <string name="msg_a54c648d6a5d" formatted="false">"請先重新整理並選擇飲水支付方式"</string>
+    <string name="msg_a555b7117495" formatted="false">"取消結果尚未確認，請重新整理訂單"</string>
+    <string name="msg_a5a749ecf99b" formatted="false">"使用 Kotlin 與 Jetpack Compose 建構的獨立 Android 洗衣與飲水用戶端。"</string>
+    <string name="msg_a6b6c3b4d179" formatted="false">"通透玻璃，更明顯的折射與彈性形變"</string>
+    <string name="msg_a6b75d068032" formatted="false">"深色"</string>
+    <string name="msg_a6e01b215620" formatted="false">"飲水機正在使用或狀態尚未確認，請先重新整理狀態"</string>
+    <string name="msg_a6e3cad608b3" formatted="false">"訂單詳情格式尚未支援，請先在原 App 核對"</string>
+    <string name="msg_a74a462db571">"最多 %1$s 張，圖片儲存在本機。關閉啟動畫面仍會保留圖片設定。"</string>
+    <string name="msg_a7761b0a28b0" formatted="false">"此裝置需要藍牙啟動，目前版本暫不支援"</string>
+    <string name="msg_a7afd35b9a01" formatted="false">"請先核對機器現場的計費標準。"</string>
+    <string name="msg_a7e4da3594db" formatted="false">"六、帳戶、權限與個人資訊\n請僅使用本人或已獲合法授權的帳戶，妥善保管手機號碼、驗證碼、登入權杖、付款憑證及本機訂單資訊。目前用戶端在本機儲存使用所需的工作階段、訂單、外觀偏好及條款確認紀錄；相機、定位等權限依對應功能需要申請。涉及第三方簡訊、定位、掃碼或支付元件時，還需瞭解其適用規則。回饋截圖和日誌前請刪除敏感資訊，切勿在群組內傳送驗證碼、權杖或支付密碼。"</string>
+    <string name="msg_a7e578b0de6d" formatted="false">"飲水支付方式格式尚未支援"</string>
+    <string name="msg_a87629fa5f58">"液態玻璃%1$s互動預覽"</string>
+    <string name="msg_a8bed1fccfdd" formatted="false">"飲水計費資料格式異常，請重新整理裝置"</string>
+    <string name="msg_a96aae5afee6" formatted="false">"正在重新整理飲水狀態"</string>
+    <string name="msg_aa0819dfc4d8" formatted="false">"淺色"</string>
+    <string name="msg_aa65429cd42b" formatted="false">"公升"</string>
+    <string name="msg_ab47da0b6480" formatted="false">"請先確認上一次飲水的狀態"</string>
+    <string name="msg_ab98197175b0" formatted="false">"主題設定"</string>
+    <string name="msg_aba24a0aa5c8" formatted="false">"飲水支付方式尚未確認"</string>
+    <string name="msg_abbd0e07316e" formatted="false">"確認模式，查看金額"</string>
+    <string name="msg_abcbef635922" formatted="false">"訂單已關閉，可以返回洗衣重新選擇模式"</string>
+    <string name="msg_abdf0bb6c80c" formatted="false">"點擊複製群組號碼"</string>
+    <string name="msg_ac08701c24ca" formatted="false">"正在讀取桌布顏色…"</string>
+    <string name="msg_ac301767677f" formatted="false">"本機目前沒有可顯示的洗衣訂單。"</string>
+    <string name="msg_ac43b33eb622" formatted="false">"啟動指令已送出，請等待飲水機回應"</string>
+    <string name="msg_ada841bf67e9">"服務暫時無法使用（%1$s）"</string>
+    <string name="msg_adcead944a6f" formatted="false">"取消未付款訂單"</string>
+    <string name="msg_ae8e4d07d70a" formatted="false">"請掃描飲水機 QR Code"</string>
+    <string name="msg_af93b6dcf87a" formatted="false">"實色底部導覽列，保留彈性滑桿"</string>
+    <string name="msg_afb44149eeaf" formatted="false">"確認這一次洗衣"</string>
+    <string name="msg_afdbcbccf8a9">"QQ 群：%1$s"</string>
+    <string name="msg_b01e2d77a8c6" formatted="false">"訂單已退款"</string>
+    <string name="msg_b0e7cbd7c9aa">"複製失敗，群組號碼：%1$s"</string>
+    <string name="msg_b140a6401279" formatted="false">"展開訂單詳情"</string>
+    <string name="msg_b1c9c1d036e2" formatted="false">"液態玻璃"</string>
+    <string name="msg_b25ef479aebd" formatted="false">"登入平台帳戶，使用洗衣和飲水服務。"</string>
+    <string name="msg_b31d5141e416" formatted="false">"正在查詢出水口"</string>
+    <string name="msg_b396db2e9196" formatted="false">"預覽啟動畫面"</string>
+    <string name="msg_b3b023c8f791" formatted="false">"Material 導覽列"</string>
+    <string name="msg_b3e570b20fb0" formatted="false">"一、專案性質與使用界線\nJianxi 是獨立開發的學習交流專案，供技術學習、交流以及合法授權範圍內的個人使用。作者不代表胖乖生活、洗衣設備營運方、學校、支付機構或其他第三方，也不對第三方平台的准入作出授權。原始碼使用權以隨附的 MIT 及各第三方元件授權為準。"</string>
+    <string name="msg_b4dfbfba0578" formatted="false">"Jianxi 使用者守則（使用者條款）\n版本：1.0.0｜內部版本：0.1.16｜更新日期：2026年11月3日"</string>
+    <string name="msg_b4f947a472c7" formatted="false">"手機號碼登入"</string>
+    <string name="msg_b5159bb8082c" formatted="false">"暖橙"</string>
+    <string name="msg_b5183983ef3a" formatted="false">"請重新登入"</string>
+    <string name="msg_b621b6e40986" formatted="false">"訂單已建立，可以繼續付款；若已在原 App 付款，請重新整理狀態。"</string>
+    <string name="msg_b646c5129632">"內部版本 %1$s"</string>
+    <string name="msg_b6af1a5049fc" formatted="false">"要登出嗎？"</string>
+    <string name="msg_b70c4e8a2e1d" formatted="false">"懸浮"</string>
+    <string name="msg_b741efb628be" formatted="false">"確認取消"</string>
+    <string name="msg_b7b30111f5a8" formatted="false">"洗衣項目"</string>
+    <string name="msg_b7b49aebe3b6" formatted="false">"無法儲存本機工作階段，請檢查儲存空間"</string>
+    <string name="msg_b90a8ac9c488" formatted="false">"選擇語言"</string>
+    <string name="msg_b99f9f63102d" formatted="false">"報價優惠選取狀態格式尚未支援"</string>
+    <string name="msg_ba2e93e73037" formatted="false">"恢復預設"</string>
+    <string name="msg_bb2d9ee15950" formatted="false">"報價優惠類型尚未支援"</string>
+    <string name="msg_bb536fd5dbb8" formatted="false">"啟動畫面圖片 1"</string>
+    <string name="msg_bbad1fd91c78" formatted="false">"裝置正在被他人使用"</string>
+    <string name="msg_bc11495c5a35" formatted="false">"帳戶餘額"</string>
+    <string name="msg_bc355408517f" formatted="false">"訂單已取消"</string>
+    <string name="msg_bc8383e2aaa8" formatted="false">"在這裡查看本機訂單、用水紀錄和付款進度。"</string>
+    <string name="msg_bc982c81c510" formatted="false">"洗衣"</string>
+    <string name="msg_bc99124901b6" formatted="false">"動態配色"</string>
+    <string name="msg_bdf7ecf94b2d" formatted="false">"啟動畫面圖片 2"</string>
+    <string name="msg_be376c412d1f" formatted="false">"開始用水"</string>
+    <string name="msg_be9fe6a1986a" formatted="false">"裝置詳情缺少編號"</string>
+    <string name="msg_bf39c4d5884d" formatted="false">"查詢飲水支付方式失敗"</string>
+    <string name="msg_bf737f02a6f3" formatted="false">"請輸入以下完整承諾聲明"</string>
+    <string name="msg_bfcf57d4bef3" formatted="false">"在瀏覽器中開啟"</string>
+    <string name="msg_c08142c140ff" formatted="false">"布林值"</string>
+    <string name="msg_c09c8adbff7c" formatted="false">"金額異常，請重新整理後再試"</string>
+    <string name="msg_c0b3fbff51cc" formatted="false">"完成"</string>
+    <string name="msg_c1cb5f40de7c" formatted="false">"關於 Jianxi"</string>
+    <string name="msg_c1cb9b9edad5" formatted="false">"請先處理進行中的飲水工作階段"</string>
+    <string name="msg_c1f658373079" formatted="false">"未登入"</string>
+    <string name="msg_c2387dfab4aa" formatted="false">"飲水帳單待付款"</string>
+    <string name="msg_c46badfbf19c" formatted="false">"此洗衣模式目前無法使用，請重新整理裝置後再試"</string>
+    <string name="msg_c47810fe6c5c" formatted="false">"付款結果待確認"</string>
+    <string name="msg_c47989854d25" formatted="false">"青碧"</string>
+    <string name="msg_c4af153a611c">"玻璃強度 · %1$s"</string>
+    <string name="msg_c4bb300b0e62" formatted="false">"正在取消訂單"</string>
+    <string name="msg_c5500a58e0c5" formatted="false">"數值"</string>
+    <string name="msg_c6135da0ea76" formatted="false">"查詢付款狀態失敗"</string>
+    <string name="msg_c6143fa2daf8" formatted="false">"平台仍要求免密碼授權，但暫未提供簽約入口，請稍後重新整理再試"</string>
+    <string name="scanner_rejected_hint" formatted="false">"相機未接受亮度調整，仍可掃碼；請改變角度或降低裝置螢幕亮度"</string>
+    <string name="msg_c65b3b97b411" formatted="false">"未知格式"</string>
+    <string name="msg_c66b688131ed" formatted="false">"找不到可開啟 GitHub 連結的 App"</string>
+    <string name="msg_c6729b9b5fe1" formatted="false">"裝置詳情缺少識別碼，請先在原 App 核對裝置"</string>
+    <string name="msg_c8592490c32d" formatted="false">"裝置狀態異常"</string>
+    <string name="msg_c8f3e8d49eb3" formatted="false">"取得支付寶免密碼簽約入口失敗"</string>
+    <string name="msg_c9174343f70d" formatted="false">"完全"</string>
+    <string name="msg_c952e1cb7c50" formatted="false">"飲水機詳情缺少裝置編號"</string>
+    <string name="msg_ca0dffccb99d" formatted="false">"要結束本次用水嗎？"</string>
+    <string name="msg_ca7223717fa6" formatted="false">"支付方式"</string>
+    <string name="msg_ca80d3c72c64">"%1$s · %2$s，請及時取衣。"</string>
+    <string name="msg_cae4a3724dad" formatted="false">"本次洗衣已結束。"</string>
+    <string name="msg_cb4ba40bf823" formatted="false">"使用說明"</string>
+    <string name="msg_cbf70e387219" formatted="false">"鳶紫"</string>
+    <string name="msg_cc0bf0ebd2ce" formatted="false">"飲水帳單已逾時或失效，請以平台紀錄為準。"</string>
+    <string name="msg_cc93f0020b76" formatted="false">"已付款 · 等待裝置運轉資訊"</string>
+    <string name="msg_cdc013bc1922" formatted="false">"未完成訂單會保留在這台手機，使用同一手機號碼登入後可繼續查看。"</string>
+    <string name="msg_ce33b71f9fdd" formatted="false">"請確認這是你面前的洗衣機"</string>
+    <string name="msg_cfc54865db1f" formatted="false">"上次用水結果待確認"</string>
+    <string name="msg_d0032305b571" formatted="false">"取消編輯首頁文案"</string>
+    <string name="msg_d00503584e15" formatted="false">"展開啟動畫面設定"</string>
+    <string name="msg_d007cc91971f" formatted="false">"主題色彩"</string>
+    <string name="msg_d03a42384c95" formatted="false">"自動使用桌面桌布的代表色"</string>
+    <string name="scanner_darker" formatted="false">"較暗"</string>
+    <string name="msg_d0f6b2e6e6e0" formatted="false">"等待支付寶授權核對"</string>
+    <string name="msg_d12a5c36eda7" formatted="false">"付款包含簽約內容，已停止"</string>
+    <string name="msg_d22657dec5d1" formatted="false">"重新取色"</string>
+    <string name="msg_d26366e4e8b6" formatted="false">"飲水帳單已完成"</string>
+    <string name="msg_d377abc2010c" formatted="false">"正在核對付款狀態"</string>
+    <string name="msg_d3c121b15386" formatted="false">"伺服器回傳內容過大"</string>
+    <string name="msg_d3ceb6ef8429" formatted="false">"結束用水結果尚未確認，請檢查裝置並重新整理狀態"</string>
+    <string name="msg_d3d991a64f44">"暫不支援此支付寶支付產品（產品碼：%1$s）"</string>
+    <string name="msg_d3f08a6ba56a" formatted="false">"海藍"</string>
+    <string name="msg_d438416ae194" formatted="false">"飲水帳單付款待確認"</string>
+    <string name="msg_d49841a540e5" formatted="false">"金額格式異常，請重新整理後再試"</string>
+    <string name="msg_d4b3f49cd2e4" formatted="false">"固定"</string>
+    <string name="msg_d4b832a716f8" formatted="false">"還有一筆訂單待確認"</string>
+    <string name="msg_d657d9bdf227" formatted="false">"收款碼已儲存"</string>
+    <string name="msg_d6aaf25dfadf" formatted="false">"依目前順序在每次啟動時切換，可調整順序或移除圖片。移除全部後恢復預設。"</string>
+    <string name="msg_d6b68c8c2c0d" formatted="false">"目前版本僅支援洗衣機和洗鞋機"</string>
+    <string name="msg_d727d75a30fb">"%1$s%2$s 至 %3$s"</string>
+    <string name="msg_d7bdb38202bb" formatted="false">"飲水結算資料格式尚未支援"</string>
+    <string name="msg_d972edc5aee3" formatted="false">"金額精度異常，請重新整理後再試"</string>
+    <string name="msg_da9054ac44be" formatted="false">"App 語言"</string>
+    <string name="msg_dab4ad500f41" formatted="false">"輕度"</string>
+    <string name="msg_dac56e56e97c" formatted="false">"飲水機機構編號無效，請重新掃碼"</string>
+    <string name="msg_dbf549867f16">"報價優惠選項格式尚未支援（%1$s[]：%2$s）"</string>
+    <string name="msg_dce94891cdfc" formatted="false">"帳戶授權狀態尚未同步。可再次確認用水，由平台核對；不會自動開始出水。"</string>
+    <string name="msg_dcfbc5a92a09" formatted="false">"正在核對訂單"</string>
+    <string name="msg_dd3246e28288" formatted="false">"掃描飲水機"</string>
+    <string name="msg_dd81861811e5" formatted="false">"文字"</string>
+    <string name="msg_de5b158ef2c5" formatted="false">"飲水啟動結果尚未確認，請重新整理狀態"</string>
+    <string name="msg_de5c8ba9ef9a" formatted="false">"QR Code 內容過長"</string>
+    <string name="msg_de9d97131bfe" formatted="false">"無法讀取所選圖片"</string>
+    <string name="msg_dee754f9cb2d" formatted="false">"查看飲水紀錄"</string>
+    <string name="msg_df3d58c7d84b" formatted="false">"設定"</string>
+    <string name="msg_df647b73b990" formatted="false">"已展開"</string>
+    <string name="msg_dfb119a5da45" formatted="false">"允許本次定位後，才能繼續操作"</string>
+    <string name="msg_dfc443702105" formatted="false">"目前裝置沒有可用的洗衣模式，請確認裝置類型"</string>
+    <string name="msg_e0a5c5fef33d" formatted="false">"已儲存到相簿，可在支付寶掃一掃中選擇圖片"</string>
+    <string name="msg_e0be747a5d8c" formatted="false">"找不到可開啟連結的 App"</string>
+    <string name="msg_e1506406a5bd" formatted="false">"裝置"</string>
+    <string name="msg_e165b1f5693c" formatted="false">"裝置辨識回應缺少編號"</string>
+    <string name="msg_e2e2b296fc1f" formatted="false">"確認紀錄儲存失敗，請檢查可用空間後再試。"</string>
+    <string name="msg_e3526a818011" formatted="false">"五、遵守開源授權\n本專案原始碼採用 MIT License，第三方元件適用各自授權。合法取得的複製、修改、合併、再發布及其他授權權利仍以相應授權為準；應保留要求保留的著作權、授權和來源說明，尊重第三方權利。本守則不得解釋為撤銷、縮減或替代已經獲得的開源授權權利。"</string>
+    <string name="msg_e3814b406bdf" formatted="false">"這台飲水機不是已支援的按用量後付費裝置，請先使用原 App"</string>
+    <string name="msg_e3ac6be7bdbd" formatted="false">"平台回傳多個商家簽約要求，請在胖乖核對後再試"</string>
+    <string name="msg_e622cab1b487" formatted="false">"儲存收款碼"</string>
+    <string name="msg_e64447db76a9" formatted="false">"已收合"</string>
+    <string name="msg_e681110952dc" formatted="false">"正在辨識裝置"</string>
+    <string name="msg_e68dcfacd50b" formatted="false">"請允許本次定位後繼續付款"</string>
+    <string name="msg_e705494b745f" formatted="false">"QR Code 編碼無效"</string>
+    <string name="msg_e7067503679b" formatted="false">"未取得支付參數，請查詢訂單狀態"</string>
+    <string name="msg_e73c6a05de48" formatted="false">"付款已確認；裝置同步結果待核實，請查看洗衣機"</string>
+    <string name="msg_e7c7a644b627" formatted="false">"餘額付款結果尚未確認，請稍後重新整理訂單"</string>
+    <string name="msg_e7e3ad41fdb9" formatted="false">"需要 Android 12 以上版本系統"</string>
+    <string name="msg_e8a953ca2355" formatted="false">"無法開啟本裝置的支付寶授權，請返回後再試。"</string>
+    <string name="msg_e8d09706ad21">"請輸入 %1$s 至 %2$s 之間的整數（ms）"</string>
+    <string name="msg_e94328786abb" formatted="false">"啟動畫面看板娘"</string>
+    <string name="msg_e97395fabcb3" formatted="false">"飲水帳單結果待確認，請先查詢訂單狀態。"</string>
+    <string name="msg_ea08ad4c58e1" formatted="false">"飲水帳單編號不一致"</string>
+    <string name="msg_ea126e4e9491" formatted="false">"平台確認洗衣結束後提醒取衣"</string>
+    <string name="msg_ea579916e03b" formatted="false">"支付寶支付參數無效"</string>
+    <string name="msg_eb8162a8e6be" formatted="false">"支付管道回應格式尚未支援"</string>
+    <string name="msg_ecf99c00e14f" formatted="false">"洗衣結束提醒與通知權限"</string>
+    <string name="msg_ed06c8b46087" formatted="false">"暫時無法取得位置，請稍後再試"</string>
+    <string name="msg_edbdfa509c1e" formatted="false">"有一筆飲水紀錄待處理，請掃描原裝置或在訂單中恢復。"</string>
+    <string name="msg_eef16f7a3477" formatted="false">"三、必要請求與資料完整性\n本軟體僅在使用者明確操作及合法授權範圍內傳送登入、裝置辨識、報價、下單、付款、訂單查詢或取消等必要請求。不以竄改、偽造、破壞網路資料為目的，不提供偽造付款成功、惡意修改價格或餘額、越權存取帳戶等功能。正常業務操作會由伺服器端依法更新相應訂單狀態；金額、支付和裝置狀態須以伺服器端核對結果為準。"</string>
+    <string name="msg_ef28a66a21b1" formatted="false">"每次啟動顯示一張，下次啟動切換下一張"</string>
+    <string name="msg_ef9454bff0b4" formatted="false">"開源授權"</string>
+    <string name="msg_efab9e4d456b" formatted="false">"Jianxi-支付寶收款碼.jpg"</string>
+    <string name="msg_f06ac4a79992" formatted="false">"飲水機或商家資訊已變更，請重新掃碼確認"</string>
+    <string name="msg_f088643d2a3b" formatted="false">"請重新整理並確認裝置狀態"</string>
+    <string name="msg_f0fd094c9fed" formatted="false">"可以返回洗衣，重新選擇模式。"</string>
+    <string name="msg_f2a3913f6de6" formatted="false">"請輸入正確的手機號碼"</string>
+    <string name="msg_f326b0624dab" formatted="false">"請先處理未完成訂單"</string>
+    <string name="msg_f37173351372" formatted="false">"用戶端完全免費；洗衣等第三方服務費用依實際訂單為準。"</string>
+    <string name="msg_f3baf4cab336" formatted="false">"飲水帳單支付方式已變更，請先在原 App 核對"</string>
+    <string name="msg_f3ef5f2ab85b" formatted="false">"目前配色 · 系統配色（備用）"</string>
+    <string name="msg_f406fd207594" formatted="false">"返回並核對授權"</string>
+    <string name="msg_f42a1238b44a" formatted="false">"儲存失敗，請再試"</string>
+    <string name="msg_f4436c0e1576" formatted="false">"意見回饋群"</string>
+    <string name="msg_f60e109fb32b" formatted="false">"此 QR Code 需要透過支付寶掃碼，請使用支付寶掃描原 QR Code"</string>
+    <string name="msg_f617edd7b975" formatted="false">"查看飲水帳單"</string>
+    <string name="msg_f64a02bd16f5" formatted="false">"洗衣進度暫未同步，將稍後再試"</string>
+    <string name="msg_f65b4f1a14a2" formatted="false">"保留訂單"</string>
+    <string name="msg_f727d5abd647" formatted="false">"重新整理訂單狀態"</string>
+    <string name="msg_f72b83eaba1c" formatted="false">"淡入"</string>
+    <string name="msg_f78a40791721" formatted="false">"目前主題預覽"</string>
+    <string name="msg_f7f924097dc7" formatted="false">"請先完成支付寶授權並返回核對"</string>
+    <string name="msg_f93b9bd79597" formatted="false">"查詢支付寶免密碼簽約狀態失敗"</string>
+    <string name="msg_fa732580b1e2" formatted="false">"長按 · 拖曳 · 放開"</string>
+    <string name="msg_fac74bbab67c" formatted="false">"取得支付資訊失敗"</string>
+    <string name="msg_fbda4354a3f3" formatted="false">"查詢訂單詳情失敗"</string>
+    <string name="msg_fc984db26cf9" formatted="false">"貼上飲水機裝置碼"</string>
+    <string name="msg_fd1190aacfba" formatted="false">"飲水裝置占用狀態格式尚未支援"</string>
+    <string name="msg_fd45c5a9fee0" formatted="false">"伺服器回應缺少有效狀態碼"</string>
+    <string name="msg_fdc62b523ba2" formatted="false">"建立訂單失敗"</string>
+    <string name="msg_fdcd35336d1d" formatted="false">"自訂啟動畫面圖片"</string>
+    <string name="msg_fe33d85393d6" formatted="false">"計費標準請核對機身標價及平台帳單"</string>
+    <string name="msg_fef8fbb645c8" formatted="false">"平台回傳的商家簽約資訊尚未確認"</string>
+    <string name="msg_ff4fc4a36c34" formatted="false">"訂單已關閉"</string>
+    <string name="msg_ff536b7aeffd" formatted="false">"登入已過期，請重新登入"</string>
+    <string name="msg_ff7e349a58d1" formatted="false">"訂單待付款"</string>
+    <string name="msg_ffc624300de8" formatted="false">"金額"</string>
+    <string name="msg_643afd7f49a2_version" formatted="false">"版本：1.0.0｜內部版本：0.1.16｜更新日期：2026年11月3日"</string>
+</resources>

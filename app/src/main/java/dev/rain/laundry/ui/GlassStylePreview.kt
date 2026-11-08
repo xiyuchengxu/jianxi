@@ -1,10 +1,13 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,20 +32,20 @@ internal fun GlassStylePreview(level: GlassLevel, tabs: List<dev.rain.laundry.co
     var selected by remember(tabs) { mutableIntStateOf(tabs.lastIndex) }
     Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp).padding(bottom = 12.dp),
         verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text("悬浮底栏交互预览", Modifier.padding(horizontal = 6.dp),
+        Text(appText(R.string.msg_9490a9f00e48), Modifier.padding(horizontal = 6.dp),
             style = MaterialTheme.typography.labelMedium, color = colors.onSurfaceVariant)
         Box(Modifier.fillMaxWidth().height(124.dp).clip(RoundedCornerShape(20.dp))
             .onGloballyPositioned { origin = it.positionInRoot() }
-            .semantics { contentDescription = "液态玻璃${level.title}交互预览" }) {
+            .semantics { contentDescription = appText(R.string.msg_a87629fa5f58 , localizedMessage(level.title)) }) {
             Column(Modifier.matchParentSize().then(if (level != GlassLevel.NONE) Modifier.drawWithContent {
                 backdrop.record { this@drawWithContent.drawContent() }; drawLayer(backdrop)
             } else Modifier).background(Brush.linearGradient(listOf(
                 colors.primaryContainer, colors.surfaceContainerLow, colors.tertiaryContainer)))
                 .padding(horizontal = 16.dp, vertical = 14.dp), verticalArrangement = Arrangement.SpaceBetween) {
-                Text("长按 · 拖动 · 松手", style = MaterialTheme.typography.labelMedium,
+                Text(appText(R.string.msg_fa732580b1e2), style = MaterialTheme.typography.labelMedium,
                     color = colors.onPrimaryContainer.copy(alpha = .65f))
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    repeat(3) { index -> Text("${index + 1}  简洗", style = MaterialTheme.typography.titleMedium,
+                    repeat(3) { index -> Text(appText(R.string.msg_5a2665f54deb , index + 1), style = MaterialTheme.typography.titleMedium,
                         color = colors.onSurface.copy(alpha = .4f)) }
                 }
             }

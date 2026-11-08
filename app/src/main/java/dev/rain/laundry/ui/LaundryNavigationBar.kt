@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
@@ -7,6 +10,7 @@ import androidx.compose.material.icons.outlined.LocalLaundryService
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.WaterDrop
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.layer.GraphicsLayer
@@ -44,7 +48,7 @@ fun LaundryNavigationBar(
         ) {
             tabs.forEachIndexed { index, tab ->
                 NavigationBarItem(selected = selected == index, onClick = { onSelect(index) },
-                    enabled = enabled, modifier = Modifier.semantics { contentDescription = "${tab.title}导航" },
+                    enabled = enabled, modifier = Modifier.semantics { contentDescription = appText(R.string.msg_8ffbad496815 , localizedMessage(tab.title)) },
                     icon = { Icon(tab.icon, contentDescription = null) }, label = { Text(tab.title) })
             }
         }

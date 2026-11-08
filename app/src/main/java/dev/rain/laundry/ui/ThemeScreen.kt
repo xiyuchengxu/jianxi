@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
@@ -21,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,14 +53,20 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
         item(key = "preview") { ThemePreview(settings) }
 
+        item(key = "home_message") {
+            SettingGroup(appText(R.string.msg_3e0d676d2d85), Icons.Outlined.EditNote) {
+                HomeMessageSettings(settings, onChange)
+            }
+        }
+
         item(key = "splash") {
-            SettingGroup("开屏看板娘", Icons.Outlined.PhotoLibrary) {
+            SettingGroup(appText(R.string.msg_e94328786abb), Icons.Outlined.PhotoLibrary) {
                 SplashSettings(settings, onChange)
             }
         }
 
         item(key = "mode") {
-            SettingGroup("主题模式", Icons.Outlined.Brightness6) {
+            SettingGroup(appText(R.string.msg_44fb814b166e), Icons.Outlined.Brightness6) {
                 ThemeMode.entries.forEachIndexed { index, mode ->
                     if (index > 0) SettingDivider()
                     ChoiceRow(mode.title, when (mode) {
@@ -69,29 +79,29 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "black") {
-            SettingGroup("深色外观", Icons.Outlined.Contrast) {
+            SettingGroup(appText(R.string.msg_46bad67d0636), Icons.Outlined.Contrast) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.Nightlight, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("纯黑模式", style = MaterialTheme.typography.bodyLarge)
-                        Text("仅在深色主题下生效", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                        Text(appText(R.string.msg_56fe9a6dd1aa), style = MaterialTheme.typography.bodyLarge)
+                        Text(appText(R.string.msg_247ab5060860), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
                     Switch(settings.pureBlack, { onChange(settings.copy(pureBlack = it)) },
-                        modifier = Modifier.semantics { contentDescription = "纯黑模式" })
+                        modifier = Modifier.semantics { contentDescription = appText(R.string.msg_56fe9a6dd1aa) })
                 }
             }
         }
 
         item(key = "palette") {
-            SettingGroup("主题色彩", Icons.Outlined.Palette) {
+            SettingGroup(appText(R.string.msg_d007cc91971f), Icons.Outlined.Palette) {
                 FlowRow(Modifier.fillMaxWidth().padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     ThemePalette.entries.forEach { palette ->
                         val chosen = !dynamicActive && settings.palette == palette
                         Box(Modifier.size(48.dp).alpha(if (dynamicActive) .4f else 1f).clip(CircleShape)
                             .selectable(chosen, enabled = !dynamicActive, role = Role.RadioButton, onClick = { onChange(settings.copy(palette = palette)) })
-                            .semantics { contentDescription = "${palette.title}配色" }, contentAlignment = Alignment.Center) {
+                            .semantics { contentDescription = appText(R.string.msg_4c0130832ac1 , localizedMessage(palette.title)) }, contentAlignment = Alignment.Center) {
                             Box(Modifier.size(40.dp).then(if (chosen) Modifier.border(2.dp, colors.primary, CircleShape) else Modifier)
                                 .padding(4.dp).background(palette.accent(), CircleShape), contentAlignment = Alignment.Center) {
                                 if (chosen) Icon(Icons.Outlined.Check, null, Modifier.size(19.dp), tint = Color.White)
@@ -100,10 +110,10 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                     }
                 }
                 Text(when {
-                    !dynamicActive -> "当前配色 · ${settings.palette.title}"
-                    wallpaper.seed != null -> "当前配色 · 桌面壁纸"
-                    wallpaper.loading -> "当前配色 · 正在取色"
-                    else -> "当前配色 · 系统配色（备用）"
+                    !dynamicActive -> appText(R.string.msg_755f809f9c52 , localizedMessage(settings.palette.title))
+                    wallpaper.seed != null -> appText(R.string.msg_03dd0c88d8ac)
+                    wallpaper.loading -> appText(R.string.msg_5ecc022c1ca8)
+                    else -> appText(R.string.msg_f3ef5f2ab85b)
                 },
                     Modifier.padding(horizontal = 18.dp).padding(bottom = 14.dp),
                     style = MaterialTheme.typography.bodySmall, color = colors.primary)
@@ -116,8 +126,8 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                         .graphicsLayer { scaleX = menuScale.value; scaleY = menuScale.value }
                         .clickable(enabled = !dynamicActive) { styleMenu = true }.padding(18.dp),
                         verticalAlignment = Alignment.CenterVertically) {
-                        Text("配色风格", Modifier.weight(1f))
-                        Text(if (dynamicActive) "自动" else settings.colorStyle.title, color = colors.onSurfaceVariant)
+                        Text(appText(R.string.msg_4d29b30867a0), Modifier.weight(1f))
+                        Text(if (dynamicActive) appText(R.string.msg_7eb336e42cb5) else settings.colorStyle.title, color = colors.onSurfaceVariant)
                         Spacer(Modifier.width(4.dp))
                         Icon(Icons.Outlined.UnfoldMore, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp))
                     }
@@ -136,21 +146,21 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "wallpaper") {
-            SettingGroup("动态配色", Icons.Outlined.Wallpaper) {
+            SettingGroup(appText(R.string.msg_bc99124901b6), Icons.Outlined.Wallpaper) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.AutoAwesome, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("从壁纸取色", style = MaterialTheme.typography.bodyLarge)
+                        Text(appText(R.string.msg_458e4ccaafb1), style = MaterialTheme.typography.bodyLarge)
                         Text(when {
-                            !dynamicSupported -> "需要 Android 12 及以上系统"
-                            dynamicActive -> "根据桌面壁纸生成主题，关闭后恢复手动色板"
-                            else -> "自动使用桌面壁纸的代表色"
+                            !dynamicSupported -> appText(R.string.msg_e7e3ad41fdb9)
+                            dynamicActive -> appText(R.string.msg_0b8351751e94)
+                            else -> appText(R.string.msg_d03a42384c95)
                         }, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
                     Switch(checked = dynamicActive, enabled = dynamicSupported,
                         onCheckedChange = { onChange(settings.copy(dynamicColor = it)) },
-                        modifier = Modifier.semantics { contentDescription = "从壁纸取色" })
+                        modifier = Modifier.semantics { contentDescription = appText(R.string.msg_458e4ccaafb1) })
                 }
                 if (dynamicActive) {
                     SettingDivider()
@@ -161,12 +171,12 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                                 .border(1.dp, colors.outlineVariant, CircleShape))
                         }
                         Text(when {
-                            wallpaper.loading -> "正在读取壁纸颜色…"
-                            wallpaper.seed != null -> "壁纸颜色已应用"
-                            else -> "未获取到壁纸颜色，暂用系统配色"
+                            wallpaper.loading -> appText(R.string.msg_ac08701c24ca)
+                            wallpaper.seed != null -> appText(R.string.msg_1cecf188f254)
+                            else -> appText(R.string.msg_13c1f4bc5d91)
                         }, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                         TextButton(onClick = wallpaper.refresh, enabled = !wallpaper.loading) {
-                            Text("重新取色")
+                            Text(appText(R.string.msg_d22657dec5d1))
                         }
                     }
                 }
@@ -174,17 +184,17 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "navigation") {
-            SettingGroup("底栏", Icons.Outlined.Layers) {
-                ChoiceRow("悬浮", Icons.Outlined.ViewAgenda, settings.bottomBar == BottomBarStyle.FLOATING,
-                    { onChange(settings.copy(bottomBar = BottomBarStyle.FLOATING)) }, "玻璃强度 · ${settings.glassLevel.title}")
+            SettingGroup(appText(R.string.msg_894df8bd55a2), Icons.Outlined.Layers) {
+                ChoiceRow(appText(R.string.msg_b70c4e8a2e1d), Icons.Outlined.ViewAgenda, settings.bottomBar == BottomBarStyle.FLOATING,
+                    { onChange(settings.copy(bottomBar = BottomBarStyle.FLOATING)) }, appText(R.string.msg_c4af153a611c , localizedMessage(settings.glassLevel.title)))
                 SettingDivider()
-                ChoiceRow("固定", Icons.Outlined.VerticalAlignBottom, settings.bottomBar == BottomBarStyle.FIXED,
-                    { onChange(settings.copy(bottomBar = BottomBarStyle.FIXED)) }, "Material 导航栏")
+                ChoiceRow(appText(R.string.msg_d4b3f49cd2e4), Icons.Outlined.VerticalAlignBottom, settings.bottomBar == BottomBarStyle.FIXED,
+                    { onChange(settings.copy(bottomBar = BottomBarStyle.FIXED)) }, appText(R.string.msg_b3b023c8f791))
             }
         }
 
         item(key = "glass") {
-            SettingGroup("液态玻璃", Icons.Outlined.WaterDrop) {
+            SettingGroup(appText(R.string.msg_b1c9c1d036e2), Icons.Outlined.WaterDrop) {
                 GlassLevel.entries.forEachIndexed { index, level ->
                     if (index > 0) SettingDivider()
                     ChoiceRow(level.title, when (level) {
@@ -192,15 +202,15 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                         GlassLevel.LIGHT -> Icons.Outlined.BlurOn
                         GlassLevel.FULL -> Icons.Outlined.WaterDrop
                     }, settings.glassLevel == level, { onChange(settings.copy(glassLevel = level)) }, when (level) {
-                        GlassLevel.NONE -> "实色底栏，保留弹性滑块"
-                        GlassLevel.LIGHT -> "柔和毛玻璃，轻微折射与形变"
-                        GlassLevel.FULL -> "通透玻璃，更明显的折射与弹性形变"
+                        GlassLevel.NONE -> appText(R.string.msg_af93b6dcf87a)
+                        GlassLevel.LIGHT -> appText(R.string.msg_6cdb2ed0c44e)
+                        GlassLevel.FULL -> appText(R.string.msg_a6b6c3b4d179)
                     })
                 }
                 SettingDivider()
                 Text(if (settings.bottomBar == BottomBarStyle.FIXED)
-                    "当前为固定底栏，不使用液态玻璃。所选等级会在切回悬浮底栏后生效。"
-                    else "长按或拖动体验液态形变，轻点切换带弹性回弹。",
+                    appText(R.string.msg_65e1d3722879)
+                    else appText(R.string.msg_323af04842ad),
                     Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                     style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                 GlassStylePreview(settings.glassLevel, settings.visibleTabs)
@@ -208,22 +218,22 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "swipe") {
-            SettingGroup("页面切换", Icons.Outlined.Swipe) {
+            SettingGroup(appText(R.string.msg_3f2191b43607), Icons.Outlined.Swipe) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.Swipe, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text("左右滑动翻页", style = MaterialTheme.typography.bodyLarge)
-                        Text("在底栏当前显示的页面之间切换", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                        Text(appText(R.string.msg_088dce96a836), style = MaterialTheme.typography.bodyLarge)
+                        Text(appText(R.string.msg_1d4fe6ba00ce), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
                     Switch(settings.swipeNavigation, { onChange(settings.copy(swipeNavigation = it)) },
-                        modifier = Modifier.semantics { contentDescription = "左右滑动翻页" })
+                        modifier = Modifier.semantics { contentDescription = appText(R.string.msg_088dce96a836) })
                 }
             }
         }
 
         item(key = "animation") {
-            SettingGroup("选项卡动画", Icons.Outlined.Animation) {
+            SettingGroup(appText(R.string.msg_30b6558e1ec2), Icons.Outlined.Animation) {
                 PageAnimation.entries.forEachIndexed { index, animation ->
                     if (index > 0) SettingDivider()
                     ChoiceRow(animation.title, when (animation) {
@@ -235,7 +245,7 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
             }
         }
         item(key = "savedHint") {
-            Text("更改即时生效，并自动保存。", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+            Text(appText(R.string.msg_7f48fe35e1c4), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
         }
     }
 }
@@ -296,7 +306,7 @@ private fun ChoiceRow(title: String, icon: ImageVector, selected: Boolean, onSel
 @Composable
 private fun ThemePreview(settings: ThemeSettings) {
     val colors = MaterialTheme.colorScheme
-    Surface(Modifier.fillMaxWidth().height(264.dp).clearAndSetSemantics { contentDescription = "当前主题预览" },
+    Surface(Modifier.fillMaxWidth().height(264.dp).clearAndSetSemantics { contentDescription = appText(R.string.msg_f78a40791721) },
         shape = RoundedCornerShape(30.dp), color = colors.surfaceContainer) {
         Box(contentAlignment = Alignment.Center) {
             Surface(Modifier.width(132.dp).height(234.dp), shape = RoundedCornerShape(24.dp),

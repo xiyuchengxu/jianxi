@@ -1,9 +1,10 @@
 # 正式版签名
 
-当前发布版本：5.0.0；内部版本：0.1.29；Android versionCode：30。
+当前发布版本：5.2.0；内部版本：0.1.31；Android versionCode：32。历史 v5.0.0 的标签与附件保持原样。
 
+5.2.0 新增“设置 → 语言”，支持跟随系统、简体中文、英语、日语、繁体中文、俄语、韩语，选择即时应用并保存；自定义主页文案及平台返回名称保留原文。Android 13 起使用系统应用语言，Android 8–12 使用本机偏好及界面重建。签名证书保持原正式证书，构建与验证结果见 `VALIDATION.md`。
 
-5.0.0 新增最近 20 条本机订单与周分组、主题开屏设置折叠，保留屏幕二维码扫码、透明开屏及饮水签约修复。正式包支持覆盖原正式证书版本。
+5.1.0 新增“设置 → 主题 → 主页文案”自定义入口，支持本机保存与恢复默认；包含此前最近 20 条本机订单与周分组、洗衣进度及结束通知、主题开屏设置折叠，保留屏幕二维码扫码、透明开屏及饮水签约修复。正式包支持覆盖原正式证书版本。
 
 后续发布只提供正式签名 APK 和源码 ZIP，按 [发布与版本规则](RELEASE_POLICY.md) 执行。正式版继续沿用 1.0.0 起使用的同一份私有正式密钥，证书 SHA-256 为：
 
@@ -43,7 +44,7 @@ JIANXI_RELEASE_KEY_PASSWORD=<密钥密码>
 发布验证程序固定校验上述原正式证书，同时要求 v1/v2/v3 全部有效、独立 v1 验证通过、包名及版本匹配，APK 非调试且 ZIP 完整。将参数替换成实际发布版本和构建号：
 
 ```sh
-python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --version 5.0.0 --version-code 30
+python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --version 5.2.0 --version-code 32
 ```
 
 ## 旧覆盖升级版的迁移

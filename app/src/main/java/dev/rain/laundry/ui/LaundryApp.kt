@@ -1,10 +1,15 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -12,6 +17,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,7 +44,7 @@ import dev.rain.laundry.*
 import dev.rain.laundry.core.*
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
+import dev.rain.laundry.i18n.AppStrings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +60,10 @@ fun LaundryApp(
     var aboutOpen by rememberSaveable { mutableStateOf(false) }
     var themeOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
+    var notificationsOpen by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(state.orderOpenRequest) {
+        if (state.orderOpenRequest > 0) { aboutOpen = false; themeOpen = false; settingsOpen = false; notificationsOpen = false }
+    }
     val pageStates = rememberSaveableStateHolder()
     // One ScrollState per page, hoisted above AnimatedContent. Refreshes and screen
     // recompositions reuse these instances, so each page keeps its scroll offset.
@@ -80,6 +90,7 @@ fun LaundryApp(
         if (state.loggedIn && !state.busy && state.page != visiblePage) vm.navigate(visiblePage)
     }
     val screen = when {
+        notificationsOpen -> AppScreen.NOTIFICATIONS
         themeOpen -> AppScreen.THEME
         settingsOpen -> AppScreen.SETTINGS
         !state.loggedIn -> AppScreen.LOGIN
@@ -90,7 +101,7 @@ fun LaundryApp(
         else -> AppScreen.ORDERS
     }
     val currentTab = when {
-        themeOpen || settingsOpen -> NavigationTab.SETTINGS
+        themeOpen || settingsOpen || notificationsOpen -> NavigationTab.SETTINGS
         visiblePage == Page.WATER -> NavigationTab.WATER
         visiblePage == Page.ORDERS -> NavigationTab.ORDERS
         else -> NavigationTab.LAUNDRY
@@ -98,12 +109,13 @@ fun LaundryApp(
     val selectedTab = tabs.indexOf(currentTab).coerceAtLeast(0)
     val selectTab: (Int) -> Unit = { index ->
         if (!state.busy) when (val tab = tabs.getOrNull(index)) {
-            NavigationTab.SETTINGS -> { settingsOpen = true; themeOpen = false }
+            NavigationTab.SETTINGS -> { settingsOpen = true; themeOpen = false; notificationsOpen = false }
             NavigationTab.LAUNDRY, NavigationTab.WATER, NavigationTab.ORDERS -> {
                 val destination = when (tab) { NavigationTab.LAUNDRY -> Page.HOME; NavigationTab.WATER -> Page.WATER; else -> Page.ORDERS }
-                if (settingsOpen || themeOpen || state.page != destination) {
+                if (settingsOpen || themeOpen || notificationsOpen || state.page != destination) {
                     settingsOpen = false
                     themeOpen = false
+                    notificationsOpen = false
                     vm.navigate(destination)
                 }
             }
@@ -112,13 +124,13 @@ fun LaundryApp(
     }
     val openWater: () -> Unit = {
         if (settings.waterEnabled) {
-            settingsOpen = false; themeOpen = false
+            settingsOpen = false; themeOpen = false; notificationsOpen = false
             // Reopen the stored transaction explicitly; plain navigation after this
             // change no longer restores an idle outlet/device from the vault.
             if (state.waterSession != null) vm.openWaterSession() else vm.navigate(Page.WATER)
         } else {
-            settingsOpen = true; themeOpen = false
-            vm.notice("请先开启饮水入口，再查看饮水记录")
+            settingsOpen = true; themeOpen = false; notificationsOpen = false
+            vm.notice(appText(R.string.msg_5ee487891e56))
         }
     }
     val swipeEnabled = settings.swipeNavigation && state.loggedIn && !state.busy &&
@@ -131,6 +143,11 @@ fun LaundryApp(
             }
         }
     }
+    LaunchedEffect(lifecycleOwner, state.loggedIn) {
+        if (state.loggedIn) lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            while (isActive) { vm.refreshLaundryProgress(); delay(15_000) }
+        }
+    }
     // Scaffold already supplies the system navigation inset; reserve only the bar itself here.
     val navigationSpace = if (!state.loggedIn) 0.dp else if (settings.bottomBar == BottomBarStyle.FLOATING) 96.dp else 80.dp
     val glassUnderlay = state.loggedIn && settings.bottomBar == BottomBarStyle.FLOATING && settings.glassLevel != GlassLevel.NONE
@@ -141,15 +158,16 @@ fun LaundryApp(
     }
     LaunchedEffect(state.message) {
         state.message?.let { message ->
-            snackbar.showSnackbar(message)
+            snackbar.showSnackbar(localizedMessage(message))
             if (vm.state.value.message == message) vm.clearMessage()
         }
     }
-    BackHandler(state.loggedIn && !settingsOpen && !themeOpen && state.page !in listOf(Page.HOME, Page.WATER, Page.ORDERS) && !state.busy) {
+    BackHandler(state.loggedIn && !settingsOpen && !themeOpen && !notificationsOpen && state.page !in listOf(Page.HOME, Page.WATER, Page.ORDERS) && !state.busy) {
         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
     }
-    BackHandler(!state.loggedIn && settingsOpen && !themeOpen) { settingsOpen = false }
+    BackHandler(!state.loggedIn && settingsOpen && !themeOpen && !notificationsOpen) { settingsOpen = false }
     BackHandler(themeOpen) { themeOpen = false; settingsOpen = true }
+    BackHandler(notificationsOpen) { notificationsOpen = false; settingsOpen = true }
     val backdropModifier = if (glassUnderlay) {
         Modifier.drawWithContent {
             backdrop.record { this@drawWithContent.drawContent() }
@@ -161,26 +179,26 @@ fun LaundryApp(
             Scaffold(containerColor = colors.background, topBar = {
                 TopAppBar(title = {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(when { themeOpen -> Icons.Outlined.Palette; settingsOpen -> Icons.Outlined.Settings; visiblePage == Page.WATER -> Icons.Outlined.WaterDrop;
+                        Icon(when { notificationsOpen -> Icons.Outlined.NotificationsActive; themeOpen -> Icons.Outlined.Palette; settingsOpen -> Icons.Outlined.Settings; visiblePage == Page.WATER -> Icons.Outlined.WaterDrop;
                             else -> Icons.Outlined.LocalLaundryService }, null, tint = colors.primary)
-                        Text(when { themeOpen -> "主题"; settingsOpen -> "设置"; visiblePage == Page.WATER -> "饮水"; else -> "简洗" }, fontWeight = FontWeight.Bold)
+                        Text(when { notificationsOpen -> appText(R.string.msg_4b6ded8a7f18); themeOpen -> appText(R.string.msg_788db1cfec2a); settingsOpen -> appText(R.string.msg_df3d58c7d84b); visiblePage == Page.WATER -> appText(R.string.msg_6edae041a323); else -> appText(R.string.msg_2b207da009d1) }, fontWeight = FontWeight.Bold)
                     }
                 }, navigationIcon = {
-                    if (themeOpen) IconButton(onClick = { themeOpen = false; settingsOpen = true }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回")
+                    if (themeOpen || notificationsOpen) IconButton(onClick = { themeOpen = false; notificationsOpen = false; settingsOpen = true }) {
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close))
                     } else if (settingsOpen && !state.loggedIn) IconButton(onClick = { settingsOpen = false }) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回")
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close))
                     } else if (!settingsOpen && state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
                         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
-                    }, enabled = !state.busy) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, "返回") }
+                    }, enabled = !state.busy) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close)) }
                 }, actions = {
                     if (!state.loggedIn && !themeOpen && !settingsOpen) IconButton(onClick = { settingsOpen = true }) {
-                        Icon(Icons.Outlined.Settings, contentDescription = "设置")
+                        Icon(Icons.Outlined.Settings, contentDescription = appText(R.string.msg_df3d58c7d84b))
                     }
                     IconButton(onClick = { aboutOpen = true }, enabled = !state.busy) {
-                        Icon(Icons.Outlined.Info, contentDescription = "关于简洗")
+                        Icon(Icons.Outlined.Info, contentDescription = appText(R.string.msg_c1cb5f40de7c))
                     }
-                    if (state.loggedIn) TextButton(onClick = { logoutOpen = true }, enabled = !state.busy) { Text("退出") }
+                    if (state.loggedIn) TextButton(onClick = { logoutOpen = true }, enabled = !state.busy) { Text(appText(R.string.msg_498e1d59b4d7)) }
                 }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.background))
             }, snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = navigationSpace)) }) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
@@ -213,8 +231,10 @@ fun LaundryApp(
                                 Column(Modifier.widthIn(max = 520.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(22.dp)) {
                                     when (displayed) {
                                         AppScreen.LOGIN -> LoginScreen(state, vm::sendCode, vm::login)
-                                        AppScreen.HOME -> HomeScreen(state, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
-                                        AppScreen.SETTINGS -> SettingsScreen(settings, onThemeChange, { themeOpen = true }, !state.busy)
+                                        AppScreen.HOME -> HomeScreen(state, settings.homeMessage, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
+                                        AppScreen.SETTINGS -> SettingsScreen(settings, onThemeChange, { themeOpen = true }, !state.busy,
+                                            { notificationsOpen = true })
+                                        AppScreen.NOTIFICATIONS -> NotificationSettingsScreen(state.laundryProgressError)
                                         AppScreen.WATER -> WaterScreen(state, onScan, { inputOpen = true }, vm::selectWaterOutlet,
                                             onWaterStart, vm::endWater, { vm.refreshWater() }, { vm.navigate(Page.ORDERS) }, vm::selectWaterPayment)
                                         AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
@@ -241,23 +261,23 @@ fun LaundryApp(
     if (inputOpen) {
         var raw by rememberSaveable { mutableStateOf("") }
         AlertDialog(onDismissRequest = { inputOpen = false }, icon = { Icon(Icons.Outlined.QrCode, null) },
-            title = { Text("粘贴设备码") }, text = {
+            title = { Text(appText(R.string.msg_8e878de7a527)) }, text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                    Text("粘贴洗衣机或饮水机二维码的完整内容。")
-                    OutlinedTextField(raw, { raw = it.take(4096) }, label = { Text("二维码内容") }, minLines = 3, maxLines = 5)
+                    Text(appText(R.string.msg_1c8a94e1b712))
+                    OutlinedTextField(raw, { raw = it.take(4096) }, label = { Text(appText(R.string.msg_2d0222b61b9a)) }, minLines = 3, maxLines = 5)
                 }
             }, confirmButton = { TextButton(onClick = {
                 inputOpen = false; vm.scan(raw, settings.laundryEnabled, settings.waterEnabled)
-            }, enabled = raw.isNotBlank()) { Text("识别设备") } },
-            dismissButton = { TextButton(onClick = { inputOpen = false }) { Text("取消") } })
+            }, enabled = raw.isNotBlank()) { Text(appText(R.string.msg_93f6c90cc986)) } },
+            dismissButton = { TextButton(onClick = { inputOpen = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
     }
-    if (logoutOpen) AlertDialog(onDismissRequest = { logoutOpen = false }, title = { Text("退出登录？") },
-        text = { Text("未完成订单会保留在这台手机，使用同一手机号登录后可继续查看。") },
-        confirmButton = { TextButton(onClick = { logoutOpen = false; vm.logout() }) { Text("退出") } },
-        dismissButton = { TextButton(onClick = { logoutOpen = false }) { Text("取消") } })
+    if (logoutOpen) AlertDialog(onDismissRequest = { logoutOpen = false }, title = { Text(appText(R.string.msg_b6af1a5049fc)) },
+        text = { Text(appText(R.string.msg_cdc013bc1922)) },
+        confirmButton = { TextButton(onClick = { logoutOpen = false; vm.logout() }) { Text(appText(R.string.msg_498e1d59b4d7)) } },
+        dismissButton = { TextButton(onClick = { logoutOpen = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
 }
 
-private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, WATER, ORDERS, SETTINGS, THEME }
+private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, WATER, ORDERS, SETTINGS, THEME, NOTIFICATIONS }
 
 private val PageScrollStatesSaver = Saver<Map<AppScreen, ScrollState>, Map<String, Int>>(
     save = { states -> AppScreen.entries.associate { it.name to (states[it]?.value ?: 0) } },
@@ -282,55 +302,55 @@ private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, 
     var accepted by rememberSaveable { mutableStateOf(false) }
     Spacer(Modifier.height(12.dp))
     HeroIcon(Icons.Outlined.LocalLaundryService)
-    Text("把洗衣，\n变简单。", style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
-    Text("登录平台账户，使用洗衣和饮水服务。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(appText(R.string.msg_5bcd70afb28d), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
+    Text(appText(R.string.msg_b25ef479aebd), color = MaterialTheme.colorScheme.onSurfaceVariant)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
-            Text("手机号登录", style = MaterialTheme.typography.titleLarge)
-            OutlinedTextField(phone, { phone = it.filter(Char::isDigit).take(11) }, label = { Text("手机号") },
+            Text(appText(R.string.msg_b4f947a472c7), style = MaterialTheme.typography.titleLarge)
+            OutlinedTextField(phone, { phone = it.filter(Char::isDigit).take(11) }, label = { Text(appText(R.string.msg_6f52cc94db65)) },
                 prefix = { Text("+86  ") }, singleLine = true, enabled = !state.busy,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone), modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
-            OutlinedTextField(code, { code = it.filter(Char::isDigit).take(8) }, label = { Text("短信验证码") },
+            OutlinedTextField(code, { code = it.filter(Char::isDigit).take(8) }, label = { Text(appText(R.string.msg_18e6bb3f9968)) },
                 singleLine = true, enabled = !state.busy, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                 trailingIcon = { TextButton(onClick = { send(phone) }, enabled = accepted && !state.busy && phone.length == 11 && state.smsCooldown == 0) {
-                    Text(if (state.smsCooldown > 0) "${state.smsCooldown}s" else "获取验证码")
+                    Text(if (state.smsCooldown > 0) "${state.smsCooldown}s" else appText(R.string.msg_3b91d186d44e))
                 } }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
             Row(verticalAlignment = Alignment.Top) {
                 Checkbox(accepted, { accepted = it }, modifier = Modifier.size(28.dp))
                 Spacer(Modifier.width(8.dp))
-                Text("我同意使用此手机号登录本人已有的胖乖生活账户。", style = MaterialTheme.typography.bodySmall)
+                Text(appText(R.string.msg_22c8f9f73dc0), style = MaterialTheme.typography.bodySmall)
             }
             Button(onClick = { login(phone, code) }, enabled = accepted && !state.busy && phone.length == 11 && code.length >= 4,
-                modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("登录", style = MaterialTheme.typography.titleMedium) }
+                modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_1e2df9c3075a), style = MaterialTheme.typography.titleMedium) }
         }
     }
-    Text("简洗是独立客户端。短信、洗衣和饮水服务由原平台提供。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(appText(R.string.msg_54744c98c1d5), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
-private fun HomeScreen(state: UiState, scan: () -> Unit, paste: () -> Unit, orders: () -> Unit) {
-    Text("今天，也要干干净净。", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-    Text(state.phoneLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+private fun HomeScreen(state: UiState, homeMessage: String, scan: () -> Unit, paste: () -> Unit, orders: () -> Unit) {
+    Text(displayHomeMessage(homeMessage), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold, localize = false)
+    Text(state.phoneLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium, localize = false)
     Card(shape = RoundedCornerShape(32.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
         Column(Modifier.fillMaxWidth().padding(28.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             Icon(Icons.Outlined.LocalLaundryService, null, modifier = Modifier.size(70.dp), tint = MaterialTheme.colorScheme.primary)
-            Text("开始洗衣", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.SemiBold)
-            Text("扫描洗衣机上的二维码，\n选择模式后付款。", style = MaterialTheme.typography.bodyLarge)
+            Text(appText(R.string.msg_a24b2df2ec2f), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.SemiBold)
+            Text(appText(R.string.msg_2050c192dabd), style = MaterialTheme.typography.bodyLarge)
             Button(onClick = scan, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(54.dp)) {
-                Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(10.dp)); Text("扫一扫", style = MaterialTheme.typography.titleMedium)
+                Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_6415984a1009), style = MaterialTheme.typography.titleMedium)
             }
         }
     }
     OutlinedButton(onClick = paste, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-        Icon(Icons.Outlined.ContentPaste, null, modifier = Modifier.size(20.dp)); Spacer(Modifier.width(10.dp)); Text("粘贴设备码")
+        Icon(Icons.Outlined.ContentPaste, null, modifier = Modifier.size(20.dp)); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_8e878de7a527))
     }
     state.order?.takeIf { !it.phase.finished }?.let {
         OutlinedCard(onClick = orders, shape = RoundedCornerShape(24.dp)) {
             Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.AutoMirrored.Outlined.ReceiptLong, null, tint = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.width(14.dp))
-                Column(Modifier.weight(1f)) { Text("还有一笔订单待确认"); Text("查看付款进度", style = MaterialTheme.typography.bodySmall) }
-                Icon(Icons.Outlined.ChevronRight, "查看订单")
+                Column(Modifier.weight(1f)) { Text(appText(R.string.msg_d4b832a716f8)); Text(appText(R.string.msg_24c899792f14), style = MaterialTheme.typography.bodySmall) }
+                Icon(Icons.Outlined.ChevronRight, appText(R.string.msg_7546a59d0f68))
             }
         }
     }
@@ -339,8 +359,8 @@ private fun HomeScreen(state: UiState, scan: () -> Unit, paste: () -> Unit, orde
 @Composable
 private fun DeviceScreen(state: UiState, select: (WashMode) -> Unit, next: () -> Unit) {
     val device = state.device ?: return
-    Text("选择洗衣模式", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-    InfoCard(device.name, if (device.remainingMinutes > 0) "使用中 · 约剩 ${device.remainingMinutes} 分钟" else "请确认这是你面前的洗衣机")
+    Text(appText(R.string.msg_62be6c883399), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    InfoCard(device.name, if (device.remainingMinutes > 0) appText(R.string.msg_7daf2930ebfb , device.remainingMinutes) else appText(R.string.msg_ce33b71f9fdd))
     if (device.error.isNotBlank()) Text(device.error, color = MaterialTheme.colorScheme.error)
     device.modes.forEach { mode ->
         OutlinedCard(onClick = { select(mode) }, enabled = !state.busy, shape = RoundedCornerShape(24.dp),
@@ -349,41 +369,41 @@ private fun DeviceScreen(state: UiState, select: (WashMode) -> Unit, next: () ->
             Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(state.mode == mode, onClick = null)
                 Spacer(Modifier.width(12.dp))
-                Column(Modifier.weight(1f)) { Text(mode.name, style = MaterialTheme.typography.titleMedium); if (mode.feature.isNotBlank()) Text(mode.feature.take(80), style = MaterialTheme.typography.bodySmall) }
+                Column(Modifier.weight(1f)) { Text(mode.name, style = MaterialTheme.typography.titleMedium, localize = false); if (mode.feature.isNotBlank()) Text(mode.feature.take(80), style = MaterialTheme.typography.bodySmall, localize = false) }
                 Text("¥${mode.price}", style = MaterialTheme.typography.titleLarge)
             }
         }
     }
     Button(onClick = next, enabled = state.mode != null && !state.busy && device.remainingMinutes <= 0 && device.error.isBlank(),
-        modifier = Modifier.fillMaxWidth().height(56.dp)) { Text("确认模式，查看金额") }
+        modifier = Modifier.fillMaxWidth().height(56.dp)) { Text(appText(R.string.msg_abbd0e07316e)) }
 }
 
 @Composable
 private fun CheckoutScreen(state: UiState, choose: (PayRoute) -> Unit, pay: () -> Unit) {
     val quote = state.quote ?: return
-    Text("确认这一次洗衣", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    Text(appText(R.string.msg_afb44149eeaf), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
     InfoCard(quote.device.name, quote.mode.name)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Line("洗衣项目", quote.mode.name)
-            Line("数量", "1 次")
+            Line(appText(R.string.msg_b7b30111f5a8), quote.mode.name)
+            Line(appText(R.string.msg_5e29d121dda0), appText(R.string.msg_35cf44ac0fcb))
             HorizontalDivider()
-            Text("本次实付", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(appText(R.string.msg_7895f1bfe9af), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text("¥${quote.amount}", style = MaterialTheme.typography.displayMedium, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
         }
     }
-    Text("支付方式", style = MaterialTheme.typography.titleMedium)
+    Text(appText(R.string.msg_ca7223717fa6), style = MaterialTheme.typography.titleMedium)
     state.methods.forEach { method ->
         Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).clickable(enabled = !state.busy) { choose(method) }.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
             RadioButton(state.payMethod == method, onClick = { choose(method) }, enabled = !state.busy)
             Text(method.title, modifier = Modifier.weight(1f))
-            Text("单次付款", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(appText(R.string.msg_6b1933e75c74), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
     Button(onClick = pay, enabled = !state.busy && state.payMethod != null, modifier = Modifier.fillMaxWidth().height(58.dp)) {
-        Icon(Icons.Outlined.Lock, null, Modifier.size(18.dp)); Spacer(Modifier.width(10.dp)); Text("确认支付 ¥${quote.amount}", style = MaterialTheme.typography.titleMedium)
+        Icon(Icons.Outlined.Lock, null, Modifier.size(18.dp)); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_16de867a06ae , quote.amount), style = MaterialTheme.typography.titleMedium)
     }
-    Text("付款前请确认机器内已放好衣物。", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(appText(R.string.msg_749b9fdc6f64), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 private enum class OrderGroup(val label: String) { ALL("全部"), LAUNDRY("洗衣"), WATER("饮水") }
@@ -402,104 +422,122 @@ private fun OrdersScreen(
     var expandedKey by rememberSaveable(owner) {
         mutableStateOf(state.order?.takeIf { !it.phase.finished }?.let(OrderHistory::key))
     }
+    LaunchedEffect(state.orderOpenRequest) {
+        state.orderFocusKey?.let { group = OrderGroup.ALL; expandedKey = it }
+    }
+    var clock by remember { mutableLongStateOf(System.currentTimeMillis()) }
+    LaunchedEffect(history.any { !it.isWater && it.phase == OrderPhase.PAID }) {
+        while (isActive) { clock = System.currentTimeMillis(); delay(1000) }
+    }
     val session = state.waterSession
     val pendingOutsideHistory = state.order?.takeIf { current ->
         !current.phase.finished && history.none { OrderHistory.sameOrder(it, current) }
     }
 
-    Text("我的订单", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    Text(appText(R.string.msg_7c7dea47f575), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OrderGroup.entries.forEach { candidate ->
             FilterChip(selected = group == candidate, onClick = { group = candidate },
                 label = { Text(candidate.label) }, enabled = !state.busy)
         }
     }
-    Text("当前账号在本机保留最近 ${OrderHistory.LIMIT} 条订单，洗衣与饮水合计，按周一至周日归类。",
-        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
     // An old unresolved intent remains actionable even if it predates the bounded history.
     pendingOutsideHistory?.takeIf {
         group == OrderGroup.ALL || (it.isWater && group == OrderGroup.WATER) || (!it.isWater && group == OrderGroup.LAUNDRY)
     }?.let { pending ->
-        Text("待处理订单", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        Text(appText(R.string.msg_5d5c5a7050f5), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         OrderHistoryCard(pending, state.busy, expandedKey == OrderHistory.key(pending),
             { expandedKey = if (expandedKey == OrderHistory.key(pending)) null else OrderHistory.key(pending) },
-            { refresh(pending) }, { resume(pending) }, { cancelTarget = pending })
+            { refresh(pending) }, { resume(pending) }, { cancelTarget = pending }, clock)
     }
 
     if (history.isEmpty() && session == null && pendingOutsideHistory == null) {
         Spacer(Modifier.height(20.dp)); HeroIcon(Icons.AutoMirrored.Outlined.ReceiptLong)
         Text(when (group) {
-            OrderGroup.WATER -> "还没有饮水记录"
-            OrderGroup.LAUNDRY -> "还没有洗衣订单"
-            OrderGroup.ALL -> "还没有订单"
+            OrderGroup.WATER -> appText(R.string.msg_a0aa4b780049)
+            OrderGroup.LAUNDRY -> appText(R.string.msg_5d3f476b86fd)
+            OrderGroup.ALL -> appText(R.string.msg_874e82006913)
         }, style = MaterialTheme.typography.titleLarge)
-        Text("在这里查看本机订单、用水记录和付款进度。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(appText(R.string.msg_bc8383e2aaa8), color = MaterialTheme.colorScheme.onSurfaceVariant)
         return
     }
 
     @Composable
     fun records(orders: List<LocalOrder>) {
         OrderHistory.weeklyGroups(orders).forEach { week ->
-            Text(week.title, style = MaterialTheme.typography.labelLarge,
+            val prefix = when {
+                week.title.startsWith("本周 · ") -> appText(R.string.msg_a0686c2646d6)
+                week.title.startsWith("上周 · ") -> appText(R.string.msg_80a1a04791c5)
+                else -> ""
+            }
+            Text(appText(R.string.msg_d727d75a30fb, prefix, week.start, week.end), style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
             week.orders.forEach { order ->
                 val identity = OrderHistory.key(order)
                 key(identity) {
                     OrderHistoryCard(order, state.busy, expandedKey == identity,
                         { expandedKey = if (expandedKey == identity) null else identity },
-                        { refresh(order) }, { resume(order) }, { cancelTarget = order })
+                        { refresh(order) }, { resume(order) }, { cancelTarget = order }, clock,
+                        if (state.orderFocusKey == identity) state.orderOpenRequest else 0)
                 }
             }
         }
     }
     if (group != OrderGroup.WATER) {
         val laundry = history.filterNot { it.isWater }
-        OrderGroupHeader(Icons.Outlined.LocalLaundryService, "洗衣", "${laundry.size} 条")
-        if (laundry.isEmpty()) Text("本机暂无可显示的洗衣订单。",
+        OrderGroupHeader(Icons.Outlined.LocalLaundryService, appText(R.string.msg_bc982c81c510), appText(R.string.msg_478a69f47b5e , laundry.size))
+        if (laundry.isEmpty()) Text(appText(R.string.msg_ac301767677f),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         else records(laundry)
     }
     if (group != OrderGroup.LAUNDRY) {
         val bills = history.filter { it.isWater }
-        OrderGroupHeader(Icons.Outlined.WaterDrop, "饮水", "${bills.size} 条账单")
+        OrderGroupHeader(Icons.Outlined.WaterDrop, appText(R.string.msg_6edae041a323), appText(R.string.msg_1f405289ff28 , bills.size))
         // A running session is separate from the 20 order records and is the only restorable entry.
         if (session != null && (session.active || bills.isEmpty())) WaterSessionEntry(session, water)
-        if (bills.isEmpty() && session == null) Text("本机暂无可显示的饮水账单。",
+        if (bills.isEmpty() && session == null) Text(appText(R.string.msg_822a8903fcb0),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         else records(bills)
     }
     cancelTarget?.let { target ->
-        AlertDialog(onDismissRequest = { cancelTarget = null }, title = { Text("取消这笔订单？") },
-            text = { Text("${target.deviceName} · ${target.modeName}\n会先核对订单详情和付款状态，确认订单仍可取消后再申请。") },
-            confirmButton = { TextButton(onClick = { cancelTarget = null; cancel(target) }, enabled = !state.busy) { Text("确认取消") } },
-            dismissButton = { TextButton(onClick = { cancelTarget = null }) { Text("保留订单") } })
+        AlertDialog(onDismissRequest = { cancelTarget = null }, title = { Text(appText(R.string.msg_51ebba34a15f)) },
+            text = { Text(appText(R.string.msg_94654c53105c , target.deviceName, target.modeName)) },
+            confirmButton = { TextButton(onClick = { cancelTarget = null; cancel(target) }, enabled = !state.busy) { Text(appText(R.string.msg_b741efb628be)) } },
+            dismissButton = { TextButton(onClick = { cancelTarget = null }) { Text(appText(R.string.msg_f65b4f1a14a2)) } })
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OrderHistoryCard(
     order: LocalOrder, busy: Boolean, expanded: Boolean, toggle: () -> Unit,
-    refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit
+    refresh: () -> Unit, resume: () -> Unit, cancel: () -> Unit,
+    now: Long, focusRequest: Long = 0
 ) {
-    OutlinedCard(shape = RoundedCornerShape(20.dp)) {
+    val bringIntoView = remember { BringIntoViewRequester() }
+    LaunchedEffect(focusRequest) {
+        if (focusRequest > 0) { delay(250); bringIntoView.bringIntoView() }
+    }
+    OutlinedCard(shape = RoundedCornerShape(20.dp), modifier = Modifier.bringIntoViewRequester(bringIntoView)) {
         Row(Modifier.fillMaxWidth().clickable(onClick = toggle).padding(16.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(if (order.isWater) Icons.Outlined.WaterDrop else Icons.Outlined.LocalLaundryService,
                 null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(order.deviceName, style = MaterialTheme.typography.titleSmall)
+                Text(order.deviceName, style = MaterialTheme.typography.titleSmall, localize = false)
                 Text(order.modeName, style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
                 Text(orderHeadline(order), style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary)
-                Text(SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(Date(order.createdAt)),
+                Text(SimpleDateFormat("MM-dd HH:mm", AppStrings.locale()).format(Date(order.createdAt)),
                     style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text("¥${order.amount}", style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             Icon(if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                if (expanded) "收起订单详情" else "展开订单详情", modifier = Modifier.size(20.dp))
+                if (expanded) appText(R.string.msg_00d78bd5bca3) else appText(R.string.msg_b140a6401279), modifier = Modifier.size(20.dp))
         }
+        LaundryProgressIndicator(order, now)
         AnimatedVisibility(visible = expanded) {
             Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp).padding(bottom = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -527,13 +565,13 @@ private fun WaterSessionEntry(session: WaterSession, open: () -> Unit) {
             Icon(Icons.Outlined.WaterDrop, null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
-                Text(if (session.active) "饮水进行中 · 查看或结束" else "最近一次饮水记录")
-                Text(session.device.name + " · " + session.outlet.name, style = MaterialTheme.typography.bodySmall)
-                Text(SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(Date(session.startedAt)) +
+                Text(if (session.active) appText(R.string.msg_2ded5acf5f36) else appText(R.string.msg_98b03d8bcb49))
+                Text(session.device.name + " · " + session.outlet.name, style = MaterialTheme.typography.bodySmall, localize = false)
+                Text(SimpleDateFormat("MM-dd HH:mm", AppStrings.locale()).format(Date(session.startedAt)) +
                     (if (session.amount.isNotBlank()) " · ¥${session.amount}" else ""),
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
-            if (session.active) Icon(Icons.Outlined.ChevronRight, "查看饮水记录")
+            if (session.active) Icon(Icons.Outlined.ChevronRight, appText(R.string.msg_dee754f9cb2d))
         }
     }
 }
@@ -544,59 +582,59 @@ private fun OrderDetail(order: LocalOrder, busy: Boolean, refresh: () -> Unit, r
     Text(orderDescription(order), color = MaterialTheme.colorScheme.onSurfaceVariant)
     Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Line("设备", order.deviceName)
-            Line(if (order.isWater) "出水口" else "模式", order.modeName)
-            Line("金额", "¥${order.amount}")
-            Line("支付方式", order.payMethod.title)
-            Line(if (order.isWater) "账单时间" else "下单时间", SimpleDateFormat("MM-dd HH:mm", Locale.CHINA).format(Date(order.createdAt)))
-            if (order.orderNo.isNotBlank()) Text("订单号 ${order.orderNo}", style = MaterialTheme.typography.bodySmall)
+            Line(appText(R.string.msg_e1506406a5bd), order.deviceName)
+            Line(if (order.isWater) appText(R.string.msg_717d0bf23fb3) else appText(R.string.msg_47a270081ab2), order.modeName)
+            Line(appText(R.string.msg_ffc624300de8), "¥${order.amount}")
+            Line(appText(R.string.msg_ca7223717fa6), localizedMessage(order.payMethod.title))
+            Line(if (order.isWater) appText(R.string.msg_9eaf7337eac7) else appText(R.string.msg_1e75a9bc677c), SimpleDateFormat("MM-dd HH:mm", AppStrings.locale()).format(Date(order.createdAt)))
+            if (order.orderNo.isNotBlank()) Text(appText(R.string.msg_a01fa2926a83 , order.orderNo), style = MaterialTheme.typography.bodySmall)
         }
     }
     if (order.orderNo.isNotBlank() && !cancelled) OutlinedButton(onClick = refresh, enabled = !busy,
-        modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("刷新订单状态") }
+        modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_f727d5abd647)) }
     if (!order.phase.finished && order.orderNo.isNotBlank() && (order.payMethod == PayMethod.ALIPAY || order.phase == OrderPhase.CREATED))
-        Button(onClick = resume, enabled = !busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text("继续付款") }
+        Button(onClick = resume, enabled = !busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_6253728e4fa9)) }
     if (!order.isWater && !order.phase.finished && order.orderId.isNotBlank())
-        TextButton(onClick = requestCancel, enabled = !busy) { Text("取消未付款订单") }
+        TextButton(onClick = requestCancel, enabled = !busy) { Text(appText(R.string.msg_adcead944a6f)) }
 }
 
 private fun orderHeadline(order: LocalOrder): String = when (order.phase) {
-    OrderPhase.PAID -> if (order.isWater) "饮水账单已支付" else "付款已确认"
-    OrderPhase.CREATING, OrderPhase.UNCONFIRMED -> if (order.isWater) "饮水账单结果待确认" else "下单结果待确认"
-    OrderPhase.CREATED -> if (order.isWater) "饮水账单待付款" else "订单待付款"
-    OrderPhase.PAYMENT_PENDING -> if (order.isWater) "饮水账单付款待确认" else "付款结果待确认"
-    OrderPhase.CANCELLED -> if (order.isWater) "饮水账单已取消" else "订单已取消"
-    OrderPhase.REJECTED -> if (order.isWater) "饮水账单未生成" else "下单未成功"
-    OrderPhase.CLOSED -> if (order.isWater) "饮水账单已关闭" else "订单已关闭"
-    OrderPhase.COMPLETED -> if (order.isWater) "饮水账单已完成" else "订单已完成"
-    OrderPhase.REFUNDING -> if (order.isWater) "饮水账单退款处理中" else "退款处理中"
-    OrderPhase.REFUNDED -> if (order.isWater) "饮水账单已退款" else "订单已退款"
+    OrderPhase.PAID -> if (order.isWater) appText(R.string.msg_208e9e1652bf) else appText(R.string.msg_65687255173c)
+    OrderPhase.CREATING, OrderPhase.UNCONFIRMED -> if (order.isWater) appText(R.string.msg_4c8eb5753a4e) else appText(R.string.msg_065e184d07a3)
+    OrderPhase.CREATED -> if (order.isWater) appText(R.string.msg_c2387dfab4aa) else appText(R.string.msg_ff7e349a58d1)
+    OrderPhase.PAYMENT_PENDING -> if (order.isWater) appText(R.string.msg_d438416ae194) else appText(R.string.msg_c47810fe6c5c)
+    OrderPhase.CANCELLED -> if (order.isWater) appText(R.string.msg_89543c817609) else appText(R.string.msg_bc355408517f)
+    OrderPhase.REJECTED -> if (order.isWater) appText(R.string.msg_3eb2e1441f78) else appText(R.string.msg_109b1efb4f46)
+    OrderPhase.CLOSED -> if (order.isWater) appText(R.string.msg_86a84936749d) else appText(R.string.msg_ff4fc4a36c34)
+    OrderPhase.COMPLETED -> if (order.isWater) appText(R.string.msg_d26366e4e8b6) else appText(R.string.msg_51f0310e9d93)
+    OrderPhase.REFUNDING -> if (order.isWater) appText(R.string.msg_3cb723dd618e) else appText(R.string.msg_5642ebf21120)
+    OrderPhase.REFUNDED -> if (order.isWater) appText(R.string.msg_2c5f66a724fd) else appText(R.string.msg_b01e2d77a8c6)
 }
 
 private fun orderDescription(order: LocalOrder): String {
     if (order.isWater) return when (order.phase) {
-        OrderPhase.PAID -> "饮水结算账单已支付，金额与状态以平台记录为准。"
-        OrderPhase.CREATING, OrderPhase.UNCONFIRMED -> "饮水账单结果待确认，请先查询订单状态。"
-        OrderPhase.CREATED -> "饮水结算账单已创建，可以继续付款；若已在原应用付款，请刷新状态。"
-        OrderPhase.PAYMENT_PENDING -> "饮水账单付款结果尚未确认，请先刷新订单状态。"
-        OrderPhase.CANCELLED -> "饮水账单已取消，请以平台记录为准。"
-        OrderPhase.REJECTED -> "饮水账单未生成成功，请返回饮水页核对设备状态。"
-        OrderPhase.CLOSED -> "饮水账单已超时或失效，请以平台记录为准。"
-        OrderPhase.COMPLETED -> "本次饮水已结束，账单已完成。"
-        OrderPhase.REFUNDING -> "平台正在处理饮水账单退款，请在原应用查看进度。"
-        OrderPhase.REFUNDED -> "平台已标记饮水账单退款完成，请核对到账情况。"
+        OrderPhase.PAID -> appText(R.string.msg_832c13565546)
+        OrderPhase.CREATING, OrderPhase.UNCONFIRMED -> appText(R.string.msg_e97395fabcb3)
+        OrderPhase.CREATED -> appText(R.string.msg_4c5c6272eeb1)
+        OrderPhase.PAYMENT_PENDING -> appText(R.string.msg_13dabacb2def)
+        OrderPhase.CANCELLED -> appText(R.string.msg_6be5a3ca9454)
+        OrderPhase.REJECTED -> appText(R.string.msg_0ee6972c135c)
+        OrderPhase.CLOSED -> appText(R.string.msg_cc0bf0ebd2ce)
+        OrderPhase.COMPLETED -> appText(R.string.msg_0f4d2cd6e467)
+        OrderPhase.REFUNDING -> appText(R.string.msg_21f2cb8d89a7)
+        OrderPhase.REFUNDED -> appText(R.string.msg_3098a02a0c34)
     }
     return when (order.phase) {
-        OrderPhase.PAID -> "请查看洗衣机运行状态。"
+        OrderPhase.PAID -> appText(R.string.msg_87da2d041151)
         OrderPhase.CREATING, OrderPhase.UNCONFIRMED ->
-            if (order.orderNo.isBlank()) "请先在原应用核对这笔订单，避免重复下单。" else "付款结果尚未确认，请先查询订单状态。"
-        OrderPhase.CREATED -> "订单已创建，可以继续付款；若已在原应用付款，请刷新状态。"
-        OrderPhase.PAYMENT_PENDING -> "付款结果尚未确认，请先查询订单状态。"
-        OrderPhase.CANCELLED, OrderPhase.REJECTED -> "可以返回洗衣，重新选择模式。"
-        OrderPhase.CLOSED -> "订单已超时或失效，可以返回洗衣重新选择模式。"
-        OrderPhase.COMPLETED -> "本次洗衣已结束。"
-        OrderPhase.REFUNDING -> "平台正在处理退款，请在原应用查看进度。"
-        OrderPhase.REFUNDED -> "平台已标记退款完成，请核对到账情况。"
+            if (order.orderNo.isBlank()) appText(R.string.msg_8bea5e0f6086) else appText(R.string.msg_0baa295b60a1)
+        OrderPhase.CREATED -> appText(R.string.msg_b621b6e40986)
+        OrderPhase.PAYMENT_PENDING -> appText(R.string.msg_0baa295b60a1)
+        OrderPhase.CANCELLED, OrderPhase.REJECTED -> appText(R.string.msg_f0fd094c9fed)
+        OrderPhase.CLOSED -> appText(R.string.msg_6132aaeef659)
+        OrderPhase.COMPLETED -> appText(R.string.msg_cae4a3724dad)
+        OrderPhase.REFUNDING -> appText(R.string.msg_2c47626fe8e8)
+        OrderPhase.REFUNDED -> appText(R.string.msg_829614d0d5f9)
     }
 }
 
@@ -611,13 +649,13 @@ private fun InfoCard(title: String, subtitle: String) {
     Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(24.dp)).padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Outlined.LocalLaundryService, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
         Spacer(Modifier.width(16.dp))
-        Column { Text(title, style = MaterialTheme.typography.titleMedium); Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+        Column { Text(title, style = MaterialTheme.typography.titleMedium, localize = false); Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false) }
     }
 }
 @Composable
 private fun Line(label: String, value: String) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(20.dp)) {
         Text(label, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(value, Modifier.weight(1.4f), fontWeight = FontWeight.Medium)
+        Text(value, Modifier.weight(1.4f), fontWeight = FontWeight.Medium, localize = false)
     }
 }

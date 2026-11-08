@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -19,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -71,7 +75,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
     fun saveDuration(): Boolean {
         val duration = durationDraft.toIntOrNull()
         if (duration == null || duration !in MIN_SPLASH_DURATION_MS..MAX_SPLASH_DURATION_MS) {
-            durationError = "请输入 $MIN_SPLASH_DURATION_MS 至 $MAX_SPLASH_DURATION_MS 之间的整数（ms）"
+            durationError = appText(R.string.msg_e8d09706ad21 , MIN_SPLASH_DURATION_MS, MAX_SPLASH_DURATION_MS)
             return false
         }
         durationError = null
@@ -95,7 +99,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
             val append = addingImages
             val existing = if (append) latestSettings.splashImages else emptyList()
             if (existing.size + uris.size > MAX_SPLASH_IMAGES) {
-                error = "最多使用 $MAX_SPLASH_IMAGES 张图片，请减少选择数量。"
+                error = appText(R.string.msg_569001c47283 , MAX_SPLASH_IMAGES)
             } else {
                 importing = true
                 error = null
@@ -107,9 +111,9 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                     } catch (cancelled: CancellationException) {
                         throw cancelled
                     } catch (failure: IOException) {
-                        error = "${failure.message ?: "图片导入失败"}。原有图片已保留。"
+                        error = appText(R.string.msg_5ecee348e4b3 , failure.message ?: appText(R.string.msg_12515926f77d))
                     } catch (_: Exception) {
-                        error = "图片导入失败，请选择有效的图片后重试。原有图片已保留。"
+                        error = appText(R.string.msg_298186c3f519)
                     } finally {
                         importing = false
                     }
@@ -124,19 +128,19 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
             horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(Icons.Outlined.AutoAwesome, null, tint = colors.onSurfaceVariant)
             Column(Modifier.weight(1f)
-                .clickable(onClickLabel = if (expanded) "收起开屏设置" else "展开开屏设置", onClick = ::toggleExpanded)
-                .semantics { stateDescription = if (expanded) "已展开" else "已收起" },
+                .clickable(onClickLabel = if (expanded) appText(R.string.msg_2d264ece4497) else appText(R.string.msg_d00503584e15), onClick = ::toggleExpanded)
+                .semantics { stateDescription = if (expanded) appText(R.string.msg_df647b73b990) else appText(R.string.msg_e64447db76a9) },
                 verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text("显示开屏看板娘", style = MaterialTheme.typography.bodyLarge)
-                Text("每次启动显示一张，下次启动切换下一张",
+                Text(appText(R.string.msg_63109ff6f1bb), style = MaterialTheme.typography.bodyLarge)
+                Text(appText(R.string.msg_ef28a66a21b1),
                     style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
             Switch(checked = settings.splashEnabled, enabled = !importing,
                 onCheckedChange = { latestOnChange(latestSettings.copy(splashEnabled = it)) },
-                modifier = Modifier.semantics { contentDescription = "显示开屏看板娘" })
+                modifier = Modifier.semantics { contentDescription = appText(R.string.msg_63109ff6f1bb) })
             IconButton(onClick = ::toggleExpanded) {
                 Icon(if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
-                    if (expanded) "收起开屏设置" else "展开开屏设置")
+                    if (expanded) appText(R.string.msg_2d264ece4497) else appText(R.string.msg_d00503584e15))
             }
         }
 
@@ -148,9 +152,9 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     OutlinedTextField(value = durationDraft,
                         onValueChange = { durationDraft = it; durationError = null },
-                        label = { Text("开屏时长（ms）") },
+                        label = { Text(appText(R.string.msg_7647946e9f07)) },
                         supportingText = {
-                            Text(durationError ?: "默认 $DEFAULT_SPLASH_DURATION_MS ms，范围 $MIN_SPLASH_DURATION_MS–$MAX_SPLASH_DURATION_MS ms")
+                            Text(durationError ?: appText(R.string.msg_6978239af3fb , DEFAULT_SPLASH_DURATION_MS, MIN_SPLASH_DURATION_MS, MAX_SPLASH_DURATION_MS))
                         },
                         isError = durationError != null, enabled = !importing, singleLine = true,
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
@@ -169,18 +173,18 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                             keyboard?.hide()
                             focusManager.clearFocus()
                         }
-                    }, enabled = !importing) { Text("保存时长") }
+                    }, enabled = !importing) { Text(appText(R.string.msg_793dc584cf9d)) }
                 }
 
                 HorizontalDivider(Modifier.padding(horizontal = 18.dp), color = colors.outlineVariant.copy(alpha = .55f))
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp),
                     verticalAlignment = Alignment.CenterVertically) {
-                    Text("${if (custom) "自定义图片" else "默认图片"} · ${images.size} 张",
+                    Text(appText(R.string.msg_475091a94a64 , if (custom) appText(R.string.msg_0dc111847321) else appText(R.string.msg_6f10af9918f8), images.size),
                         Modifier.weight(1f), style = MaterialTheme.typography.labelLarge, color = colors.primary)
                     TextButton(onClick = { previewImage = images.first() }, enabled = !importing) {
                         Icon(Icons.Outlined.PlayArrow, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
-                        Text("预览开屏")
+                        Text(appText(R.string.msg_b396db2e9196))
                     }
                 }
 
@@ -193,7 +197,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                                 .background(colors.background)
                                 .clickable(enabled = !importing) { previewImage = source }, contentAlignment = Alignment.Center) {
                                 bitmap?.let {
-                                    Image(it, contentDescription = "开屏图片 ${index + 1}",
+                                    Image(it, contentDescription = appText(R.string.msg_91a1254d600f , index + 1),
                                         modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
                                 } ?: CircularProgressIndicator(Modifier.size(24.dp), strokeWidth = 2.dp)
                             }
@@ -208,12 +212,12 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                                             latestOnChange(latestSettings.copy(splashImages = reordered))
                                         }
                                     }, enabled = !importing && index > 0, modifier = Modifier.size(48.dp)) {
-                                        Icon(Icons.Outlined.ArrowBack, "第 ${index + 1} 张向前移动", Modifier.size(19.dp))
+                                        Icon(Icons.Outlined.ArrowBack, appText(R.string.msg_0b2f1558771b , index + 1), Modifier.size(19.dp))
                                     }
                                     IconButton(onClick = {
                                         latestOnChange(latestSettings.copy(splashImages = latestSettings.splashImages.filterNot { it == source }))
                                     }, enabled = !importing, modifier = Modifier.size(48.dp)) {
-                                        Icon(Icons.Outlined.Close, "移除第 ${index + 1} 张图片", Modifier.size(19.dp))
+                                        Icon(Icons.Outlined.Close, appText(R.string.msg_1fd81704a521 , index + 1), Modifier.size(19.dp))
                                     }
                                     IconButton(onClick = {
                                         val reordered = latestSettings.splashImages.toMutableList()
@@ -224,7 +228,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                                             latestOnChange(latestSettings.copy(splashImages = reordered))
                                         }
                                     }, enabled = !importing && index < images.lastIndex, modifier = Modifier.size(48.dp)) {
-                                        Icon(Icons.Outlined.ArrowForward, "第 ${index + 1} 张向后移动", Modifier.size(19.dp))
+                                        Icon(Icons.Outlined.ArrowForward, appText(R.string.msg_3465dd4a34e0 , index + 1), Modifier.size(19.dp))
                                     }
                                 }
                             } else {
@@ -237,8 +241,8 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
 
                 Column(Modifier.padding(horizontal = 18.dp).padding(bottom = 14.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(if (custom) "按当前顺序在每次启动时切换，可调整顺序或移除图片。移除全部后恢复默认。"
-                        else "选择自己的图片替换默认看板娘。多张图片按选择顺序在每次启动时切换。",
+                    Text(if (custom) appText(R.string.msg_d6aaf25dfadf)
+                        else appText(R.string.msg_6303308108a0),
                         style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -249,13 +253,13 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                         }, enabled = !importing && (!custom || images.size < MAX_SPLASH_IMAGES)) {
                             Icon(Icons.Outlined.AddPhotoAlternate, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
-                            Text(if (custom) "添加图片" else "自定义图片")
+                            Text(if (custom) appText(R.string.msg_9f0d4e4656ee) else appText(R.string.msg_0dc111847321))
                         }
                         if (custom) {
                             TextButton(onClick = {
                                 error = null
                                 latestOnChange(latestSettings.copy(splashImages = emptyList()))
-                            }, enabled = !importing) { Text("恢复默认") }
+                            }, enabled = !importing) { Text(appText(R.string.msg_ba2e93e73037)) }
                         }
                     }
                     if (custom) {
@@ -264,16 +268,16 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                             error = null
                             picker.launch(arrayOf("image/*"))
                         }, enabled = !importing, contentPadding = PaddingValues(horizontal = 0.dp)) {
-                            Text("重新选择图片")
+                            Text(appText(R.string.msg_7f48dd3aa586))
                         }
                     }
                     if (importing) {
                         LinearProgressIndicator(Modifier.fillMaxWidth())
-                        Text("正在保存图片…", style = MaterialTheme.typography.bodySmall,
+                        Text(appText(R.string.msg_9d2e3d5ad46b), style = MaterialTheme.typography.bodySmall,
                             color = colors.onSurfaceVariant,
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite })
                     } else {
-                        Text("最多 $MAX_SPLASH_IMAGES 张，图片保存在本机。关闭开屏仍会保留图片设置。",
+                        Text(appText(R.string.msg_a74a462db571 , MAX_SPLASH_IMAGES),
                             style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
                     error?.let { message ->

@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.i18n.LocalizedText as Text
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -40,10 +43,10 @@ internal class SplashImageStore(context: Context) {
     private val context = context.applicationContext
 
     suspend fun importImages(uris: List<Uri>): List<String> = withContext(Dispatchers.IO) {
-        require(uris.size in 1..MAX_SPLASH_IMAGES) { "请选择 1 至 $MAX_SPLASH_IMAGES 张图片" }
+        require(uris.size in 1..MAX_SPLASH_IMAGES) { appText(R.string.msg_539a04f13653 , MAX_SPLASH_IMAGES) }
         val directory = File(context.filesDir, SPLASH_IMAGE_DIRECTORY)
         if (!directory.isDirectory && !directory.mkdirs() && !directory.isDirectory) {
-            throw IOException("无法创建开屏图片目录")
+            throw IOException(appText(R.string.msg_6c3a3a160315))
         }
         val created = mutableListOf<File>()
         var completed = false
@@ -54,7 +57,7 @@ internal class SplashImageStore(context: Context) {
                     File.createTempFile("import_", ".tmp", directory).also { PendingSplashImports.names += it.name }
                 }
                 try {
-                    val input = context.contentResolver.openInputStream(uri) ?: throw IOException("无法读取所选图片")
+                    val input = context.contentResolver.openInputStream(uri) ?: throw IOException(appText(R.string.msg_de9d97131bfe))
                     input.use { source ->
                         staging.outputStream().use { target ->
                             val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
@@ -64,13 +67,13 @@ internal class SplashImageStore(context: Context) {
                                 val read = source.read(buffer)
                                 if (read < 0) break
                                 count += read
-                                if (count > MAX_IMPORT_BYTES) throw IOException("单张图片不能超过 50 MB")
+                                if (count > MAX_IMPORT_BYTES) throw IOException(appText(R.string.msg_55ae9cf11f5d))
                                 target.write(buffer, 0, read)
                             }
                         }
                     }
                     val bitmap = decodeSplashImage({ staging.inputStream() }, readOrientation(staging))
-                        ?: throw IOException("所选文件不是可读取的图片")
+                        ?: throw IOException(appText(R.string.msg_6b30d72d0686))
                     try {
                         currentCoroutineContext().ensureActive()
                         val extension = if (bitmap.hasAlpha()) "png" else "jpg"
@@ -79,7 +82,7 @@ internal class SplashImageStore(context: Context) {
                         synchronized(PendingSplashImports.lock) { PendingSplashImports.names += destination.name }
                         destination.outputStream().use { output ->
                             val format = if (bitmap.hasAlpha()) Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
-                            if (!bitmap.compress(format, 92, output)) throw IOException("无法保存开屏图片")
+                            if (!bitmap.compress(format, 92, output)) throw IOException(appText(R.string.msg_2dda33f41051))
                         }
                         destination.name
                     } finally {

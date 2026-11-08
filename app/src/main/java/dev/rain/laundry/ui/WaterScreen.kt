@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -7,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -39,53 +43,53 @@ internal fun WaterScreen(
                 tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(if (device == null) "开始饮水" else device.name, Modifier.testTag("waterDeviceName"),
-                style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-            Text("多喝热水～", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            Text(if (device == null) appText(R.string.msg_88ef220dbc2f) else device.name, Modifier.testTag("waterDeviceName"),
+                style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, localize = false)
+            Text(appText(R.string.msg_0e5d45e9456f), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
         }
     }
     if (device == null) {
-        Text("扫描饮水机上的二维码，\n选择出水口后开始用水。", style = MaterialTheme.typography.bodyLarge)
+        Text(appText(R.string.msg_8032591e13e5), style = MaterialTheme.typography.bodyLarge)
         if (state.waterSession?.active == true) {
-            Text("有一条饮水记录待处理，请扫描原设备或在订单中恢复。", color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(appText(R.string.msg_edbdfa509c1e), color = MaterialTheme.colorScheme.onSurfaceVariant)
             OutlinedButton(onClick = orders, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-                Text("查看进行中的饮水记录")
+                Text(appText(R.string.msg_6b59ed9d733e))
             }
         }
     } else {
         val title = when {
-            session?.phase == WaterPhase.SETTLING -> "用水已结束，正在核对账单"
-            session?.phase == WaterPhase.ENDED -> "本次用水已结束"
-            device.error.isNotBlank() -> "设备状态异常"
-            active && state.waterStatus?.status == 6 -> "本次用水状态异常，请刷新核对"
-            session?.phase == WaterPhase.ENDING -> "正在等待设备结束用水"
-            session?.phase == WaterPhase.USING -> "正在用水"
-            session?.phase in setOf(WaterPhase.STARTING, WaterPhase.WAITING) -> "等待饮水机响应"
-            active -> "上次用水结果待确认"
-            state.waterStatus?.workStatus == 3 -> "设备正在被他人使用"
-            state.waterStatus?.mine == true -> "当前账户正在用水，请刷新恢复会话"
-            state.waterStatus?.available == true -> if (state.waterStatus.status == 6) "出水口空闲，请重新确认用水"
-                else "请选择面前饮水机的出水口"
-            else -> "请刷新并确认设备状态"
+            session?.phase == WaterPhase.SETTLING -> appText(R.string.msg_5f386787584a)
+            session?.phase == WaterPhase.ENDED -> appText(R.string.msg_9ff5a9563ee2)
+            device.error.isNotBlank() -> appText(R.string.msg_c8592490c32d)
+            active && state.waterStatus?.status == 6 -> appText(R.string.msg_055ff46ac059)
+            session?.phase == WaterPhase.ENDING -> appText(R.string.msg_15d2dda731b4)
+            session?.phase == WaterPhase.USING -> appText(R.string.msg_5bdb9263878d)
+            session?.phase in setOf(WaterPhase.STARTING, WaterPhase.WAITING) -> appText(R.string.msg_79cea7bbcb4f)
+            active -> appText(R.string.msg_cfc54865db1f)
+            state.waterStatus?.workStatus == 3 -> appText(R.string.msg_bbad1fd91c78)
+            state.waterStatus?.mine == true -> appText(R.string.msg_06e43ba08011)
+            state.waterStatus?.available == true -> if (state.waterStatus.status == 6) appText(R.string.msg_22739db68677)
+                else appText(R.string.msg_07a3c2feadd0)
+            else -> appText(R.string.msg_f088643d2a3b)
         }
         Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
             Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(title, style = MaterialTheme.typography.titleLarge)
-                Text("支付方式：${payment?.title ?: "待核对"} · 按实际用量结算", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(appText(R.string.msg_845461671a4e , payment?.title?.let(::localizedMessage) ?: appText(R.string.msg_33df16b4afab)), color = MaterialTheme.colorScheme.onSurfaceVariant)
                 if (active || !session?.amount.isNullOrBlank()) {
-                    Text(session?.amount?.takeIf { it.isNotBlank() }?.let { "¥$it" } ?: "金额待同步",
+                    Text(session?.amount?.takeIf { it.isNotBlank() }?.let { "¥$it" } ?: appText(R.string.msg_6c61dc3a5f3d),
                         style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
-                    Text(if (session?.phase == WaterPhase.ENDED) "平台返回的结算金额" else "实际金额以平台结算账单为准",
+                    Text(if (session?.phase == WaterPhase.ENDED) appText(R.string.msg_6d1262e5d2e0) else appText(R.string.msg_4d84a10ccdee),
                         style = MaterialTheme.typography.bodySmall)
                 }
                 if (active && session?.phase !in setOf(WaterPhase.SETTLING, WaterPhase.ENDED)) {
-                    Text("请在机器上操作出水，离开前确认已停止。", style = MaterialTheme.typography.bodySmall)
+                    Text(appText(R.string.msg_0841fa3cbaff), style = MaterialTheme.typography.bodySmall)
                 }
             }
         }
-        if (device.announcement.isNotBlank()) Text(device.announcement.take(600), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        if (device.announcement.isNotBlank()) Text(device.announcement.take(600), color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
         if (device.error.isNotBlank()) Text(device.error, color = MaterialTheme.colorScheme.error)
-        Text("出水口", style = MaterialTheme.typography.titleMedium)
+        Text(appText(R.string.msg_717d0bf23fb3), style = MaterialTheme.typography.titleMedium)
         device.outlets.forEach { candidate ->
             val selected = outlet?.id == candidate.id
             OutlinedCard(onClick = { select(candidate) }, enabled = !state.busy && !active && !authorizationPending,
@@ -95,16 +99,16 @@ internal fun WaterScreen(
                     RadioButton(selected, null)
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(candidate.name, style = MaterialTheme.typography.titleMedium)
-                        Text(candidate.rate.ifBlank { "计费标准请核对机身标价及平台账单" }, style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant)
-                        if (candidate.feature.isNotBlank()) Text(candidate.feature.take(160), style = MaterialTheme.typography.bodySmall)
+                        Text(candidate.name, style = MaterialTheme.typography.titleMedium, localize = false)
+                        Text(candidate.rate.ifBlank { appText(R.string.msg_fe33d85393d6) }, style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
+                        if (candidate.feature.isNotBlank()) Text(candidate.feature.take(160), style = MaterialTheme.typography.bodySmall, localize = false)
                     }
                 }
             }
         }
         if (!active && state.waterPayments.isNotEmpty()) {
-            Text("支付方式", style = MaterialTheme.typography.titleMedium)
+            Text(appText(R.string.msg_ca7223717fa6), style = MaterialTheme.typography.titleMedium)
             state.waterPayments.forEach { candidate ->
                 val selected = candidate == state.waterPayment
                 OutlinedCard(onClick = { selectPayment(candidate) }, enabled = !state.busy && !authorizationPending,
@@ -129,48 +133,48 @@ internal fun WaterScreen(
                     state.waterStatus?.available == true,
                 modifier = Modifier.fillMaxWidth().height(56.dp)) {
                 Icon(Icons.Outlined.WaterDrop, null); Spacer(Modifier.width(8.dp))
-                Text(if (authorizationPending) "等待支付宝授权核验" else "开始用水")
+                Text(if (authorizationPending) appText(R.string.msg_d0f6b2e6e6e0) else appText(R.string.msg_be376c412d1f))
             }
         } else if (device.supportAppFinish && state.waterStatus?.mine == true) {
             Button(onClick = { endDialog = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(56.dp)) {
-                Icon(Icons.Outlined.StopCircle, null); Spacer(Modifier.width(8.dp)); Text("结束用水")
+                Icon(Icons.Outlined.StopCircle, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_9055c1d4ca6f))
             }
         }
-        if (active && !device.supportAppFinish) Text("这台设备请使用机身停止按钮结束出水，再刷新状态。",
+        if (active && !device.supportAppFinish) Text(appText(R.string.msg_321554ba3c42),
             style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        if (active && session?.phase == WaterPhase.UNKNOWN) Text("请先检查设备、刷新状态。结果未确认时不会再次发送启动指令。",
+        if (active && session?.phase == WaterPhase.UNKNOWN) Text(appText(R.string.msg_4167b9536d27),
             style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         OutlinedButton(onClick = refresh, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Icon(Icons.Outlined.Refresh, null); Spacer(Modifier.width(8.dp)); Text("刷新饮水状态")
+            Icon(Icons.Outlined.Refresh, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_083c5e6e61a7))
         }
         if (session?.settlementOrder != null) OutlinedButton(onClick = orders, enabled = !state.busy,
-            modifier = Modifier.fillMaxWidth().height(52.dp)) { Text("查看饮水账单") }
+            modifier = Modifier.fillMaxWidth().height(52.dp)) { Text(appText(R.string.msg_f617edd7b975)) }
     }
     if (!active) {
         if (device == null) Button(onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(54.dp)) {
-            Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text("扫描饮水机")
+            Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_dd3246e28288))
         } else OutlinedButton(onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Text("重新扫描饮水机")
+            Text(appText(R.string.msg_4dca55259348))
         }
         OutlinedButton(onClick = paste, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
-            Icon(Icons.Outlined.ContentPaste, null); Spacer(Modifier.width(8.dp)); Text("粘贴饮水机设备码")
+            Icon(Icons.Outlined.ContentPaste, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_fc984db26cf9))
         }
     }
     if (startDialog && device != null && outlet != null && payment != null) AlertDialog(onDismissRequest = { startDialog = false },
-        title = { Text("确认开始用水？") }, text = { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text("${device.name} · ${outlet.name}")
-            Text(outlet.rate.ifBlank { "请先核对机器现场的计费标准。" })
-            Text("本次使用${payment.title}，按实际用量结算。请准备好容器，结束后确认机器已经停止出水。")
+        title = { Text(appText(R.string.msg_09b6b52a8ffc)) }, text = { Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text("${device.name} · ${outlet.name}", localize = false)
+            Text(outlet.rate.ifBlank { appText(R.string.msg_a7afd35b9a01) }, localize = false)
+            Text(appText(R.string.msg_914133ec9e6e , localizedMessage(payment.title)))
             if (payment.requiresAlipayAgreement) {
-                Text("本次使用支付宝先享后付（免密），按实际用量由平台结算扣款。确认后会核对本设备的签约要求；需要签约时将打开支付宝，返回后须再次确认用水。未付账单请到订单中核对金额和付款状态。")
+                Text(appText(R.string.msg_960aa8eb1c5d))
             } else if (payment.method == PayMethod.ALIPAY) {
-                Text("平台可能根据已有支付宝授权自动扣款；未付账单可在订单中继续支付。")
+                Text(appText(R.string.msg_43a112a16373))
             }
         } }, confirmButton = { TextButton(onClick = { startDialog = false; start() },
-            enabled = !state.busy && state.waterPaymentAllowed) { Text("确认开始用水") } },
-        dismissButton = { TextButton(onClick = { startDialog = false }) { Text("取消") } })
-    if (endDialog) AlertDialog(onDismissRequest = { endDialog = false }, title = { Text("结束本次用水？") },
-        text = { Text("将请求饮水机停止本次用水，并查询平台结算账单。请同时确认机器已停止出水。") },
-        confirmButton = { TextButton(onClick = { endDialog = false; finish() }, enabled = !state.busy) { Text("确认结束用水") } },
-        dismissButton = { TextButton(onClick = { endDialog = false }) { Text("继续用水") } })
+            enabled = !state.busy && state.waterPaymentAllowed) { Text(appText(R.string.msg_97c0474b816d)) } },
+        dismissButton = { TextButton(onClick = { startDialog = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
+    if (endDialog) AlertDialog(onDismissRequest = { endDialog = false }, title = { Text(appText(R.string.msg_ca0dffccb99d)) },
+        text = { Text(appText(R.string.msg_00612aad0812)) },
+        confirmButton = { TextButton(onClick = { endDialog = false; finish() }, enabled = !state.busy) { Text(appText(R.string.msg_6ce4fd181551)) } },
+        dismissButton = { TextButton(onClick = { endDialog = false }) { Text(appText(R.string.msg_9a81c4e994ca)) } })
 }

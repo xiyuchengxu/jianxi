@@ -24,7 +24,8 @@ data class LocalOrder(
     val owner: String, val deviceName: String, val modeName: String, val amount: String,
     val payMethod: PayMethod, val phase: OrderPhase, val createdAt: Long = System.currentTimeMillis(),
     val orderId: String = "", val orderNo: String = "", val syncRequested: Boolean = false,
-    val thirdChannel: String? = null, val outVoucherId: String? = null, val category: String? = null
+    val thirdChannel: String? = null, val outVoucherId: String? = null, val category: String? = null,
+    val laundryProgress: LaundryProgress? = null
 ) {
     val isWater: Boolean get() = category == "04"
 }

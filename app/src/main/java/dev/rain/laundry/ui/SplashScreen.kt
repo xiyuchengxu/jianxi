@@ -1,5 +1,9 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -63,9 +67,9 @@ internal fun SplashScreen(
     Box(modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
         bitmap?.let {
             Image(it, when (image) {
-                defaultSplashImages[0] -> "开屏图片 1"
-                defaultSplashImages[1] -> "开屏图片 2"
-                else -> "自定义开屏图片"
+                defaultSplashImages[0] -> appText(R.string.msg_bb536fd5dbb8)
+                defaultSplashImages[1] -> appText(R.string.msg_bdf7ecf94b2d)
+                else -> appText(R.string.msg_fdcd35336d1d)
             }, Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
         }
     }

@@ -1,5 +1,7 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.outlined.LocalLaundryService
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -54,10 +57,10 @@ fun AboutScreen(onBack: () -> Unit) {
         containerColor = colors.background,
         topBar = {
             TopAppBar(
-                title = { Text("关于简洗") },
+                title = { Text(appText(R.string.msg_c1cb5f40de7c)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = "返回")
+                        Icon(Icons.AutoMirrored.Outlined.ArrowBack, contentDescription = appText(R.string.scanner_close))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.background)
@@ -87,41 +90,41 @@ fun AboutScreen(onBack: () -> Unit) {
                         Icon(Icons.Outlined.LocalLaundryService, contentDescription = null,
                             tint = colors.primary, modifier = Modifier.size(44.dp))
                     }
-                    Text("简洗", style = MaterialTheme.typography.headlineLarge,
+                    Text(appText(R.string.msg_2b207da009d1), style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.SemiBold)
-                    Text("把洗衣，变简单", color = colors.onSurfaceVariant)
-                    Text("版本 ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                    Text(appText(R.string.msg_5124eb2d64ae), color = colors.onSurfaceVariant)
+                    Text(appText(R.string.msg_81f2e88ab5a7 , BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
                         style = MaterialTheme.typography.labelLarge, color = colors.onSurfaceVariant)
-                    Text("内部版本 ${BuildConfig.INTERNAL_VERSION}",
+                    Text(appText(R.string.msg_b646c5129632 , BuildConfig.INTERNAL_VERSION),
                         style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                 }
 
-                Text("使用 Kotlin 与 Jetpack Compose 构建的独立 Android 洗衣与饮水客户端。",
+                Text(appText(R.string.msg_a5a749ecf99b),
                     style = MaterialTheme.typography.bodyLarge)
 
                 OutlinedCard(onClick = {
                     runCatching {
                         (context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager)
-                            .setPrimaryClip(ClipData.newPlainText("简洗反馈群", UsageDocuments.FEEDBACK_GROUP))
-                    }.onSuccess { scope.launch { snackbar.showSnackbar("群号已复制，请在 QQ 中搜索加入") } }
-                        .onFailure { scope.launch { snackbar.showSnackbar("复制失败，群号：${UsageDocuments.FEEDBACK_GROUP}") } }
+                            .setPrimaryClip(ClipData.newPlainText(appText(R.string.msg_5c22e569d581), UsageDocuments.FEEDBACK_GROUP))
+                    }.onSuccess { scope.launch { snackbar.showSnackbar(appText(R.string.msg_7e1c2cd5e619)) } }
+                        .onFailure { scope.launch { snackbar.showSnackbar(appText(R.string.msg_b0e7cbd7c9aa , UsageDocuments.FEEDBACK_GROUP)) } }
                 }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp)) {
                     Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                         Icon(Icons.Outlined.Groups, null, tint = colors.primary)
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(5.dp)) {
-                            Text("反馈群", style = MaterialTheme.typography.titleMedium)
-                            Text("QQ 群：${UsageDocuments.FEEDBACK_GROUP}", style = MaterialTheme.typography.bodyMedium)
-                            Text("点击复制群号", style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+                            Text(appText(R.string.msg_f4436c0e1576), style = MaterialTheme.typography.titleMedium)
+                            Text(appText(R.string.msg_afdbcbccf8a9 , UsageDocuments.FEEDBACK_GROUP), style = MaterialTheme.typography.bodyMedium)
+                            Text(appText(R.string.msg_abdf0bb6c80c), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                         }
-                        Icon(Icons.Outlined.ContentCopy, "复制群号")
+                        Icon(Icons.Outlined.ContentCopy, appText(R.string.msg_46e651c95c83))
                     }
                 }
 
                 OutlinedCard(
                     onClick = {
                         runCatching { uriHandler.openUri(SOURCE_URL) }.onFailure {
-                            scope.launch { snackbar.showSnackbar("未找到可打开 GitHub 链接的应用") }
+                            scope.launch { snackbar.showSnackbar(appText(R.string.msg_c66b688131ed)) }
                         }
                     },
                     modifier = Modifier.fillMaxWidth(),
@@ -133,11 +136,11 @@ fun AboutScreen(onBack: () -> Unit) {
                         Icon(Icons.Outlined.Code, contentDescription = null, tint = colors.primary)
                         Column(modifier = Modifier.weight(1f),
                             verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Text("GitHub · 项目源码", style = MaterialTheme.typography.titleMedium)
+                            Text(appText(R.string.msg_225342a2ef09), style = MaterialTheme.typography.titleMedium)
                             Text("github.com/xiyuchengxu/jianxi",
                                 style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                         }
-                        Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = "在浏览器中打开")
+                        Icon(Icons.AutoMirrored.Outlined.OpenInNew, contentDescription = appText(R.string.msg_bfcf57d4bef3))
                     }
                 }
 
@@ -147,27 +150,27 @@ fun AboutScreen(onBack: () -> Unit) {
                 ) {
                     Icon(Icons.Outlined.FavoriteBorder, contentDescription = null, modifier = Modifier.size(20.dp))
                     Spacer(Modifier.width(10.dp))
-                    Text("打赏支持", style = MaterialTheme.typography.titleMedium)
+                    Text(appText(R.string.msg_8279f6a35954), style = MaterialTheme.typography.titleMedium)
                 }
 
                 OutlinedButton(
                     onClick = {
                         runCatching { uriHandler.openUri(EASTER_EGG_URL) }.onFailure {
-                            scope.launch { snackbar.showSnackbar("未找到可打开链接的应用") }
+                            scope.launch { snackbar.showSnackbar(appText(R.string.msg_e0be747a5d8c)) }
                         }
                     },
                     modifier = Modifier.fillMaxWidth().height(54.dp)
                 ) {
-                    Text("千万不要点", style = MaterialTheme.typography.titleMedium)
+                    Text(appText(R.string.msg_49e131043706), style = MaterialTheme.typography.titleMedium)
                 }
 
                 Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(24.dp),
                     colors = CardDefaults.cardColors(containerColor = colors.surfaceContainerLow)) {
                     Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Text("使用说明", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
-                        Text("客户端完全免费；洗衣等第三方服务费用以实际订单为准。", color = colors.onSurfaceVariant)
-                        TextButton(onClick = { documentOpen = "disclaimer" }) { Text("免责声明") }
-                        TextButton(onClick = { documentOpen = "rules" }) { Text("用户守则（用户协议）") }
+                        Text(appText(R.string.msg_cb4ba40bf823), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
+                        Text(appText(R.string.msg_f37173351372), color = colors.onSurfaceVariant)
+                        TextButton(onClick = { documentOpen = "disclaimer" }) { Text(appText(R.string.msg_280af617c87f)) }
+                        TextButton(onClick = { documentOpen = "rules" }) { Text(appText(R.string.msg_15d8fa4535c2)) }
                     }
                 }
 
@@ -175,22 +178,22 @@ fun AboutScreen(onBack: () -> Unit) {
                     colors = CardDefaults.cardColors(containerColor = colors.surfaceContainerLow)) {
                     Column(modifier = Modifier.fillMaxWidth().padding(22.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        Text("开源协议", style = MaterialTheme.typography.labelLarge, color = colors.primary)
+                        Text(appText(R.string.msg_ef9454bff0b4), style = MaterialTheme.typography.labelLarge, color = colors.primary)
                         Text("MIT License", style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.SemiBold)
-                        Text("本项目源码采用 MIT 开源协议。完整许可及版权声明可离线查看。",
+                        Text(appText(R.string.msg_64328cd1a729),
                             color = colors.onSurfaceVariant)
-                        TextButton(onClick = { licenseOpen = true }) { Text("阅读完整协议") }
+                        TextButton(onClick = { licenseOpen = true }) { Text(appText(R.string.msg_64f7d3d535d8)) }
                     }
                 }
 
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("第三方组件", style = MaterialTheme.typography.titleMedium)
-                    Text("AndroidX / Jetpack Compose、Material Color Utilities、OkHttp、Gson、ZXing Embedded 和支付宝 Android SDK 等组件遵循各自的许可，详见仓库中的 THIRD_PARTY_NOTICES.md。",
+                    Text(appText(R.string.msg_788ef5156b41), style = MaterialTheme.typography.titleMedium)
+                    Text(appText(R.string.msg_76057ded0624),
                         style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
-                    TextButton(onClick = { colorLicenseOpen = true }) { Text("配色组件开源许可") }
+                    TextButton(onClick = { colorLicenseOpen = true }) { Text(appText(R.string.msg_1b205f76c96d)) }
                 }
-                Text("简洗是独立开源项目，与原服务平台无隶属关系。",
+                Text(appText(R.string.msg_13ee5f6fac47),
                     style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
         }
@@ -199,7 +202,7 @@ fun AboutScreen(onBack: () -> Unit) {
     if (donationOpen) DonationDialog(onClose = { donationOpen = false })
 
     if (documentOpen.isNotBlank()) UsageDocumentDialog(
-        title = if (documentOpen == "disclaimer") "免责声明" else "用户守则（用户协议）",
+        title = if (documentOpen == "disclaimer") appText(R.string.msg_280af617c87f) else appText(R.string.msg_15d8fa4535c2),
         content = if (documentOpen == "disclaimer") documents.disclaimer else documents.rules,
         onDismiss = { documentOpen = "" }
     )
@@ -214,7 +217,7 @@ fun AboutScreen(onBack: () -> Unit) {
                     Text(license, style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()))
                 }
-            }, confirmButton = { TextButton(onClick = { colorLicenseOpen = false }) { Text("完成") } })
+            }, confirmButton = { TextButton(onClick = { colorLicenseOpen = false }) { Text(appText(R.string.msg_c0b3fbff51cc)) } })
     }
 
     if (licenseOpen) {
@@ -230,7 +233,7 @@ fun AboutScreen(onBack: () -> Unit) {
                         modifier = Modifier.heightIn(max = 360.dp).verticalScroll(rememberScrollState()))
                 }
             },
-            confirmButton = { TextButton(onClick = { licenseOpen = false }) { Text("完成") } }
+            confirmButton = { TextButton(onClick = { licenseOpen = false }) { Text(appText(R.string.msg_c0b3fbff51cc)) } }
         )
     }
 }

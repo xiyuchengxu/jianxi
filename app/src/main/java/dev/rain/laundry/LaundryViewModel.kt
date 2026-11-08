@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.rain.laundry.core.*
 import dev.rain.laundry.data.*
+import dev.rain.laundry.notifications.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -19,6 +20,8 @@ data class UiState(
     val mode: WashMode? = null, val quote: Quote? = null, val methods: List<PayRoute> = emptyList(),
     val payMethod: PayRoute? = null, val order: LocalOrder? = null,
     val orderHistory: List<LocalOrder> = emptyList(),
+    val orderFocusKey: String? = null, val orderOpenRequest: Long = 0,
+    val laundryProgressError: String? = null,
     val waterDevice: WaterDevice? = null, val waterOutlet: WaterOutlet? = null,
     val waterStatus: WaterStatus? = null, val waterSession: WaterSession? = null,
     val waterPayments: List<WaterPayRoute> = emptyList(), val waterPayment: WaterPayRoute? = null,
@@ -52,6 +55,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private var returnedWaterAuthorization: WaterAuthorizationLaunch? = null
     private var waterAuthorizationVerification: Job? = null
     private var waterRefreshJob: Job? = null
+    private var laundryRefreshJob: Job? = null
     private var foregroundRevision = 0L
     private var smsJob: Job? = null
     val paymentLaunches = launchChannel.receiveAsFlow()
@@ -68,6 +72,11 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         startPayment = ::payExisting,
         onBalancePending = { notice("余额付款结果尚未确认，请稍后刷新订单") }
     )
+    init {
+        if (state.value.loggedIn && (state.value.orderHistory + listOfNotNull(state.value.order)).any {
+                !it.isWater && it.phase == OrderPhase.PAID })
+            LaundryNotificationScheduler.requestCheck(getApplication(), vault.owner())
+    }
     private fun restoreOrder(order: LocalOrder): LocalOrder =
         if (order.phase == OrderPhase.CREATING) order.copy(phase = OrderPhase.UNCONFIRMED) else order
     private fun unfinishedOrder(): LocalOrder? = state.value.order?.takeIf { !it.phase.finished }
@@ -81,6 +90,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             val updateCurrent = current == null || OrderHistory.sameOrder(current, order) ||
                 (current.phase.finished && order.createdAt >= current.createdAt)
             state.copy(order = if (updateCurrent) order else current, orderHistory = history)
+        }
+        if (!order.isWater && order.phase == OrderPhase.PAID) {
+            LaundryNotificationScheduler.requestCheck(getApplication(), order.owner)
         }
     }
     /** Viewing history never changes the workflow pointer. Only an explicit action may promote a record. */
@@ -111,6 +123,43 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     }
     fun clearMessage() { _state.update { it.copy(message = null) } }
     fun notice(message: String) { _state.update { it.copy(message = message) } }
+    fun openOrderNotification(owner: String, key: String) {
+        if (!state.value.loggedIn || vault.owner() != owner) {
+            notice("请登录订单所属账号后查看洗衣进度"); return
+        }
+        val record = (vault.orders() + listOfNotNull(vault.order())).firstOrNull { OrderHistory.key(it) == key }
+        _state.update { it.copy(page = Page.ORDERS, orderFocusKey = record?.let(OrderHistory::key),
+            orderOpenRequest = it.orderOpenRequest + 1,
+            message = if (record == null) "这笔订单已不在最近 20 条记录中" else null) }
+    }
+    /** Only read queries; no busy banner, scroll reset, payment, or machine commands. */
+    fun refreshLaundryProgress() {
+        if (state.value.busy || !state.value.loggedIn || laundryRefreshJob?.isActive == true) return
+        val owner = vault.owner().takeIf { it.isNotBlank() } ?: return
+        val revision = foregroundRevision
+        val token = vault.token()
+        fun current() = state.value.loggedIn && vault.owner() == owner && vault.token() == token &&
+            revision == foregroundRevision && !state.value.busy
+        laundryRefreshJob = viewModelScope.launch {
+            val result = try { LaundryMonitorEngine.check(getApplication(), owner, api, ::current) }
+            catch (cancelled: CancellationException) { throw cancelled }
+            catch (_: SessionExpired) {
+                if (current()) {
+                    clearWaterAuthorization(); LaundryNotificationScheduler.cancelAll(getApplication())
+                    vault.logout(); _state.value = UiState(message = "登录已过期，请重新登录")
+                }
+                return@launch
+            }
+            if (!current()) return@launch
+            _state.update { it.copy(order = vault.order()?.let(::restoreOrder),
+                orderHistory = vault.orders().map(::restoreOrder),
+                laundryProgressError = if (result.retry) "洗衣进度暂未同步，将稍后重试" else null) }
+            result.nextCheckAtMs?.let { next ->
+                LaundryNotificationScheduler.requestCheck(getApplication(), owner,
+                    (next - System.currentTimeMillis()).coerceAtLeast(0))
+            }
+        }
+    }
     fun navigate(page: Page) {
         if (state.value.busy) return
         if (!state.value.waterAuthorizationPending && state.value.waterSession?.active != true &&
@@ -134,6 +183,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private fun work(progress: String, silent: Boolean = false, task: suspend () -> Unit) {
         if (state.value.busy) return
         foregroundRevision++
+        LaundryMonitorEngine.beginForeground()
         _state.update { it.copy(busy = true, progress = progress) }
         viewModelScope.launch {
             try { task() }
@@ -145,7 +195,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
                 is ClientError -> e.message.orEmpty()
                 else -> "暂时无法处理这份数据，请稍后重试"
             }; if (silent) _state.update { it.copy(waterUpdateError = message) } else notice(message) }
-            finally { _state.update { it.copy(busy = false, progress = "") } }
+            finally { _state.update { it.copy(busy = false, progress = "") }; LaundryMonitorEngine.endForeground() }
         }
     }
     fun sendCode(phone: String) {
@@ -170,7 +220,8 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
                 orderHistory = vault.orders().map(::restoreOrder), waterSession = water) }
         }
     }
-    fun logout() { if (!state.value.busy) { clearWaterAuthorization(); smsJob?.cancel(); vault.logout(); _state.value = UiState() } }
+    fun logout() { if (!state.value.busy) { clearWaterAuthorization(); smsJob?.cancel(); laundryRefreshJob?.cancel();
+        LaundryNotificationScheduler.cancelAll(getApplication()); vault.logout(); _state.value = UiState() } }
     fun scan(raw: String, laundryEnabled: Boolean = true, waterEnabled: Boolean = true) {
         work("正在识别设备") {
             when (val scanned = api.scanDevice(DeviceCodes.parse(raw))) {
@@ -517,8 +568,10 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         work("正在查询订单") { noticeOrderState(synchronizeOrderState(order)) }
     }
     private suspend fun synchronizeOrderState(order: LocalOrder): LocalOrder {
-        val current = OrderStates.apply(order, api.orderStatus(order))
+        val details = api.orderDetails(order)
+        val current = OrderStates.apply(order, details.status).copy(laundryProgress = details.laundryProgress)
         if (current != order) saveOrder(current)
+        LaundryMonitorEngine.observe(getApplication(), current)
         return current
     }
     private fun noticeOrderState(order: LocalOrder) = notice(when (order.phase) {

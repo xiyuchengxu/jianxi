@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="msg_001914d23f0c" formatted="false">"안개빛 파랑"</string>
+    <string name="msg_00612aad0812" formatted="false">"정수기에 이번 물 사용 중지를 요청하고 플랫폼 정산 청구서를 조회합니다. 기기에서 물 공급이 멈췄는지도 함께 확인해 주세요."</string>
+    <string name="msg_00d78bd5bca3" formatted="false">"주문 상세 접기"</string>
+    <string name="msg_0121f8244bea" formatted="false">"기기 기관 번호가 유효하지 않습니다. QR 코드를 다시 스캔해 기기를 인식해 주세요."</string>
+    <string name="msg_013ddbb797c5" formatted="false">"물 이용 요금 데이터가 비정상입니다. 기기를 새로고침해 주세요."</string>
+    <string name="msg_019293ad723c" formatted="false">"이 기기의 비밀번호 없는 결제 승인 요건을 확인하지 못했습니다."</string>
+    <string name="msg_01e7dcfb8bff" formatted="false">"결제가 확인되었습니다. 세탁기 작동 상태를 확인해 주세요."</string>
+    <string name="msg_029b46b17729" formatted="false">"결제 상태를 조회하는 중"</string>
+    <string name="msg_03dd0c88d8ac" formatted="false">"현재 색상 · 바탕화면 배경"</string>
+    <string name="msg_055ff46ac059" formatted="false">"이번 물 이용 상태가 비정상입니다. 새로고침하여 확인해 주세요."</string>
+    <string name="msg_065e184d07a3" formatted="false">"주문 결과 확인 대기 중"</string>
+    <string name="msg_069619c91b97" formatted="false">"이 기기에 미결제 주문이 있습니다. 먼저 원래 앱에서 처리해 주세요."</string>
+    <string name="msg_06e43ba08011" formatted="false">"현재 계정에서 물을 이용 중입니다. 새로고침하여 세션을 복원해 주세요."</string>
+    <string name="msg_073fcb8f4117" formatted="false">"결제 전 기기 위치 확인을 위해 위치 권한이 필요합니다."</string>
+    <string name="msg_07a3c2feadd0" formatted="false">"앞에 있는 정수기의 출수구를 선택해 주세요."</string>
+    <string name="msg_07b375304298" formatted="false">"이 주문은 현재 계정의 것이 아닙니다."</string>
+    <string name="msg_083c5e6e61a7" formatted="false">"물 이용 상태 새로고침"</string>
+    <string name="msg_0841fa3cbaff" formatted="false">"기기에서 출수를 조작하고, 떠나기 전에 중지되었는지 확인해 주세요."</string>
+    <string name="msg_088dce96a836" formatted="false">"좌우로 밀어 페이지 넘기기"</string>
+    <string name="msg_0910213a8f05" formatted="false">"견적 항목이 선택한 세탁 모드와 일치하지 않습니다."</string>
+    <string name="msg_0951f3233237">"%1$s위안/%2$s"</string>
+    <string name="msg_096a1a09a313" formatted="false">"이 기기의 알리페이 비밀번호 없는 결제 승인을 먼저 완료해야 합니다. 알리페이를 여는 중입니다."</string>
+    <string name="msg_09b6b52a8ffc" formatted="false">"물 이용을 시작할까요?"</string>
+    <string name="msg_0b0aa02f64fd" formatted="false">"오늘도 깨끗하게."</string>
+    <string name="msg_0b29f93e5076" formatted="false">"8. 책임 범위와 합법적 권리\n관련 법률이 허용하는 범위에서 이 소프트웨어는 현재 상태 그대로 제공되며, 명시된 설명을 넘어서는 보증을 하지 않습니다. 사용자는 스스로 행한 권한 초과, 위법, 타인의 권익 침해 또는 플랫폼 규칙 위반 행위에 대해 해당 책임을 부담해야 합니다. 이 고지는 법률상 면제할 수 없는 책임을 배제하거나 제한하지 않으며, 사용자가 법률에 따라 누리는 권리를 박탈하지 않고, 이미 합법적으로 취득한 오픈소스 라이선스 권리를 취소하지 않습니다."</string>
+    <string name="msg_0b2f1558771b">"%1$s번째 이미지를 앞으로 이동"</string>
+    <string name="msg_0b6e2d0e2cdc">"%1$s 종료 예정 · 남은 시간은 참고용입니다"</string>
+    <string name="msg_0b8351751e94" formatted="false">"바탕화면 배경에서 테마를 생성합니다. 끄면 수동 색상 팔레트로 돌아갑니다."</string>
+    <string name="msg_0baa295b60a1" formatted="false">"결제 결과가 아직 확인되지 않았습니다. 먼저 주문 상태를 조회해 주세요."</string>
+    <string name="msg_0c1af104f3dc" formatted="false">"물 이용 상태 조회 실패"</string>
+    <string name="msg_0d2366e40efe" formatted="false">"주문을 조회하는 중"</string>
+    <string name="msg_0d262993e8d5" formatted="false">"가격이 업데이트되었습니다. 다시 확인해 주세요."</string>
+    <string name="msg_0dc111847321" formatted="false">"사용자 지정 이미지"</string>
+    <string name="msg_0dcc32f22104" formatted="false">"결제 상태 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_0e5d45e9456f" formatted="false">"따뜻한 물 많이 드세요~"</string>
+    <string name="msg_0ee6972c135c" formatted="false">"물 이용 청구서가 생성되지 않았습니다. 물 이용 페이지로 돌아가 기기 상태를 확인해 주세요."</string>
+    <string name="msg_0eea89fa9937" formatted="false">"세탁 기능이 꺼져 있습니다. 먼저 설정에서 켜 주세요."</string>
+    <string name="msg_0f4d2cd6e467" formatted="false">"이번 물 이용이 끝났고 청구서가 완료되었습니다."</string>
+    <string name="msg_0f7345aa9d28" formatted="false">"주문 상태가 아직 확인되지 않았습니다. 먼저 주문을 확인해 주세요."</string>
+    <string name="msg_0fee128df8c6" formatted="false">"이번 요청이 플랫폼에서 거부되었습니다. 잠시 후 다시 시도해 주세요. (403)"</string>
+    <string name="msg_0ffd6956dde5" formatted="false">"이 기기는 먼저 이용 후 결제 방식을 사용하며, 현재 버전에서는 지원되지 않습니다."</string>
+    <string name="msg_10085fb8523f" formatted="false">"로컬 주문을 읽을 수 없습니다. 잠시 후 다시 시도해 주세요."</string>
+    <string name="msg_109b1efb4f46" formatted="false">"주문하지 못했습니다"</string>
+    <string name="msg_119a288b74a7" formatted="false">"이 주문은 최근 20건 기록에 없습니다."</string>
+    <string name="msg_12052867974c" formatted="false">"물 이용을 종료하는 중"</string>
+    <string name="msg_1213ea2e1fb5" formatted="false">"로그인이 만료되었습니다"</string>
+    <string name="msg_12515926f77d" formatted="false">"이미지를 가져오지 못했습니다"</string>
+    <string name="msg_1354a76ef3f2" formatted="false">"견적에 세탁 항목이 없습니다."</string>
+    <string name="msg_13758a0f2e76" formatted="false">"먼저 이번 물 이용을 종료하고 확인한 뒤 새 주문을 생성해 주세요."</string>
+    <string name="msg_138a7e077b76" formatted="false">"솔빛 초록"</string>
+    <string name="msg_13c1f4bc5d91" formatted="false">"배경 색상을 가져오지 못해 임시로 시스템 색상을 사용합니다."</string>
+    <string name="msg_13c5cfb46dc9" formatted="false">"플랫폼이 세탁 종료를 확인하면 알려 드립니다. 남은 시간은 참고용이며, 절전 설정이나 네트워크 지연으로 백그라운드 알림이 늦을 수 있습니다."</string>
+    <string name="msg_13cc658e15e3" formatted="false">"알리페이 결제 상품 코드 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_13cd457fb578" formatted="false">"4. 원래 서비스 규칙 준수\n사용자는 자신이 계정, 기기 서비스 및 결제 조작에 대한 합법적 권한을 가지고 있는지 직접 확인해야 하며, 관련 법률, 원래 플랫폼의 유효한 규칙, 학교 또는 시설의 관리 요건을 준수해야 합니다. 권한이 없거나 관련 규칙이 이러한 사용을 허용하지 않는 경우 사용을 중단해야 합니다. 이 소프트웨어는 원래 플랫폼이 사용자에게 부여한 권한을 대체할 수 없으며, 인증, 리스크 관리 또는 결제 의무를 회피하는 데 사용되어서는 안 됩니다."</string>
+    <string name="msg_13dabacb2def" formatted="false">"물 이용 청구서 결제 결과가 아직 확인되지 않았습니다. 먼저 주문 상태를 새로고침해 주세요."</string>
+    <string name="msg_13ee5f6fac47" formatted="false">"Jianxi는 독립적인 오픈소스 프로젝트이며 원래 서비스 플랫폼과 소속 관계가 없습니다."</string>
+    <string name="msg_15970fc99c94" formatted="false">"확인 문구: 면책 고지를 읽었으며 사용자 약관을 준수할 것을 약속합니다."</string>
+    <string name="msg_15d2dda731b4" formatted="false">"기기가 물 이용을 종료하기를 기다리는 중"</string>
+    <string name="msg_15d8fa4535c2" formatted="false">"사용자 수칙(사용자 약관)"</string>
+    <string name="msg_15dee3b19c6e" formatted="false">"현재 알리페이에서 이 승인을 열 수 없습니다. 알리페이를 업데이트한 후 다시 시도해 주세요."</string>
+    <string name="msg_16b6d5550fa5" formatted="false">"이것이 회원님의 물 이용 세션인지 아직 확인되지 않았습니다. 먼저 상태를 새로고침해 주세요."</string>
+    <string name="msg_16de867a06ae">"¥%1$s 결제 확인"</string>
+    <string name="msg_16e194579f97" formatted="false">"주문 상태 형식이 아직 지원되지 않습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_17ec083a8fcc" formatted="false">"알리페이 비밀번호 없는 결제 계약 상태가 아직 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_18e6bb3f9968" formatted="false">"SMS 인증번호"</string>
+    <string name="msg_18fa003268e3" formatted="false">"물 이용 결제 방식 확인 응답 형식이 아직 지원되지 않습니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_1ad91bc551f7">"현재 계정의 최근 주문 %1$s건이 이 기기에 보관되며, 세탁과 물 이용을 합산해 월요일부터 일요일까지 분류됩니다."</string>
+    <string name="msg_1b205f76c96d" formatted="false">"색상 구성 요소 오픈소스 라이선스"</string>
+    <string name="msg_1bd91a7d0c53" formatted="false">"저장됨"</string>
+    <string name="msg_1c8a94e1b712" formatted="false">"세탁기 또는 정수기 QR 코드의 전체 내용을 붙여넣어 주세요."</string>
+    <string name="msg_1cecf188f254" formatted="false">"배경 색상이 적용되었습니다."</string>
+    <string name="msg_1d1d1e02bdf7" formatted="false">"결제가 아직 확인되지 않았습니다. 잠시 후 다시 조회할 수 있습니다."</string>
+    <string name="msg_1d4fe6ba00ce" formatted="false">"하단 바에 현재 표시된 페이지 간 전환"</string>
+    <string name="msg_1e027e8f269f" formatted="false">"이 기기의 비밀번호 없는 결제 승인 요건이 아직 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_1e2df9c3075a" formatted="false">"로그인"</string>
+    <string name="msg_1e75a9bc677c" formatted="false">"주문 시간"</string>
+    <string name="msg_1ea9145b3d9d" formatted="false">"잔액 결제가 완료되지 않았습니다"</string>
+    <string name="scanner_unsupported_hint" formatted="false">"이 카메라는 노출 낮추기를 지원하지 않지만 스캔은 가능합니다. 각도를 바꾸거나 기기 화면 밝기를 낮춰 주세요."</string>
+    <string name="msg_1f405289ff28">"청구서 %1$s건"</string>
+    <string name="msg_1f407ac21f14" formatted="false">"5. 서비스 및 결제 위험\n네트워크, 플랫폼 인터페이스, 시스템 호환성, 기기 상태, 운영사 점검 등의 변화로 로그인 실패, 견적 변경, 결제 상태 지연 또는 기기 미작동이 발생할 수 있습니다. 작성자는 서비스가 영구적으로 이용 가능하거나 오류가 전혀 없거나 기기가 반드시 작동할 것을 보증하지 않습니다. 결제 전에 기기, 항목, 금액 및 결제 채널을 확인하고, 결과가 비정상이면 먼저 주문을 확인하거나 운영사에 문의하여 중복 결제를 피해 주세요. 거래 이행, 환불 및 분쟁 처리는 관련 서비스 제공자의 유효한 규칙과 관련 법률을 따릅니다."</string>
+    <string name="msg_1fd81704a521">"%1$s번째 이미지 삭제"</string>
+    <string name="msg_2007f308d3da" formatted="false">"시작 명령 조회 실패"</string>
+    <string name="msg_2050c192dabd" formatted="false">"세탁기의 QR 코드를 스캔하고,\n모드를 선택한 후 결제해 주세요."</string>
+    <string name="msg_208e9e1652bf" formatted="false">"물 이용 청구서가 결제되었습니다"</string>
+    <string name="msg_217cfe7db1e3" formatted="false">"시스템 설정 따르기"</string>
+    <string name="msg_2198a0a4adaf" formatted="false">"이 정수기는 현재 사용 가능한 잔액 또는 알리페이 결제 채널을 제공하지 않습니다. 원래 앱에서 결제 방식을 확인해 주세요."</string>
+    <string name="msg_21b69b59b6c5" formatted="false">"이 기기의 비밀번호 없는 결제 승인 요건 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_21d35783ad6d" formatted="false">"주문 응답 내용이 불완전합니다. 주문을 확인한 후 계속해 주세요."</string>
+    <string name="msg_21f2cb8d89a7" formatted="false">"플랫폼에서 물 이용 청구서 환불을 처리 중입니다. 원래 앱에서 진행 상황을 확인해 주세요."</string>
+    <string name="msg_225342a2ef09" formatted="false">"GitHub · 프로젝트 소스 코드"</string>
+    <string name="msg_22739db68677" formatted="false">"출수구가 비어 있습니다. 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_228cd0b0f24b" formatted="false">"일시적으로 확인할 수 없습니다"</string>
+    <string name="msg_22c8f9f73dc0" formatted="false">"이 휴대폰 번호로 제가 보유한 기존 胖乖生活 계정에 로그인하는 데 동의합니다."</string>
+    <string name="msg_23a79ee9fdd7">"요청 실패(%1$s)"</string>
+    <string name="msg_24634c517963" formatted="false">"정수기 상태 또는 요금 기준이 업데이트되었습니다. QR 코드를 다시 스캔해 확인해 주세요."</string>
+    <string name="msg_247ab5060860" formatted="false">"어두운 테마에서만 적용됩니다"</string>
+    <string name="msg_247ca01ae280" formatted="false">"알림 설정"</string>
+    <string name="msg_2490b9b14fe5" formatted="false">"앱 표시 언어 선택"</string>
+    <string name="msg_24c899792f14" formatted="false">"결제 진행 상황 보기"</string>
+    <string name="msg_24e93eeda994" formatted="false">"먼저 휴대폰의 위치 서비스를 켜 주세요"</string>
+    <string name="msg_276a8bc45803" formatted="false">"알리페이"</string>
+    <string name="msg_280af617c87f" formatted="false">"면책 고지"</string>
+    <string name="msg_298186c3f519" formatted="false">"이미지를 가져오지 못했습니다. 유효한 이미지를 선택해 다시 시도해 주세요. 기존 이미지는 유지됩니다."</string>
+    <string name="msg_2a28f5ad7c38" formatted="false">"물 이용 청구서 결제 채널 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_2a4973a587ae" formatted="false">"로그인이 만료되었습니다"</string>
+    <string name="msg_2b207da009d1" formatted="false">"Jianxi"</string>
+    <string name="msg_2c1288e1d9f3" formatted="false">"인증번호가 전송되었습니다"</string>
+    <string name="msg_2c47626fe8e8" formatted="false">"플랫폼에서 환불을 처리 중입니다. 원래 앱에서 진행 상황을 확인해 주세요."</string>
+    <string name="msg_2c581506e729" formatted="false">"정수기를 시작하는 중"</string>
+    <string name="msg_2c5b2c20873e" formatted="false">"먼저 알리페이에서 먼저 이용 후 결제(비밀번호 없는 결제) 계약을 완료해 주세요."</string>
+    <string name="msg_2c5f66a724fd" formatted="false">"물 이용 청구서가 환불되었습니다"</string>
+    <string name="msg_2cbcfc25120f" formatted="false">"물 이용 시작 응답에 명령 번호가 없습니다. 상태를 새로고침해 주세요."</string>
+    <string name="msg_2cc8c71e5e19" formatted="false">"정수기 시작 실패"</string>
+    <string name="msg_2cd0f3be8738" formatted="false">"취소"</string>
+    <string name="msg_2d0222b61b9a" formatted="false">"QR 코드 내용"</string>
+    <string name="msg_2d264ece4497" formatted="false">"스플래시 설정 접기"</string>
+    <string name="msg_2d65f1558d6f" formatted="false">"정수기 상세 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_2dbf7aacc433" formatted="false">"세탁 종료 알림이 켜졌습니다"</string>
+    <string name="msg_2dda33f41051" formatted="false">"스플래시 이미지를 저장할 수 없습니다"</string>
+    <string name="msg_2ded5acf5f36" formatted="false">"물 이용 중 · 확인 또는 종료"</string>
+    <string name="msg_2e1f7be3bcfa" formatted="false">"결제가 취소되었습니다. 주문에서 결제를 계속할 수 있습니다."</string>
+    <string name="msg_3080976c784d" formatted="false">"알리페이에서 확인하고 계약을 완료해 주세요. 돌아오면 이 기기의 계약 요건을 다시 조회하며, 출수는 자동으로 시작되지 않습니다."</string>
+    <string name="msg_3098a02a0c34" formatted="false">"플랫폼에서 물 이용 청구서 환불 완료를 표시했습니다. 입금 여부를 확인해 주세요."</string>
+    <string name="msg_30b6558e1ec2" formatted="false">"탭 애니메이션"</string>
+    <string name="msg_321554ba3c42" formatted="false">"이 기기에서는 본체의 중지 버튼으로 출수를 끝낸 후 상태를 새로고침해 주세요."</string>
+    <string name="msg_323af04842ad" formatted="false">"길게 누르거나 드래그해 액체 같은 변형을 느껴 보세요. 탭하면 탄성 있게 전환됩니다."</string>
+    <string name="msg_325527570302" formatted="false">"알리페이 주문 내용을 확인할 수 없습니다"</string>
+    <string name="msg_33a072bb43bc" formatted="false">"플랫폼에서 여전히 이 기기에 비밀번호 없는 결제 승인이 필요하다고 안내합니다. 잠시 후 확인해 주세요. 물 이용을 확인하면 알리페이가 열립니다."</string>
+    <string name="msg_33cdc95be001" formatted="false">"2. 본인 계정과 합법적 권한\n본인 또는 합법적으로 권한을 받은 계정, 기기 서비스 및 주문만 조작해야 하며, 신원을 도용하거나 타인의 인증번호를 빌리거나 토큰을 탈취하거나 결제 계정을 무단 사용해서는 안 됩니다. 권한 없이 타인의 계정, 주문, 기기 사용 정보 및 개인정보를 조회, 저장 또는 유포해서는 안 됩니다."</string>
+    <string name="msg_33df16b4afab" formatted="false">"확인 대기"</string>
+    <string name="msg_3465dd4a34e0">"%1$s번째 이미지를 뒤로 이동"</string>
+    <string name="msg_34aa2e852e28" formatted="false">"로그인 응답에 세션 정보가 없습니다"</string>
+    <string name="msg_35cf44ac0fcb" formatted="false">"1회"</string>
+    <string name="scanner_waiting" formatted="false">"카메라를 여는 중…"</string>
+    <string name="msg_37bacd3c428f" formatted="false">"홈 문구 저장"</string>
+    <string name="msg_37e717d5998d" formatted="false">"부드럽게"</string>
+    <string name="msg_37f64a4b3e45" formatted="false">"문구"</string>
+    <string name="msg_381f5b6b8dba" formatted="false">"이 정수기는 블루투스 연결이 필요합니다. 먼저 원래 앱에서 물을 받아 주세요."</string>
+    <string name="msg_3834f9cf9f9b" formatted="false">"알림 켜기"</string>
+    <string name="msg_3987423266ad" formatted="false">"8. 사칭 요금 징수 및 오해 유발 홍보 금지\n작성자, 운영사 또는 관리자를 사칭하여 존재하지 않는 권한을 판매하거나, 세탁 결과를 보장하거나, 특별한 권익을 약속하거나, 송금을 유도하거나, 기타 사기 행위를 해서는 안 됩니다. 작성자가 제공하는 클라이언트는 무료이며, 자발적 후원은 기능과 정상적인 사용에 영향을 주지 않습니다. 합법적으로 파생된 프로젝트의 권리와 의무는 여전히 해당 라이선스에 따라 처리되며, 홍보 시 작성자 또는 원래 플랫폼의 보증을 받은 것으로 대중을 오도해서는 안 됩니다."</string>
+    <string name="msg_3988d0190748" formatted="false">"물 이용 종료가 확인되지 않았습니다"</string>
+    <string name="msg_399477e1d8d5">"%1$s: %2$s(오류 코드 %3$s)"</string>
+    <string name="msg_3a153dab831f" formatted="false">"기기 번호 형식이 비정상입니다"</string>
+    <string name="msg_3a65247b5242" formatted="false">"10. 이상 발견 시 즉시 중단\n가격, 주문, 결제 또는 기기 상태에 이상이 있으면 먼저 반복 조작을 중단하고, 주문 조회, 원래 플랫폼 또는 운영사를 통해 확인하며, 피드백 그룹에 민감 정보를 제거한 정보를 제공해야 합니다. 이상을 이용해 계속 이익을 얻거나, 임의로 테스트 범위를 확대하거나, 타인의 민감한 데이터를 유포해서는 안 됩니다. 원래 플랫폼 및 운영사와의 업무 분쟁은 해당 공식 채널을 통해 처리해야 합니다."</string>
+    <string name="msg_3a8a7bac9348" formatted="false">"물 이용 결제 방식 선택 실패"</string>
+    <string name="msg_3b91d186d44e" formatted="false">"인증번호 받기"</string>
+    <string name="msg_3cb723dd618e" formatted="false">"물 이용 청구서 환불 처리 중"</string>
+    <string name="msg_3cfa1efa202f" formatted="false">"먼저 사용 약관을 읽고 확인해 주세요."</string>
+    <string name="msg_3d3517709575" formatted="false">"승인 요청이 만료되었습니다. 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_3d3fce810de2" formatted="false">"처음 사용하는 경우 아래 내용을 모두 읽고 확인 문구를 입력한 후 계속해 주세요."</string>
+    <string name="msg_3d5436ea23d2" formatted="false">"주문"</string>
+    <string name="msg_3d746aa6be41" formatted="false">"견적에 선택하지 않은 할인이 추가되었습니다. 먼저 확인해 주세요."</string>
+    <string name="msg_3d872b191e4e" formatted="false">"널값"</string>
+    <string name="msg_3e0d676d2d85" formatted="false">"홈"</string>
+    <string name="msg_3eb2e1441f78" formatted="false">"물 이용 청구서가 생성되지 않았습니다"</string>
+    <string name="msg_3ecd8517b211" formatted="false">"세탁 금액 확인 실패"</string>
+    <string name="msg_3ed8f3a53bb1" formatted="false">"잔액 결제를 제출하는 중"</string>
+    <string name="msg_3f2191b43607" formatted="false">"페이지 전환"</string>
+    <string name="msg_3fd47edce45b" formatted="false">"닫기"</string>
+    <string name="msg_3fe8a0ad2114" formatted="false">"2. 클라이언트 완전 무료\n작성자가 배포하는 Jianxi 클라이언트는 완전히 무료이며, 소프트웨어 사용료, 회원비, 구독료 또는 기능 해제 비용을 받지 않습니다. 자발적 후원은 사용 조건이 아니며, 세탁 서비스나 추가 권익을 구매하는 것이 아닙니다. 세탁 항목, 계정 잔액 및 제3자 결제 등 실제 서비스 비용은 운영사와 결제 채널이 표시하는 합법적 주문을 기준으로 합니다. '소프트웨어 무료'는 세탁 서비스가 무료라는 뜻이 아닙니다. 다른 채널에서 받는 비용은 작성자의 소프트웨어 이용료가 아닙니다."</string>
+    <string name="msg_40368cbb8f34" formatted="false">"서버가 내용을 반환하지 않았습니다"</string>
+    <string name="msg_408b4f2cabcf" formatted="false">"물 이용을 시작하기 전 기기 위치 확인을 위해 위치 권한이 필요합니다."</string>
+    <string name="msg_409b911feaf5" formatted="false">"현재 진행 중인 물 이용 기록이 없습니다"</string>
+    <string name="msg_409c4e104012" formatted="false">"세탁이 끝났습니다"</string>
+    <string name="msg_40b0aade58d7" formatted="false">"동의하지 않고 종료"</string>
+    <string name="msg_40ca838c072f" formatted="false">"비우거나 공백만 남긴 채 저장하면 기본 문구로 복원됩니다."</string>
+    <string name="scanner_title" formatted="false">"세탁기 또는 정수기 QR 코드 스캔"</string>
+    <string name="msg_4167b9536d27" formatted="false">"먼저 기기를 확인하고 상태를 새로고침해 주세요. 결과가 확인되지 않으면 시작 명령을 다시 보내지 않습니다."</string>
+    <string name="msg_4189cc4d71fe" formatted="false">"면책 고지를 읽었으며 사용자 약관을 준수할 것을 약속합니다"</string>
+    <string name="msg_41b8dd731e63" formatted="false">"물 이용 청구서 상세가 아직 확인되지 않았습니다"</string>
+    <string name="msg_41c71d37f309">"홈 문구 입력란, 최대 %1$s자"</string>
+    <string name="scanner_normal" formatted="false">"일반 코드"</string>
+    <string name="msg_43a112a16373" formatted="false">"플랫폼은 기존 알리페이 승인에 따라 자동으로 결제할 수 있습니다. 미결제 청구서는 주문에서 계속 결제할 수 있습니다."</string>
+    <string name="msg_44fb814b166e" formatted="false">"테마 모드"</string>
+    <string name="msg_453a3ff82d81">"알리페이 승인 상태가 아직 확인되지 않았습니다: %1$s. 새로고침한 후 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_458e4ccaafb1" formatted="false">"배경에서 색상 추출"</string>
+    <string name="msg_46b676f80bdc" formatted="false">"먼저 현재 미완료 주문을 처리해 주세요"</string>
+    <string name="msg_46bad67d0636" formatted="false">"어두운 화면"</string>
+    <string name="msg_46e651c95c83" formatted="false">"그룹 번호 복사"</string>
+    <string name="msg_4741fddebad0" formatted="false">"언어 변경은 즉시 적용되며 현재 계정과 주문은 유지됩니다."</string>
+    <string name="msg_475091a94a64">"%1$s · %2$s장"</string>
+    <string name="msg_47528de26047" formatted="false">"물 이용 상태 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_478a69f47b5e">"%1$s건"</string>
+    <string name="msg_47a270081ab2" formatted="false">"모드"</string>
+    <string name="msg_484d55613910" formatted="false">"없음"</string>
+    <string name="msg_4948596875a4" formatted="false">"확인 후 들어가기"</string>
+    <string name="msg_498e1d59b4d7" formatted="false">"종료"</string>
+    <string name="msg_49e131043706" formatted="false">"절대 누르지 마세요"</string>
+    <string name="scanner_limit_hint" formatted="false">"카메라 밝기 감소 한계에 도달했습니다. 각도를 조금 바꾸거나 기기 화면 밝기를 낮춰 주세요."</string>
+    <string name="msg_4a3a09acabd9" formatted="false">"먼저 로그인한 후 정수기를 사용해 주세요"</string>
+    <string name="msg_4b6ded8a7f18" formatted="false">"알림"</string>
+    <string name="msg_4b77024928a1" formatted="false">"이전 주문 결과가 확인되지 않았습니다. 먼저 원래 앱에서 주문을 확인해 주세요."</string>
+    <string name="msg_4c0130832ac1">"%1$s 배색"</string>
+    <string name="msg_4c4872c43ad4" formatted="false">"IMEI, SN 또는 NQT가 포함된 기기 QR 코드를 사용해 주세요"</string>
+    <string name="msg_4c5c6272eeb1" formatted="false">"물 이용 정산 청구서가 생성되었습니다. 계속 결제할 수 있으며, 원래 앱에서 이미 결제했다면 상태를 새로고침해 주세요."</string>
+    <string name="msg_4c8eb5753a4e" formatted="false">"물 이용 청구서 결과 확인 대기 중"</string>
+    <string name="msg_4c9c54b14027" formatted="false">"견적 주문 유형 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_4d29b30867a0" formatted="false">"색상 스타일"</string>
+    <string name="msg_4d506f9bd318" formatted="false">"견적 할인 데이터 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_4d6b40d659e5" formatted="false">"정수기"</string>
+    <string name="msg_4d84a10ccdee" formatted="false">"실제 금액은 플랫폼 정산 청구서를 기준으로 합니다"</string>
+    <string name="msg_4dca55259348" formatted="false">"정수기 다시 스캔"</string>
+    <string name="msg_4decd6c42efc" formatted="false">"플랫폼이 반환한 기기 승인 요건이 아직 확인되지 않았습니다"</string>
+    <string name="msg_50d9f748385e" formatted="false">"알리페이 계약 링크 형식이 아직 지원되지 않습니다. 胖乖生活에서 확인한 후 다시 시도해 주세요."</string>
+    <string name="msg_50dab49f5bab" formatted="false">"정수기를 현재 사용할 수 없습니다. 기기를 새로고침해 주세요."</string>
+    <string name="msg_5108d2fa0bac" formatted="false">"주문을 환불 처리 중입니다. 원래 앱에서 진행 상황을 확인해 주세요."</string>
+    <string name="msg_5124eb2d64ae" formatted="false">"세탁을 더 간편하게"</string>
+    <string name="msg_517e649764b1" formatted="false">"면책 고지 및 사용자 수칙"</string>
+    <string name="msg_5192dad3dee3" formatted="false">"예상 시간이 지났으며 플랫폼의 종료 확인을 기다리는 중"</string>
+    <string name="msg_51ebba34a15f" formatted="false">"이 주문을 취소할까요?"</string>
+    <string name="msg_51f0310e9d93" formatted="false">"주문이 완료되었습니다"</string>
+    <string name="msg_52420fc5327e" formatted="false">"세탁 진행 중 · 남은 시간 동기화 대기"</string>
+    <string name="msg_525fba38cbee" formatted="false">"이 물 이용 청구서는 현재 알리페이 1회 결제 채널을 제공하지 않습니다. 원래 앱에서 결제를 완료한 후 새로고침해 주세요."</string>
+    <string name="msg_539a04f13653">"이미지를 1장에서 %1$s장까지 선택해 주세요"</string>
+    <string name="msg_53da7f836186">"견적 할인 옵션 형식이 아직 지원되지 않습니다(%1$s: %2$s)."</string>
+    <string name="msg_53f92c063963" formatted="false">"객체"</string>
+    <string name="msg_542e9ae16505">"기본 문구: %1$s"</string>
+    <string name="msg_54744c98c1d5" formatted="false">"Jianxi는 독립 클라이언트입니다. SMS, 세탁 및 물 이용 서비스는 원래 플랫폼에서 제공합니다."</string>
+    <string name="msg_54c9beed47d8" formatted="false">"알리페이가 설치되어 있지 않습니다. 설치한 후 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_5509fe43c5e9" formatted="false">"물 이용 청구서 결제가 확인되었습니다"</string>
+    <string name="msg_55ae9cf11f5d" formatted="false">"이미지 한 장은 50 MB를 초과할 수 없습니다"</string>
+    <string name="msg_5642ebf21120" formatted="false">"환불 처리 중"</string>
+    <string name="msg_569001c47283">"이미지는 최대 %1$s장까지 사용할 수 있습니다. 선택 수량을 줄여 주세요."</string>
+    <string name="msg_56fe9a6dd1aa" formatted="false">"순수 검정 모드"</string>
+    <string name="msg_570d60206779" formatted="false">"저장 중"</string>
+    <string name="scanner_close" formatted="false">"뒤로"</string>
+    <string name="msg_580b9f75924d" formatted="false">"알리페이 먼저 이용 후 결제(비밀번호 없는 결제)"</string>
+    <string name="msg_583465e2a15d" formatted="false">"알리페이 스캔을 사용하거나 이미지를 저장한 후 인식해 주세요."</string>
+    <string name="msg_59124bffa4c0" formatted="false">"결제가 확인되어 기기 동기화를 요청했습니다. 기기가 시작되었는지 확인해 주세요."</string>
+    <string name="msg_5a1a388ad40c" formatted="false">"기기 상태 확인 실패"</string>
+    <string name="msg_5a2665f54deb">"%1$s  Jianxi"</string>
+    <string name="msg_5bcd70afb28d" formatted="false">"세탁을,\n더 간편하게."</string>
+    <string name="msg_5bdb9263878d" formatted="false">"물 이용 중"</string>
+    <string name="msg_5c22e569d581" formatted="false">"Jianxi 피드백 그룹"</string>
+    <string name="msg_5c55a67935af" formatted="false">"전체"</string>
+    <string name="msg_5d3f476b86fd" formatted="false">"세탁 주문이 없습니다"</string>
+    <string name="msg_5d5c5a7050f5" formatted="false">"처리 대기 주문"</string>
+    <string name="msg_5e29d121dda0" formatted="false">"수량"</string>
+    <string name="msg_5e7f0dec6dbe" formatted="false">"주문이 환불되었습니다. 입금 여부를 확인해 주세요."</string>
+    <string name="msg_5ecc022c1ca8" formatted="false">"현재 색상 · 색상 추출 중"</string>
+    <string name="msg_5ecee348e4b3">"%1$s. 기존 이미지는 유지됩니다."</string>
+    <string name="msg_5ee487891e56" formatted="false">"먼저 물 이용 메뉴를 켠 후 물 이용 기록을 확인해 주세요"</string>
+    <string name="msg_5f386787584a" formatted="false">"물 이용이 끝났으며 청구서를 확인하는 중"</string>
+    <string name="msg_5f63b1959faf">"하단 바에 %1$s 메뉴 표시"</string>
+    <string name="msg_60404752f27e" formatted="false">"선명하게"</string>
+    <string name="msg_606b515644d2" formatted="false">"결제 금액이 확인 금액과 일치하지 않습니다"</string>
+    <string name="msg_609c3bd23883" formatted="false">"부터 (단계별 요금)"</string>
+    <string name="msg_610654391ab3" formatted="false">"9. 건전한 피드백과 타인 보호\n피드백 그룹 가입과 피드백 제공은 모두 자발적입니다. 타인을 존중하고 문제를 객관적으로 설명하며, 도배, 괴롭힘, 욕설, 위법 콘텐츠 게시 또는 확인되지 않은 개인 비난을 유포해서는 안 됩니다. 스크린샷, 로그 또는 QR 코드를 제출하기 전에 민감 정보를 제거하고, 어떤 그룹 구성원에게도 SMS 인증번호, 토큰, 결제 비밀번호 또는 계정을 통제할 수 있는 기타 정보를 제공해서는 안 됩니다."</string>
+    <string name="msg_6132aaeef659" formatted="false">"주문이 시간 초과되었거나 만료되었습니다. 세탁으로 돌아가 모드를 다시 선택할 수 있습니다."</string>
+    <string name="scanner_brightness_accessibility" formatted="false">"화면 코드 밝기 낮추기"</string>
+    <string name="scanner_screen" formatted="false">"화면 코드"</string>
+    <string name="msg_61ec6116d1f5" formatted="false">"물 이용 기능이 꺼져 있습니다. 먼저 설정에서 켜 주세요."</string>
+    <string name="msg_62200c199491" formatted="false">"기기 사용 가능 상태 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_6253728e4fa9" formatted="false">"결제 계속"</string>
+    <string name="msg_62be6c883399" formatted="false">"세탁 모드 선택"</string>
+    <string name="msg_62fe8a9e39d9" formatted="false">"이미 물을 사용한 정산 청구서입니다. 금액을 확인한 후 결제해 주세요."</string>
+    <string name="msg_6303308108a0" formatted="false">"기본 마스코트를 교체할 사용자 이미지를 선택하세요. 여러 이미지는 선택한 순서대로 앱을 시작할 때마다 전환됩니다."</string>
+    <string name="msg_630e2611df30" formatted="false">"주문 취소 실패"</string>
+    <string name="msg_63109ff6f1bb" formatted="false">"스플래시 마스코트 표시"</string>
+    <string name="msg_6337e0867c00" formatted="false">"알리페이 결제"</string>
+    <string name="msg_634bf913de99" formatted="false">"서버 응답 형식이 변경되어 일시적으로 처리할 수 없습니다"</string>
+    <string name="msg_63ccc6721672" formatted="false">"세탁 종료 알림 켜기"</string>
+    <string name="msg_6415984a1009" formatted="false">"스캔"</string>
+    <string name="msg_64328cd1a729" formatted="false">"이 프로젝트의 소스 코드는 MIT 오픈소스 라이선스를 사용합니다. 전체 라이선스 및 저작권 고지는 오프라인에서 확인할 수 있습니다."</string>
+    <string name="msg_643afd7f49a2" formatted="false">"Jianxi 면책 고지\n버전: 1.0.0｜내부 버전: 0.1.16｜업데이트 날짜: 2026년 11월 3일"</string>
+    <string name="msg_64f7d3d535d8" formatted="false">"전체 약관 읽기"</string>
+    <string name="msg_65687255173c" formatted="false">"결제가 확인되었습니다"</string>
+    <string name="msg_657c50e3dcf5" formatted="false">"주문이 속한 계정으로 로그인한 후 조작해 주세요"</string>
+    <string name="msg_65d6f4d9ff07" formatted="false">"6. 무단 개조 및 사칭 배포 금지\n패키지를 변조하거나 다른 내용을 삽입하거나 기능을 변경한 후 원작자 신분을 사칭하거나, 여전히 작성자가 배포한 원본, 정식 버전 또는 원래 서비스 플랫폼의 공식 클라이언트라고 사용자를 오도해서는 안 됩니다. 작성자 명의로 악성 코드, 유료 기능, 광고 또는 허위 약속을 삽입해서는 안 됩니다. 오픈소스 라이선스에 따라 수정 및 재배포할 때는 해당 고지를 유지하고, 수정자, 변경 사항 및 원작자 버전이 아님을 명확히 표시해야 하며, 공식 배포인 것처럼 위장해서는 안 됩니다."</string>
+    <string name="msg_65e1d3722879" formatted="false">"현재 고정 하단 바를 사용하며 리퀴드 글라스를 적용하지 않습니다. 선택한 단계는 플로팅 하단 바로 전환한 후 적용됩니다."</string>
+    <string name="msg_660ffe0aeef5" formatted="false">"물 이용 정산 조회 실패"</string>
+    <string name="msg_661d94d78724" formatted="false">"결제 정보를 가져오는 중"</string>
+    <string name="scanner_normal_hint" formatted="false">"전체 QR 코드가 프레임 안에 들어오게 하세요. 화면이 너무 밝으면 ‘화면 코드’로 전환하세요."</string>
+    <string name="msg_670afc87ff0c" formatted="false">"3. 서비스 및 결제 규칙 준수\n운영사, 학교 및 시설의 유효한 규정에 따라 세탁 기기를 사용하고, 세탁물, 기기, 항목 및 금액을 확인한 후 결제해야 합니다. 요금을 회피하거나 할인 또는 결제 결과를 위조하거나 비정상적인 권익을 얻기 위해 요청을 반복해서는 안 되며, 인터페이스 차이를 이용해 정당한 사용 제한을 우회해서는 안 됩니다. 상태가 불명확하면 먼저 주문을 확인하고, 무분별하게 주문이나 결제를 반복해서는 안 됩니다."</string>
+    <string name="msg_67105fbcc14e" formatted="false">"주문이 속한 계정으로 로그인한 후 세탁 진행 상황을 확인해 주세요"</string>
+    <string name="scanner_screen_hint" formatted="false">"QR 코드 무늬가 선명해질 때까지 밝기를 천천히 조절하세요. 조금 멀리 두면 초점을 맞추는 데 도움이 됩니다."</string>
+    <string name="msg_685bb17fdb2b" formatted="false">"배열"</string>
+    <string name="msg_694111630619" formatted="false">"기기 정보가 불완전합니다. QR 코드를 다시 스캔해 확인해 주세요."</string>
+    <string name="msg_6978239af3fb">"기본 %1$s ms, 범위 %2$s–%3$s ms"</string>
+    <string name="msg_698b0d6c12a4" formatted="false">"확인 문구 확인"</string>
+    <string name="msg_69ca3b6b5f60" formatted="false">"정수기에 현재 사용 가능한 출수구가 없습니다"</string>
+    <string name="msg_6aacc960bae8" formatted="false">"주문 상세 번호가 일치하지 않습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_6acfa1db6a62" formatted="false">"세탁기"</string>
+    <string name="msg_6b1933e75c74" formatted="false">"1회 결제"</string>
+    <string name="msg_6b30d72d0686" formatted="false">"선택한 파일을 이미지로 읽을 수 없습니다"</string>
+    <string name="msg_6b59ed9d733e" formatted="false">"진행 중인 물 이용 기록 보기"</string>
+    <string name="msg_6bdb4435095e" formatted="false">"저장 중…"</string>
+    <string name="msg_6be5a3ca9454" formatted="false">"물 이용 청구서가 취소되었습니다. 플랫폼 기록을 기준으로 해 주세요."</string>
+    <string name="msg_6bea77acefb3" formatted="false">"표준"</string>
+    <string name="msg_6c3a3a160315" formatted="false">"스플래시 이미지 폴더를 만들 수 없습니다"</string>
+    <string name="msg_6c61dc3a5f3d" formatted="false">"금액 동기화 대기"</string>
+    <string name="msg_6c6594023f60" formatted="false">"인증번호를 보내는 중"</string>
+    <string name="msg_6cdb2ed0c44e" formatted="false">"부드러운 프로스트 글라스, 은은한 굴절과 변형"</string>
+    <string name="msg_6ce4fd181551" formatted="false">"물 이용 종료 확인"</string>
+    <string name="msg_6d1262e5d2e0" formatted="false">"플랫폼이 반환한 정산 금액"</string>
+    <string name="msg_6d1c3af7a838" formatted="false">"물 이용 상태를 일시적으로 새로고침할 수 없습니다. 잠시 후 다시 시도해 주세요."</string>
+    <string name="msg_6d41d86f222f" formatted="false">"이 정수기는 현재 유니온페이 퀵패스 비밀번호 없는 결제 등 지원되지 않는 채널만 제공합니다. 먼저 원래 앱을 사용해 주세요."</string>
+    <string name="msg_6ea618c519a2" formatted="false">"확인 문구 입력"</string>
+    <string name="msg_6edae041a323" formatted="false">"물 이용"</string>
+    <string name="msg_6f10af9918f8" formatted="false">"기본 이미지"</string>
+    <string name="msg_6f2d708abb24" formatted="false">"물 이용 청구서 상태가 아직 지원되지 않습니다."</string>
+    <string name="msg_6f52cc94db65" formatted="false">"휴대폰 번호"</string>
+    <string name="msg_6faf7537a441" formatted="false">"현재 반환된 내용은 알리페이 1회 결제가 아닙니다"</string>
+    <string name="msg_7017c40cec9b" formatted="false">"4. 네트워크 및 데이터 공격·훼손 금지\n이 소프트웨어, 소스 코드 또는 파생 프로그램을 이용해 공격, 악의적 대량 요청, 부하 테스트, 허위 주문, 인증 우회, 타인 데이터 탐지 또는 업무 방해 행위를 해서는 안 됩니다. 업무 데이터를 위조하거나 주문 또는 잔액을 악의적으로 수정하거나, 프라이버시를 가로채거나, 다른 사용자 및 기기의 정상적인 사용을 방해해서는 안 됩니다. 보안 연구는 관련 권리자의 별도 명시적 승인을 받아야 합니다."</string>
+    <string name="msg_708c97df7bec" formatted="false">"흑연"</string>
+    <string name="msg_70e229df2e66" formatted="false">"물 이용 상태가 아직 확인되지 않았습니다. 잠시 후 새로고침해 주세요."</string>
+    <string name="msg_717d0bf23fb3" formatted="false">"출수구"</string>
+    <string name="msg_73ddd0a867c2" formatted="false">"알리페이 후원 수취 QR 코드"</string>
+    <string name="msg_749b9fdc6f64" formatted="false">"결제 전 기기 안에 세탁물을 넣었는지 확인해 주세요."</string>
+    <string name="msg_7546a59d0f68" formatted="false">"주문 보기"</string>
+    <string name="msg_755f809f9c52">"현재 색상 · %1$s"</string>
+    <string name="msg_75c526d48af0" formatted="false">"애니메이션 없음"</string>
+    <string name="msg_76057ded0624" formatted="false">"AndroidX / Jetpack Compose, Material Color Utilities, OkHttp, Gson, ZXing Embedded 및 알리페이 Android SDK 등의 구성 요소는 각자의 라이선스를 따르며, 자세한 내용은 저장소의 THIRD_PARTY_NOTICES.md를 참조하세요."</string>
+    <string name="msg_7647946e9f07" formatted="false">"스플래시 표시 시간(ms)"</string>
+    <string name="msg_76ee9a62d31e" formatted="false">"7. 비공개·민감 자료 외부 유출 금지\n관련 권리자 또는 정보 주체의 승인 없이 인증번호, 토큰, 결제 증빙, 프라이버시 스크린샷, 그룹 내 비공개 개인정보, 개인 서명 키 또는 기타 기밀 자료를 외부에 유출해서는 안 됩니다. 비공개로 명확히 표시되었고 오픈소스 라이선스 범위에 포함되지 않은 자료는 먼저 유포 권한을 확인해야 합니다. 이 요구 사항은 MIT 등 오픈소스 라이선스로 합법적으로 취득한 공개 소스 코드와 소프트웨어의 복제, 수정 또는 배포를 금지하는 것으로 확대 해석되어서는 안 됩니다."</string>
+    <string name="msg_7830ed883845" formatted="false">"정수기 정보가 변경되었습니다. QR 코드를 다시 스캔해 확인해 주세요."</string>
+    <string name="msg_788db1cfec2a" formatted="false">"테마"</string>
+    <string name="msg_788ef5156b41" formatted="false">"제3자 구성 요소"</string>
+    <string name="msg_7895f1bfe9af" formatted="false">"이번 실제 결제 금액"</string>
+    <string name="msg_79080acb89b3" formatted="false">"화면, 색상, 스플래시 및 하단 바 스타일"</string>
+    <string name="msg_793dc584cf9d" formatted="false">"표시 시간 저장"</string>
+    <string name="msg_79cea7bbcb4f" formatted="false">"정수기 응답을 기다리는 중"</string>
+    <string name="msg_7c315faa6c32" formatted="false">"플랫폼이 더 이상 계약을 요구하지 않습니다. 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_7c7dea47f575" formatted="false">"내 주문"</string>
+    <string name="msg_7daf2930ebfb">"사용 중 · 약 %1$s분 남음"</string>
+    <string name="msg_7db163039817" formatted="false">"가격을 확인하는 중"</string>
+    <string name="msg_7e1c2cd5e619" formatted="false">"그룹 번호를 복사했습니다. QQ에서 검색해 가입해 주세요."</string>
+    <string name="msg_7ea56ad1e29f" formatted="false">"플랫폼에서 여전히 이 기기의 비밀번호 없는 결제 개통을 요구합니다. 잠시 후 새로고침해 확인해 주세요."</string>
+    <string name="msg_7eb336e42cb5" formatted="false">"자동"</string>
+    <string name="msg_7eb9be087d93" formatted="false">"세탁 진행 상황은 자동으로 동기화되며, 남은 시간은 참고용입니다."</string>
+    <string name="msg_7f3cf008769d" formatted="false">"정수기 상세에 기기 식별자가 없습니다"</string>
+    <string name="msg_7f48dd3aa586" formatted="false">"이미지 다시 선택"</string>
+    <string name="msg_7f48fe35e1c4" formatted="false">"변경 사항은 즉시 적용되고 자동으로 저장됩니다."</string>
+    <string name="msg_7f96511c0fa3">"홈 상단에 표시되며 줄바꿈을 지원하고 최대 %1$s자까지 입력할 수 있습니다."</string>
+    <string name="msg_800bba0b799c" formatted="false">"알리페이 승인 상태가 아직 확인되지 않았습니다. 잠시 후 새로고침해 확인해 주세요."</string>
+    <string name="msg_801916710b48" formatted="false">"1. 전체 읽기 및 준수\n사용 전에 면책 고지, 본 수칙, 적용되는 원래 플랫폼 규칙 및 오픈소스 라이선스를 모두 읽고 이해한 후 사용해야 합니다. 사용자는 이러한 규칙과 관련 법률을 준수할 것을 약속하며, ‘읽지 않았음’, ‘학습·연구’ 또는 확인 문구 입력을 위법, 권한 초과 또는 권익 침해 행위의 이유로 삼지 않습니다. 받아들일 수 없는 경우 종료하고 사용을 중단해야 합니다."</string>
+    <string name="msg_8032591e13e5" formatted="false">"정수기의 QR 코드를 스캔하고,\n출수구를 선택한 후 물 이용을 시작해 주세요."</string>
+    <string name="msg_80a1a04791c5" formatted="false">"지난주 · "</string>
+    <string name="msg_81f2e88ab5a7">"버전 %1$s (%2$s)"</string>
+    <string name="msg_822a8903fcb0" formatted="false">"이 기기에 표시할 물 이용 청구서가 없습니다."</string>
+    <string name="msg_8279f6a35954" formatted="false">"후원하기"</string>
+    <string name="msg_829614d0d5f9" formatted="false">"플랫폼에서 환불 완료를 표시했습니다. 입금 여부를 확인해 주세요."</string>
+    <string name="msg_8313f2a8cb24" formatted="false">"Jianxi를 응원해 주셔서 감사합니다. 후원 금액은 직접 정하실 수 있습니다."</string>
+    <string name="msg_832c13565546" formatted="false">"물 이용 정산 청구서가 결제되었습니다. 금액과 상태는 플랫폼 기록을 기준으로 합니다."</string>
+    <string name="msg_83e008eb7dc4" formatted="false">"밀기"</string>
+    <string name="msg_845461671a4e">"결제 방식: %1$s · 실제 사용량 기준 정산"</string>
+    <string name="msg_8481aa8b7737" formatted="false">"견적에 추가 상품이 포함되어 있습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_85312acee487">"홈 문구, 현재 내용: %1$s"</string>
+    <string name="msg_85c6e00d4cca" formatted="false">"이 기기는 현재 사용 가능한 1회 결제 채널을 제공하지 않습니다"</string>
+    <string name="msg_86a84936749d" formatted="false">"물 이용 청구서가 종료되었습니다"</string>
+    <string name="msg_874e82006913" formatted="false">"주문이 없습니다"</string>
+    <string name="msg_87b7632a53e5" formatted="false">"위 문구와 정확히 일치해야 하며, 중국어 쉼표를 포함하고 따옴표는 포함하지 않습니다."</string>
+    <string name="msg_87c4fd5fd71e" formatted="false">"세탁 종료 알림"</string>
+    <string name="msg_87da2d041151" formatted="false">"세탁기 작동 상태를 확인해 주세요."</string>
+    <string name="msg_87e0ca38b1f4" formatted="false">"이 데이터를 일시적으로 처리할 수 없습니다. 잠시 후 다시 시도해 주세요."</string>
+    <string name="msg_87f08e0c0721" formatted="false">"알리페이 비밀번호 없는 결제 승인"</string>
+    <string name="msg_87f4372ffa2c" formatted="false">"정수기 출수구 데이터 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_88c89cff1508" formatted="false">"네트워크 연결에 실패했습니다. 네트워크를 확인한 후 다시 시도해 주세요."</string>
+    <string name="msg_88ef220dbc2f" formatted="false">"물 마시기 시작"</string>
+    <string name="msg_88f30d89d6d2" formatted="false">"물 이용 청구서 결제 방식이 아직 지원되지 않습니다. 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_8923664276ca" formatted="false">"이 주문은 이 기기의 기록에 없습니다"</string>
+    <string name="msg_894df8bd55a2" formatted="false">"하단 바"</string>
+    <string name="msg_89543c817609" formatted="false">"물 이용 청구서가 취소되었습니다"</string>
+    <string name="msg_898dcb67f920" formatted="false">"9. 피드백 및 문서 업데이트\n문제 피드백 QQ 그룹: 1124696181. 문제를 객관적으로 설명하고 민감 정보를 제거한 필요한 정보를 제공해 주세요. 그룹 내 소통은 서비스 효과나 법적 결과에 대한 보증을 구성하지 않습니다. 면책 고지와 사용자 수칙 전문은 언제든지 정보 페이지에서 확인할 수 있으며, 내용이 변경되면 클라이언트가 다시 읽고 확인하도록 요구합니다."</string>
+    <string name="msg_8ac5f3bd798f" formatted="false">"먼저 미완료 주문을 처리해 주세요"</string>
+    <string name="msg_8bea5e0f6086" formatted="false">"중복 주문을 피하려면 먼저 원래 앱에서 이 주문을 확인해 주세요."</string>
+    <string name="msg_8c5635cc9269" formatted="false">"알리페이 승인을 열 수 없습니다. 잠시 후 다시 시도해 주세요."</string>
+    <string name="msg_8e878de7a527" formatted="false">"기기 코드 붙여넣기"</string>
+    <string name="msg_8f4733578d9c" formatted="false">"물 이용 결제 채널이 변경되었습니다. 새로고침한 후 다시 선택해 주세요."</string>
+    <string name="msg_8fca8cee3982" formatted="false">"이 기기는 원격 종료를 지원하지 않습니다. 정수기의 중지 버튼을 눌러 주세요."</string>
+    <string name="msg_8ffbad496815">"%1$s 내비게이션"</string>
+    <string name="msg_900e6be64ccc" formatted="false">"기기와 플랫폼의 실제 상태를 기준으로 합니다"</string>
+    <string name="msg_9055c1d4ca6f" formatted="false">"물 이용 종료"</string>
+    <string name="msg_91051a21e008" formatted="false">"결제 방식을 가져오지 못했습니다"</string>
+    <string name="msg_914133ec9e6e">"이번에는 %1$s 방식으로 이용하며 실제 사용량 기준으로 정산합니다. 용기를 준비하고, 종료 후 기기에서 물이 멈췄는지 확인해 주세요."</string>
+    <string name="msg_91a1254d600f">"스플래시 이미지 %1$s"</string>
+    <string name="msg_925fc2ded5b2" formatted="false">"11. 확인, 업데이트 및 사용 중단\n처음 사용할 때 클라이언트에 표시된 전체 확인 문구를 직접 입력해야 하며, 확인 기록은 이 기기에만 저장됩니다. 문서 내용이 변경되거나 재설치하거나 데이터를 삭제한 후에는 다시 확인해야 할 수 있습니다. 새 내용에 동의하지 않으면 사용을 중단할 수 있으며, 사용 중단은 관련 법률과 오픈소스 라이선스가 이미 부여한 권리나 이행해야 할 의무에 영향을 주지 않습니다."</string>
+    <string name="msg_92863c1ad1f0" formatted="false">"홈 문구"</string>
+    <string name="msg_93f6c90cc986" formatted="false">"기기 인식"</string>
+    <string name="msg_93fb54ffd5d4" formatted="false">"결제 결과를 조회하는 중"</string>
+    <string name="msg_94654c53105c">"%1$s · %2$s\n주문 상세와 결제 상태를 먼저 확인하고, 주문을 여전히 취소할 수 있는지 확인한 후 신청합니다."</string>
+    <string name="msg_9490a9f00e48" formatted="false">"플로팅 하단 바 상호작용 미리보기"</string>
+    <string name="msg_960aa8eb1c5d" formatted="false">"이번에는 알리페이 먼저 이용 후 결제(비밀번호 없는 결제)를 사용하며, 실제 사용량에 따라 플랫폼이 정산하여 청구합니다. 확인 후 이 기기의 계약 요건을 확인하며, 계약이 필요하면 알리페이가 열리고 돌아온 후 물 이용을 다시 확인해야 합니다. 미결제 청구서는 주문에서 금액과 결제 상태를 확인해 주세요."</string>
+    <string name="msg_960e8d3fc1e1" formatted="false">"알리페이 비밀번호 없는 결제 승인을 확인하는 중"</string>
+    <string name="scanner_camera_error" formatted="false">"카메라를 일시적으로 사용할 수 없습니다. 돌아간 후 다시 시도해 주세요."</string>
+    <string name="msg_976a1c14feb1" formatted="false">"물 이용 정산 번호가 아직 확인되지 않았습니다. 잠시 후 새로고침해 주세요."</string>
+    <string name="msg_97c0474b816d" formatted="false">"물 이용 시작 확인"</string>
+    <string name="msg_97d1ee0dcbe2" formatted="false">"로그인 계정이 변경되었습니다. 물 이용을 다시 확인해 주세요."</string>
+    <string name="msg_98b03d8bcb49" formatted="false">"최근 물 이용 기록"</string>
+    <string name="msg_98b8c83eb71c" formatted="false">"결제 결과를 아직 확인 중입니다. 잠시 후 주문을 새로고침해 주세요."</string>
+    <string name="msg_996bbd1e69e4" formatted="false">"장미"</string>
+    <string name="msg_99ae219d44e9" formatted="false">"주문의 기기 정보가 변경되었습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_9a81c4e994ca" formatted="false">"물 이용 계속"</string>
+    <string name="msg_9b1cb6619d40" formatted="false">"세탁 모드"</string>
+    <string name="msg_9b3a9a53cd77" formatted="false">"동의합니다"</string>
+    <string name="msg_9d2e3d5ad46b" formatted="false">"이미지를 저장하는 중…"</string>
+    <string name="msg_9d8fb9c546b1">"%1$s 기능 스위치"</string>
+    <string name="msg_9da18b06f6bb" formatted="false">"물 이용이 끝났습니다. 주문에서 청구서를 확인하고 결제해 주세요."</string>
+    <string name="msg_9dcdc2b289b9" formatted="false">"초"</string>
+    <string name="msg_9e27d3fb2bfb" formatted="false">"로그인 중"</string>
+    <string name="msg_9e2becfedaad" formatted="false">"물 이용이 끝났으며 플랫폼이 정산 청구서를 반환했습니다"</string>
+    <string name="msg_9e4949bc0d52" formatted="false">"휴대폰 번호와 SMS 인증번호를 입력해 주세요"</string>
+    <string name="msg_9eaf7337eac7" formatted="false">"청구서 시간"</string>
+    <string name="msg_9f0d4e4656ee" formatted="false">"이미지 추가"</string>
+    <string name="msg_9f6fee1aba17" formatted="false">"언어"</string>
+    <string name="scanner_brighter" formatted="false">"밝게"</string>
+    <string name="msg_9ff5a9563ee2" formatted="false">"이번 물 이용이 끝났습니다"</string>
+    <string name="msg_a00234e52c02" formatted="false">"세탁 모드 데이터 형식이 아직 지원되지 않습니다. QR 코드를 보관해 추후 확인에 사용해 주세요."</string>
+    <string name="msg_a01fa2926a83">"주문 번호 %1$s"</string>
+    <string name="msg_a0640541affa" formatted="false">"기본 홈 문구로 복원하고 저장"</string>
+    <string name="msg_a0686c2646d6" formatted="false">"이번 주 · "</string>
+    <string name="msg_a07dc2446281" formatted="false">"기기가 가맹점 계약 정보를 제공하지 않습니다. QR 코드를 다시 스캔하거나 胖乖生活에서 확인해 주세요."</string>
+    <string name="msg_a0aa4b780049" formatted="false">"물 이용 기록이 없습니다"</string>
+    <string name="msg_a0b44537c2b6" formatted="false">"7. 다운로드, 설치 및 사용 선택\n설치 파일의 출처, 버전 및 서명을 확인하고, 출처가 불분명하거나 악성 내용이 삽입된 변조 패키지를 설치해서는 안 됩니다. 브라우저, 제3자 다운로드 링크 및 원래 플랫폼 콘텐츠는 해당 제공자가 책임집니다. 처음 확인 문구를 입력하는 것은 규칙을 읽고 준수하겠다는 확인입니다. 동의하지 않으면 종료하고 사용을 중단해 주세요. 앱을 삭제하거나 앱 데이터를 지우거나 서명을 변경하면 이 기기의 기록이 복구되지 않을 수 있으므로, 먼저 원래 플랫폼에서 미완료 주문을 확인해 주세요."</string>
+    <string name="msg_a158267356f5" formatted="false">"물 이용 청구서 결제 방식 조회 실패"</string>
+    <string name="msg_a24b2df2ec2f" formatted="false">"세탁 시작"</string>
+    <string name="msg_a2d0549991f7">"예상 남은 시간 %1$s분 %2$s초"</string>
+    <string name="msg_a3030bf8f16d" formatted="false">"저장"</string>
+    <string name="msg_a329dd6c8804" formatted="false">"주문 번호가 불완전합니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_a367880426a2" formatted="false">"홈 문구 편집"</string>
+    <string name="msg_a527127a2bc6" formatted="false">"플랫폼이 종료를 확인했습니다. 제때 세탁물을 꺼내 주세요."</string>
+    <string name="msg_a54c648d6a5d" formatted="false">"먼저 새로고침하고 물 이용 결제 방식을 선택해 주세요"</string>
+    <string name="msg_a555b7117495" formatted="false">"취소 결과가 아직 확인되지 않았습니다. 주문을 새로고침해 주세요."</string>
+    <string name="msg_a5a749ecf99b" formatted="false">"Kotlin과 Jetpack Compose로 구축된 독립 Android 세탁 및 물 이용 클라이언트입니다."</string>
+    <string name="msg_a6b6c3b4d179" formatted="false">"투명 유리, 더 뚜렷한 굴절과 탄성 변형"</string>
+    <string name="msg_a6b75d068032" formatted="false">"어둡게"</string>
+    <string name="msg_a6e01b215620" formatted="false">"정수기를 사용 중이거나 상태가 아직 확인되지 않았습니다. 먼저 상태를 새로고침해 주세요."</string>
+    <string name="msg_a6e3cad608b3" formatted="false">"주문 상세 형식이 아직 지원되지 않습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_a74a462db571">"최대 %1$s장까지 가능하며 이미지는 이 기기에 저장됩니다. 스플래시를 꺼도 이미지 설정은 유지됩니다."</string>
+    <string name="msg_a7761b0a28b0" formatted="false">"이 기기는 블루투스 시작이 필요하며 현재 버전에서는 지원되지 않습니다."</string>
+    <string name="msg_a7afd35b9a01" formatted="false">"먼저 기기에 표시된 요금 기준을 확인해 주세요."</string>
+    <string name="msg_a7e4da3594db" formatted="false">"6. 계정, 권한 및 개인정보\n본인 또는 합법적으로 권한을 받은 계정만 사용하고, 휴대폰 번호, 인증번호, 로그인 토큰, 결제 증빙 및 이 기기의 주문 정보를 안전하게 보관해 주세요. 현재 클라이언트는 사용에 필요한 세션, 주문, 화면 설정 및 약관 확인 기록을 이 기기에 저장하며, 카메라, 위치 등의 권한은 해당 기능에 필요할 때 요청합니다. 제3자 SMS, 위치, 스캔 또는 결제 구성 요소와 관련된 경우 해당 적용 규칙도 알아야 합니다. 피드백용 스크린샷과 로그를 제출하기 전에 민감 정보를 삭제하고, 그룹에 인증번호, 토큰 또는 결제 비밀번호를 절대 보내지 마세요."</string>
+    <string name="msg_a7e578b0de6d" formatted="false">"물 이용 결제 방식 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_a87629fa5f58">"리퀴드 글라스 %1$s 상호작용 미리보기"</string>
+    <string name="msg_a8bed1fccfdd" formatted="false">"물 이용 요금 데이터 형식이 비정상입니다. 기기를 새로고침해 주세요."</string>
+    <string name="msg_a96aae5afee6" formatted="false">"물 이용 상태를 새로고침하는 중"</string>
+    <string name="msg_aa0819dfc4d8" formatted="false">"밝게"</string>
+    <string name="msg_aa65429cd42b" formatted="false">"L"</string>
+    <string name="msg_ab47da0b6480" formatted="false">"먼저 이전 물 이용 상태를 확인해 주세요"</string>
+    <string name="msg_ab98197175b0" formatted="false">"테마 설정"</string>
+    <string name="msg_aba24a0aa5c8" formatted="false">"물 이용 결제 방식이 아직 확인되지 않았습니다"</string>
+    <string name="msg_abbd0e07316e" formatted="false">"모드를 확인하고 금액 보기"</string>
+    <string name="msg_abcbef635922" formatted="false">"주문이 종료되었습니다. 세탁으로 돌아가 모드를 다시 선택할 수 있습니다."</string>
+    <string name="msg_abdf0bb6c80c" formatted="false">"눌러서 그룹 번호 복사"</string>
+    <string name="msg_ac08701c24ca" formatted="false">"배경 색상을 읽는 중…"</string>
+    <string name="msg_ac301767677f" formatted="false">"이 기기에 표시할 세탁 주문이 없습니다."</string>
+    <string name="msg_ac43b33eb622" formatted="false">"시작 명령을 제출했습니다. 정수기의 응답을 기다려 주세요."</string>
+    <string name="msg_ada841bf67e9">"서비스를 일시적으로 사용할 수 없습니다(%1$s)."</string>
+    <string name="msg_adcead944a6f" formatted="false">"미결제 주문 취소"</string>
+    <string name="msg_ae8e4d07d70a" formatted="false">"정수기 QR 코드를 스캔해 주세요"</string>
+    <string name="msg_af93b6dcf87a" formatted="false">"단색 하단 바, 탄성 슬라이더 유지"</string>
+    <string name="msg_afb44149eeaf" formatted="false">"이번 세탁 확인"</string>
+    <string name="msg_afdbcbccf8a9">"QQ 그룹: %1$s"</string>
+    <string name="msg_b01e2d77a8c6" formatted="false">"주문이 환불되었습니다"</string>
+    <string name="msg_b0e7cbd7c9aa">"복사에 실패했습니다. 그룹 번호: %1$s"</string>
+    <string name="msg_b140a6401279" formatted="false">"주문 상세 펼치기"</string>
+    <string name="msg_b1c9c1d036e2" formatted="false">"리퀴드 글라스"</string>
+    <string name="msg_b25ef479aebd" formatted="false">"플랫폼 계정에 로그인해 세탁 및 물 이용 서비스를 사용하세요."</string>
+    <string name="msg_b31d5141e416" formatted="false">"출수구를 조회하는 중"</string>
+    <string name="msg_b396db2e9196" formatted="false">"스플래시 미리보기"</string>
+    <string name="msg_b3b023c8f791" formatted="false">"Material 내비게이션 바"</string>
+    <string name="msg_b3e570b20fb0" formatted="false">"1. 프로젝트 성격과 사용 범위\nJianxi는 독립적으로 개발된 학습·교류 프로젝트로, 기술 학습과 교류 및 합법적 권한 범위 내의 개인 사용을 위해 제공됩니다. 작성자는 胖乖生活, 세탁 기기 운영사, 학교, 결제 기관 또는 기타 제3자를 대표하지 않으며, 제3자 플랫폼의 이용 허가를 부여하지도 않습니다. 소스 코드 사용 권한은 첨부된 MIT 및 각 제3자 구성 요소 라이선스를 따릅니다."</string>
+    <string name="msg_b4dfbfba0578" formatted="false">"Jianxi 사용자 수칙(사용자 약관)\n버전: 1.0.0｜내부 버전: 0.1.16｜업데이트 날짜: 2026년 11월 3일"</string>
+    <string name="msg_b4f947a472c7" formatted="false">"휴대폰 번호 로그인"</string>
+    <string name="msg_b5159bb8082c" formatted="false">"따뜻한 오렌지"</string>
+    <string name="msg_b5183983ef3a" formatted="false">"다시 로그인해 주세요"</string>
+    <string name="msg_b621b6e40986" formatted="false">"주문이 생성되었습니다. 계속 결제할 수 있으며, 원래 앱에서 이미 결제했다면 상태를 새로고침해 주세요."</string>
+    <string name="msg_b646c5129632">"내부 버전 %1$s"</string>
+    <string name="msg_b6af1a5049fc" formatted="false">"로그아웃할까요?"</string>
+    <string name="msg_b70c4e8a2e1d" formatted="false">"플로팅"</string>
+    <string name="msg_b741efb628be" formatted="false">"취소 확인"</string>
+    <string name="msg_b7b30111f5a8" formatted="false">"세탁 항목"</string>
+    <string name="msg_b7b49aebe3b6" formatted="false">"로컬 세션을 저장할 수 없습니다. 저장 공간을 확인해 주세요."</string>
+    <string name="msg_b90a8ac9c488" formatted="false">"언어 선택"</string>
+    <string name="msg_b99f9f63102d" formatted="false">"견적 할인 선택 상태 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_ba2e93e73037" formatted="false">"기본값 복원"</string>
+    <string name="msg_bb2d9ee15950" formatted="false">"견적 할인 유형이 아직 지원되지 않습니다."</string>
+    <string name="msg_bb536fd5dbb8" formatted="false">"스플래시 이미지 1"</string>
+    <string name="msg_bbad1fd91c78" formatted="false">"다른 사람이 기기를 사용 중입니다"</string>
+    <string name="msg_bc11495c5a35" formatted="false">"계정 잔액"</string>
+    <string name="msg_bc355408517f" formatted="false">"주문이 취소되었습니다"</string>
+    <string name="msg_bc8383e2aaa8" formatted="false">"이곳에서 이 기기의 주문, 물 이용 기록 및 결제 진행 상황을 확인하세요."</string>
+    <string name="msg_bc982c81c510" formatted="false">"세탁"</string>
+    <string name="msg_bc99124901b6" formatted="false">"다이내믹 컬러"</string>
+    <string name="msg_bdf7ecf94b2d" formatted="false">"스플래시 이미지 2"</string>
+    <string name="msg_be376c412d1f" formatted="false">"물 이용 시작"</string>
+    <string name="msg_be9fe6a1986a" formatted="false">"기기 상세에 번호가 없습니다"</string>
+    <string name="msg_bf39c4d5884d" formatted="false">"물 이용 결제 방식 조회 실패"</string>
+    <string name="msg_bf737f02a6f3" formatted="false">"아래 확인 문구를 그대로 입력해 주세요"</string>
+    <string name="msg_bfcf57d4bef3" formatted="false">"브라우저에서 열기"</string>
+    <string name="msg_c08142c140ff" formatted="false">"불리언"</string>
+    <string name="msg_c09c8adbff7c" formatted="false">"금액이 비정상입니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_c0b3fbff51cc" formatted="false">"완료"</string>
+    <string name="msg_c1cb5f40de7c" formatted="false">"Jianxi 정보"</string>
+    <string name="msg_c1cb9b9edad5" formatted="false">"먼저 진행 중인 물 이용 세션을 처리해 주세요"</string>
+    <string name="msg_c1f658373079" formatted="false">"로그인하지 않음"</string>
+    <string name="msg_c2387dfab4aa" formatted="false">"물 이용 청구서 결제 대기"</string>
+    <string name="msg_c46badfbf19c" formatted="false">"이 세탁 모드는 현재 사용할 수 없습니다. 기기를 새로고침한 후 다시 시도해 주세요."</string>
+    <string name="msg_c47810fe6c5c" formatted="false">"결제 결과 확인 대기 중"</string>
+    <string name="msg_c47989854d25" formatted="false">"청록"</string>
+    <string name="msg_c4af153a611c">"유리 강도 · %1$s"</string>
+    <string name="msg_c4bb300b0e62" formatted="false">"주문을 취소하는 중"</string>
+    <string name="msg_c5500a58e0c5" formatted="false">"숫자"</string>
+    <string name="msg_c6135da0ea76" formatted="false">"결제 상태 조회 실패"</string>
+    <string name="msg_c6143fa2daf8" formatted="false">"플랫폼에서 여전히 비밀번호 없는 결제 승인을 요구하지만 아직 계약 진입점을 제공하지 않습니다. 잠시 후 새로고침하고 다시 시도해 주세요."</string>
+    <string name="scanner_rejected_hint" formatted="false">"카메라가 밝기 조정을 지원하지 않지만 스캔은 가능합니다. 각도를 바꾸거나 기기 화면 밝기를 낮춰 주세요."</string>
+    <string name="msg_c65b3b97b411" formatted="false">"알 수 없는 형식"</string>
+    <string name="msg_c66b688131ed" formatted="false">"GitHub 링크를 열 수 있는 앱을 찾지 못했습니다"</string>
+    <string name="msg_c6729b9b5fe1" formatted="false">"기기 상세에 식별자가 없습니다. 먼저 원래 앱에서 기기를 확인해 주세요."</string>
+    <string name="msg_c8592490c32d" formatted="false">"기기 상태 비정상"</string>
+    <string name="msg_c8f3e8d49eb3" formatted="false">"알리페이 비밀번호 없는 결제 계약 진입점을 가져오지 못했습니다"</string>
+    <string name="msg_c9174343f70d" formatted="false">"완전"</string>
+    <string name="msg_c952e1cb7c50" formatted="false">"정수기 상세에 기기 번호가 없습니다"</string>
+    <string name="msg_ca0dffccb99d" formatted="false">"이번 물 이용을 종료할까요?"</string>
+    <string name="msg_ca7223717fa6" formatted="false">"결제 방식"</string>
+    <string name="msg_ca80d3c72c64">"%1$s · %2$s, 제때 세탁물을 꺼내 주세요."</string>
+    <string name="msg_cae4a3724dad" formatted="false">"이번 세탁이 끝났습니다."</string>
+    <string name="msg_cb4ba40bf823" formatted="false">"사용 설명"</string>
+    <string name="msg_cbf70e387219" formatted="false">"아이리스 퍼플"</string>
+    <string name="msg_cc0bf0ebd2ce" formatted="false">"물 이용 청구서가 시간 초과되었거나 만료되었습니다. 플랫폼 기록을 기준으로 해 주세요."</string>
+    <string name="msg_cc93f0020b76" formatted="false">"결제됨 · 기기 작동 정보 대기 중"</string>
+    <string name="msg_cdc013bc1922" formatted="false">"미완료 주문은 이 휴대폰에 유지되며, 같은 휴대폰 번호로 로그인하면 계속 확인할 수 있습니다."</string>
+    <string name="msg_ce33b71f9fdd" formatted="false">"앞에 있는 세탁기가 맞는지 확인해 주세요"</string>
+    <string name="msg_cfc54865db1f" formatted="false">"지난 물 이용 결과 확인 대기 중"</string>
+    <string name="msg_d0032305b571" formatted="false">"홈 문구 편집 취소"</string>
+    <string name="msg_d00503584e15" formatted="false">"스플래시 설정 펼치기"</string>
+    <string name="msg_d007cc91971f" formatted="false">"테마 색상"</string>
+    <string name="msg_d03a42384c95" formatted="false">"바탕화면 배경의 대표 색상 자동 사용"</string>
+    <string name="scanner_darker" formatted="false">"어둡게"</string>
+    <string name="msg_d0f6b2e6e6e0" formatted="false">"알리페이 승인 확인 대기 중"</string>
+    <string name="msg_d12a5c36eda7" formatted="false">"결제에 계약 내용이 포함되어 중단되었습니다"</string>
+    <string name="msg_d22657dec5d1" formatted="false">"색상 다시 추출"</string>
+    <string name="msg_d26366e4e8b6" formatted="false">"물 이용 청구서가 완료되었습니다"</string>
+    <string name="msg_d377abc2010c" formatted="false">"결제 상태를 확인하는 중"</string>
+    <string name="msg_d3c121b15386" formatted="false">"서버 응답 내용이 너무 큽니다"</string>
+    <string name="msg_d3ceb6ef8429" formatted="false">"물 이용 종료 결과가 아직 확인되지 않았습니다. 기기를 확인하고 상태를 새로고침해 주세요."</string>
+    <string name="msg_d3d991a64f44">"이 알리페이 결제 상품은 아직 지원되지 않습니다(상품 코드: %1$s)."</string>
+    <string name="msg_d3f08a6ba56a" formatted="false">"바다빛 파랑"</string>
+    <string name="msg_d438416ae194" formatted="false">"물 이용 청구서 결제 확인 대기"</string>
+    <string name="msg_d49841a540e5" formatted="false">"금액 형식이 비정상입니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_d4b3f49cd2e4" formatted="false">"고정"</string>
+    <string name="msg_d4b832a716f8" formatted="false">"확인 대기 중인 주문이 하나 더 있습니다"</string>
+    <string name="msg_d657d9bdf227" formatted="false">"수취 QR 코드가 저장되었습니다"</string>
+    <string name="msg_d6aaf25dfadf" formatted="false">"현재 순서대로 앱을 시작할 때마다 전환하며, 순서를 바꾸거나 이미지를 삭제할 수 있습니다. 모두 삭제하면 기본값으로 복원됩니다."</string>
+    <string name="msg_d6b68c8c2c0d" formatted="false">"현재 버전은 세탁기와 신발 세탁기만 지원합니다"</string>
+    <string name="msg_d727d75a30fb">"%1$s%2$s ~ %3$s"</string>
+    <string name="msg_d7bdb38202bb" formatted="false">"물 이용 정산 데이터 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_d972edc5aee3" formatted="false">"금액 정밀도가 비정상입니다. 새로고침 후 다시 시도해 주세요."</string>
+    <string name="msg_da9054ac44be" formatted="false">"앱 언어"</string>
+    <string name="msg_dab4ad500f41" formatted="false">"약하게"</string>
+    <string name="msg_dac56e56e97c" formatted="false">"정수기 기관 번호가 유효하지 않습니다. QR 코드를 다시 스캔해 주세요."</string>
+    <string name="msg_dbf549867f16">"견적 할인 옵션 형식이 아직 지원되지 않습니다(%1$s[]: %2$s)."</string>
+    <string name="msg_dce94891cdfc" formatted="false">"계정 승인 상태가 아직 동기화되지 않았습니다. 물 이용을 다시 확인하면 플랫폼이 확인하며, 출수는 자동으로 시작되지 않습니다."</string>
+    <string name="msg_dcfbc5a92a09" formatted="false">"주문을 확인하는 중"</string>
+    <string name="msg_dd3246e28288" formatted="false">"정수기 스캔"</string>
+    <string name="msg_dd81861811e5" formatted="false">"텍스트"</string>
+    <string name="msg_de5b158ef2c5" formatted="false">"물 이용 시작 결과가 아직 확인되지 않았습니다. 상태를 새로고침해 주세요."</string>
+    <string name="msg_de5c8ba9ef9a" formatted="false">"QR 코드 내용이 너무 깁니다"</string>
+    <string name="msg_de9d97131bfe" formatted="false">"선택한 이미지를 읽을 수 없습니다"</string>
+    <string name="msg_dee754f9cb2d" formatted="false">"물 이용 기록 보기"</string>
+    <string name="msg_df3d58c7d84b" formatted="false">"설정"</string>
+    <string name="msg_df647b73b990" formatted="false">"펼쳐짐"</string>
+    <string name="msg_dfb119a5da45" formatted="false">"이번 위치 접근을 허용해야 계속 조작할 수 있습니다"</string>
+    <string name="msg_dfc443702105" formatted="false">"현재 기기에 사용 가능한 세탁 모드가 없습니다. 기기 유형을 확인해 주세요."</string>
+    <string name="msg_e0a5c5fef33d" formatted="false">"앨범에 저장했습니다. 알리페이 스캔에서 이미지를 선택할 수 있습니다."</string>
+    <string name="msg_e0be747a5d8c" formatted="false">"링크를 열 수 있는 앱을 찾지 못했습니다"</string>
+    <string name="msg_e1506406a5bd" formatted="false">"기기"</string>
+    <string name="msg_e165b1f5693c" formatted="false">"기기 인식 응답에 번호가 없습니다"</string>
+    <string name="msg_e2e2b296fc1f" formatted="false">"확인 기록을 저장하지 못했습니다. 사용 가능한 공간을 확인한 후 다시 시도해 주세요."</string>
+    <string name="msg_e3526a818011" formatted="false">"5. 오픈소스 라이선스 준수\n이 프로젝트의 소스 코드는 MIT License를 사용하며, 제3자 구성 요소에는 각자의 라이선스가 적용됩니다. 합법적으로 취득한 복제, 수정, 병합, 재배포 및 기타 허가된 권리는 여전히 해당 라이선스를 따르며, 보존이 요구되는 저작권, 라이선스 및 출처 고지를 유지하고 제3자의 권리를 존중해야 합니다. 본 수칙은 이미 취득한 오픈소스 라이선스 권리를 취소, 축소 또는 대체하는 것으로 해석되어서는 안 됩니다."</string>
+    <string name="msg_e3814b406bdf" formatted="false">"이 정수기는 지원되는 사용량 기반 후불 기기가 아닙니다. 먼저 원래 앱을 사용해 주세요."</string>
+    <string name="msg_e3ac6be7bdbd" formatted="false">"플랫폼이 여러 가맹점 계약 요건을 반환했습니다. 胖乖生活에서 확인한 후 다시 시도해 주세요."</string>
+    <string name="msg_e622cab1b487" formatted="false">"수취 QR 코드 저장"</string>
+    <string name="msg_e64447db76a9" formatted="false">"접힘"</string>
+    <string name="msg_e681110952dc" formatted="false">"기기를 인식하는 중"</string>
+    <string name="msg_e68dcfacd50b" formatted="false">"이번 위치 접근을 허용한 후 결제를 계속해 주세요"</string>
+    <string name="msg_e705494b745f" formatted="false">"QR 코드 인코딩이 유효하지 않습니다"</string>
+    <string name="msg_e7067503679b" formatted="false">"결제 매개변수를 가져오지 못했습니다. 주문 상태를 조회해 주세요."</string>
+    <string name="msg_e73c6a05de48" formatted="false">"결제가 확인되었습니다. 기기 동기화 결과는 확인 대기 중이니 세탁기를 확인해 주세요."</string>
+    <string name="msg_e7c7a644b627" formatted="false">"잔액 결제 결과가 아직 확인되지 않았습니다. 잠시 후 주문을 새로고침해 주세요."</string>
+    <string name="msg_e7e3ad41fdb9" formatted="false">"Android 12 이상이 필요합니다"</string>
+    <string name="msg_e8a953ca2355" formatted="false">"이 기기의 알리페이 승인을 열 수 없습니다. 돌아간 후 다시 시도해 주세요."</string>
+    <string name="msg_e8d09706ad21">"%1$s에서 %2$s 사이의 정수를 입력해 주세요(ms)."</string>
+    <string name="msg_e94328786abb" formatted="false">"스플래시 마스코트"</string>
+    <string name="msg_e97395fabcb3" formatted="false">"물 이용 청구서 결과 확인 대기 중입니다. 먼저 주문 상태를 조회해 주세요."</string>
+    <string name="msg_ea08ad4c58e1" formatted="false">"물 이용 청구서 번호가 일치하지 않습니다"</string>
+    <string name="msg_ea126e4e9491" formatted="false">"플랫폼이 세탁 종료를 확인하면 세탁물을 꺼내라고 알려 드립니다"</string>
+    <string name="msg_ea579916e03b" formatted="false">"알리페이 결제 매개변수가 유효하지 않습니다"</string>
+    <string name="msg_eb8162a8e6be" formatted="false">"결제 채널 응답 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_ecf99c00e14f" formatted="false">"세탁 종료 알림 및 알림 권한"</string>
+    <string name="msg_ed06c8b46087" formatted="false">"위치를 일시적으로 가져올 수 없습니다. 잠시 후 다시 시도해 주세요."</string>
+    <string name="msg_edbdfa509c1e" formatted="false">"처리할 물 이용 기록이 하나 있습니다. 원래 기기를 스캔하거나 주문에서 복원해 주세요."</string>
+    <string name="msg_eef16f7a3477" formatted="false">"3. 필요한 요청과 데이터 무결성\n이 소프트웨어는 사용자의 명확한 조작 및 합법적 승인 범위 내에서만 로그인, 기기 인식, 견적, 주문, 결제, 주문 조회 또는 취소 등 필요한 요청을 보냅니다. 네트워크 데이터를 변조, 위조 또는 훼손할 목적이 없으며, 결제 성공 위조, 가격 또는 잔액 악의적 수정, 권한 없는 계정 접근 등의 기능을 제공하지 않습니다. 정상적인 업무 조작은 서버가 법에 따라 해당 주문 상태를 업데이트하며, 금액, 결제 및 기기 상태는 서버 확인 결과를 기준으로 해야 합니다."</string>
+    <string name="msg_ef28a66a21b1" formatted="false">"앱을 시작할 때마다 한 장씩 표시하고, 다음 시작 시 다음 이미지로 전환"</string>
+    <string name="msg_ef9454bff0b4" formatted="false">"오픈소스 라이선스"</string>
+    <string name="msg_efab9e4d456b" formatted="false">"Jianxi-알리페이 수취 QR 코드.jpg"</string>
+    <string name="msg_f06ac4a79992" formatted="false">"정수기 또는 가맹점 정보가 변경되었습니다. QR 코드를 다시 스캔해 확인해 주세요."</string>
+    <string name="msg_f088643d2a3b" formatted="false">"새로고침하고 기기 상태를 확인해 주세요"</string>
+    <string name="msg_f0fd094c9fed" formatted="false">"세탁으로 돌아가 모드를 다시 선택할 수 있습니다."</string>
+    <string name="msg_f2a3913f6de6" formatted="false">"올바른 휴대폰 번호를 입력해 주세요"</string>
+    <string name="msg_f326b0624dab" formatted="false">"먼저 미완료 주문을 처리해 주세요"</string>
+    <string name="msg_f37173351372" formatted="false">"클라이언트는 완전 무료이며, 세탁 등 제3자 서비스 요금은 실제 주문을 기준으로 합니다."</string>
+    <string name="msg_f3baf4cab336" formatted="false">"물 이용 청구서 결제 방식이 변경되었습니다. 먼저 원래 앱에서 확인해 주세요."</string>
+    <string name="msg_f3ef5f2ab85b" formatted="false">"현재 색상 · 시스템 색상(대체)"</string>
+    <string name="msg_f406fd207594" formatted="false">"돌아가서 승인 확인"</string>
+    <string name="msg_f42a1238b44a" formatted="false">"저장에 실패했습니다. 다시 시도해 주세요."</string>
+    <string name="msg_f4436c0e1576" formatted="false">"피드백 그룹"</string>
+    <string name="msg_f60e109fb32b" formatted="false">"이 QR 코드는 알리페이로 스캔해야 합니다. 알리페이로 원래 QR 코드를 스캔해 주세요."</string>
+    <string name="msg_f617edd7b975" formatted="false">"물 이용 청구서 보기"</string>
+    <string name="msg_f64a02bd16f5" formatted="false">"세탁 진행 상황이 아직 동기화되지 않았습니다. 잠시 후 다시 시도합니다."</string>
+    <string name="msg_f65b4f1a14a2" formatted="false">"주문 유지"</string>
+    <string name="msg_f727d5abd647" formatted="false">"주문 상태 새로고침"</string>
+    <string name="msg_f72b83eaba1c" formatted="false">"페이드 인"</string>
+    <string name="msg_f78a40791721" formatted="false">"현재 테마 미리보기"</string>
+    <string name="msg_f7f924097dc7" formatted="false">"먼저 알리페이 승인을 완료하고 돌아와 확인해 주세요"</string>
+    <string name="msg_f93b9bd79597" formatted="false">"알리페이 비밀번호 없는 결제 계약 상태 조회 실패"</string>
+    <string name="msg_fa732580b1e2" formatted="false">"길게 누르기 · 드래그 · 놓기"</string>
+    <string name="msg_fac74bbab67c" formatted="false">"결제 정보를 가져오지 못했습니다"</string>
+    <string name="msg_fbda4354a3f3" formatted="false">"주문 상세 조회 실패"</string>
+    <string name="msg_fc984db26cf9" formatted="false">"정수기 기기 코드 붙여넣기"</string>
+    <string name="msg_fd1190aacfba" formatted="false">"물 이용 기기 점유 상태 형식이 아직 지원되지 않습니다."</string>
+    <string name="msg_fd45c5a9fee0" formatted="false">"서버 응답에 유효한 상태 코드가 없습니다"</string>
+    <string name="msg_fdc62b523ba2" formatted="false">"주문 생성 실패"</string>
+    <string name="msg_fdcd35336d1d" formatted="false">"사용자 지정 스플래시 이미지"</string>
+    <string name="msg_fe33d85393d6" formatted="false">"요금 기준은 기기 표시 가격과 플랫폼 청구서를 확인해 주세요"</string>
+    <string name="msg_fef8fbb645c8" formatted="false">"플랫폼이 반환한 가맹점 계약 정보가 아직 확인되지 않았습니다"</string>
+    <string name="msg_ff4fc4a36c34" formatted="false">"주문이 종료되었습니다"</string>
+    <string name="msg_ff536b7aeffd" formatted="false">"로그인이 만료되었습니다. 다시 로그인해 주세요."</string>
+    <string name="msg_ff7e349a58d1" formatted="false">"주문 결제 대기"</string>
+    <string name="msg_ffc624300de8" formatted="false">"금액"</string>
+    <string name="msg_643afd7f49a2_version" formatted="false">"버전: 1.0.0｜내부 버전: 0.1.16｜업데이트 날짜: 2026년 11월 3일"</string>
+</resources>

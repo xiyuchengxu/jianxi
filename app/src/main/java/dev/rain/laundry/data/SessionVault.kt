@@ -7,6 +7,7 @@ import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dev.rain.laundry.core.*
+import dev.rain.laundry.notifications.LaundryReminderRecord
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -50,10 +51,14 @@ class SessionVault(context: Context) {
     fun token(): String = get("token").orEmpty()
     fun owner(): String = get("owner").orEmpty()
     fun phoneLabel(): String = get("phone_label").orEmpty()
-    fun login(phone: String, token: String) {
-        put("owner", WireProtocol.sha256(phone)); put("phone_label", phone.take(3) + " **** " + phone.takeLast(4)); put("token", token)
+    fun login(phone: String, token: String) = synchronized(orderLock) {
+        putAll(mapOf("owner" to WireProtocol.sha256(phone),
+            "phone_label" to phone.take(3) + " **** " + phone.takeLast(4), "token" to token))
     }
-    fun logout() { preferences.edit().remove("token").remove("owner").remove("phone_label").apply() }
+    fun logout() = synchronized(orderLock) {
+        preferences.edit().remove("token").remove("owner").remove("phone_label").commit()
+        Unit
+    }
     /** The current workflow pointer is independent of the bounded browsing history. */
     fun saveOrder(order: LocalOrder) = synchronized(orderLock) {
         val current = readCurrent(order.owner)
@@ -99,6 +104,83 @@ class SessionVault(context: Context) {
         runCatching { Gson().fromJson(raw, WaterSession::class.java) }.getOrNull()?.takeIf { it.owner == owner }
     }
     fun water(): WaterSession? = readWater(owner())
+
+    /** Reminder intent and delivery claims survive history truncation and process recreation. */
+    fun laundryReminders(): List<LaundryReminderRecord> = synchronized(orderLock) {
+        val account = owner().takeIf { it.isNotBlank() && token().isNotBlank() }
+            ?: return@synchronized emptyList()
+        readLaundryReminders(account)
+    }
+    private fun readLaundryReminders(account: String): List<LaundryReminderRecord> =
+        get("laundry_reminders_$account")?.let { raw ->
+            runCatching { Gson().fromJson<List<LaundryReminderRecord>>(raw,
+                object : TypeToken<List<LaundryReminderRecord>>() {}.type).orEmpty()
+                .filter { it.order.owner == account && !it.order.isWater } }.getOrNull()
+        }.orEmpty()
+
+    fun updateLaundryReminders(expectedOwner: String,
+        transform: (List<LaundryReminderRecord>) -> List<LaundryReminderRecord>
+    ): List<LaundryReminderRecord>? = synchronized(orderLock) {
+        if (expectedOwner.isBlank() || owner() != expectedOwner || token().isBlank()) return@synchronized null
+        val updated = transform(readLaundryReminders(expectedOwner))
+            .filter { it.order.owner == expectedOwner && !it.order.isWater }
+        put("laundry_reminders_$expectedOwner", Gson().toJson(updated))
+        updated
+    }
+
+    /** A stale worker reply cannot overwrite a later foreground update or another login session. */
+    fun withLaundrySession(expectedOwner: String, expectedToken: String, isCurrent: () -> Boolean,
+        block: () -> Boolean
+    ): Boolean = synchronized(orderLock) {
+        if (owner() != expectedOwner || token() != expectedToken || expectedToken.isBlank() || !isCurrent()) false
+        else block()
+    }
+
+    /** A stale worker reply cannot overwrite a later foreground update or another login session. */
+    fun updateLaundryOrder(expectedOwner: String, expectedToken: String, previous: LocalOrder,
+        updated: LocalOrder, isCurrent: () -> Boolean = { true }
+    ): Boolean = synchronized(orderLock) {
+        if (expectedOwner.isBlank() || expectedToken.isBlank() || owner() != expectedOwner ||
+            token() != expectedToken || previous.owner != expectedOwner ||
+            !OrderHistory.sameOrder(previous, updated) || !isCurrent()) return@synchronized false
+        val current = readCurrent(expectedOwner)
+        val stored = current?.takeIf { OrderHistory.sameOrder(it, previous) }
+            ?: ordersFor(expectedOwner).firstOrNull { OrderHistory.sameOrder(it, previous) }
+        if (stored != null) {
+            if (stored != previous) return@synchronized false
+            saveOrder(updated)
+        } else {
+            // An armed cycle can outlive the 20-record history without re-inserting an old order.
+            val reminders = readLaundryReminders(expectedOwner)
+            val record = reminders.firstOrNull { OrderHistory.sameOrder(it.order, previous) }
+                ?: return@synchronized false
+            if (record.order != previous) return@synchronized false
+            put("laundry_reminders_$expectedOwner", Gson().toJson(reminders.map {
+                if (it.key == record.key) it.copy(order = updated) else it
+            }))
+        }
+        true
+    }
+
+    /** Serialize foreground/worker delivery with login/logout, claiming before the external post. */
+    internal fun deliverLaundryReminder(expectedOwner: String, reminderKey: String, nowMs: Long,
+        canPost: () -> Boolean, post: (LocalOrder) -> Unit
+    ): Boolean = synchronized(orderLock) {
+        if (expectedOwner.isBlank() || owner() != expectedOwner || token().isBlank()) return@synchronized false
+        val records = readLaundryReminders(expectedOwner)
+        val record = records.firstOrNull { it.key == reminderKey } ?: return@synchronized false
+        val completedAt = record.completedAtMs ?: return@synchronized false
+        if (record.notificationClaimed || completedAt > nowMs || nowMs - completedAt > 24 * 60 * 60 * 1000L)
+            return@synchronized false
+        if (!canPost()) return@synchronized false
+        // canPost may call Android services; recheck the account immediately before persisting the claim.
+        if (owner() != expectedOwner || token().isBlank()) return@synchronized false
+        put("laundry_reminders_$expectedOwner", Gson().toJson(records.map {
+            if (it.key == reminderKey) it.copy(notificationClaimed = true) else it
+        }))
+        post(record.order)
+        true
+    }
 
     companion object { private val orderLock = Any() }
 }

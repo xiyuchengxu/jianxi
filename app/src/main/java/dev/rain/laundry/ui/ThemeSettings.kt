@@ -36,7 +36,8 @@ data class ThemeSettings(
     val waterEnabled: Boolean = true,
     val splashEnabled: Boolean = true,
     val splashImages: List<String> = emptyList(),
-    val splashDurationMs: Int = DEFAULT_SPLASH_DURATION_MS
+    val splashDurationMs: Int = DEFAULT_SPLASH_DURATION_MS,
+    val homeMessage: String = DEFAULT_HOME_MESSAGE
 ) {
     val visibleTabs get() = visibleNavigationTabs(laundryEnabled, waterEnabled)
 }
@@ -68,7 +69,8 @@ class ThemePreferences(context: Context) {
         splashImages = decodeSplashImages(runCatching { preferences.getString("splash_images", null) }.getOrNull()),
         splashDurationMs = savedSplashDurationMs(runCatching {
             preferences.getInt("splash_duration_ms", DEFAULT_SPLASH_DURATION_MS)
-        }.getOrNull())
+        }.getOrNull()),
+        homeMessage = normalizeHomeMessage(runCatching { preferences.getString("home_message", null) }.getOrNull())
     ))
         private set
 
@@ -89,7 +91,8 @@ class ThemePreferences(context: Context) {
         val previousImages = settings.splashImages
         settings = value.copy(
             splashImages = normalizeSplashImageNames(value.splashImages),
-            splashDurationMs = normalizeSplashDurationMs(value.splashDurationMs)
+            splashDurationMs = normalizeSplashDurationMs(value.splashDurationMs),
+            homeMessage = normalizeHomeMessage(value.homeMessage)
         )
         val editor = preferences.edit()
             .putString("mode", value.mode.name)
@@ -106,6 +109,7 @@ class ThemePreferences(context: Context) {
             .putBoolean("splash_enabled", value.splashEnabled)
             .putString("splash_images", encodeSplashImages(settings.splashImages))
             .putInt("splash_duration_ms", settings.splashDurationMs)
+            .putString("home_message", settings.homeMessage)
         if (previousImages != settings.splashImages) editor.putInt("splash_next_index", 0)
         editor.apply()
         if (previousImages != settings.splashImages) cleanupScope.launch {

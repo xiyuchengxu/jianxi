@@ -1,0 +1,634 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="msg_001914d23f0c" formatted="false">"Mist blue"</string>
+    <string name="msg_00612aad0812" formatted="false">"The dispenser will be asked to stop this session and the platform's final bill will be checked. Also make sure water has stopped flowing."</string>
+    <string name="msg_00d78bd5bca3" formatted="false">"Collapse order details"</string>
+    <string name="msg_0121f8244bea" formatted="false">"Invalid device organization ID. Scan the device again."</string>
+    <string name="msg_013ddbb797c5" formatted="false">"Invalid water billing data. Refresh the device."</string>
+    <string name="msg_019293ad723c" formatted="false">"Could not check this device's password-free authorization requirement"</string>
+    <string name="msg_01e7dcfb8bff" formatted="false">"Payment confirmed. Check the washing machine's status."</string>
+    <string name="msg_029b46b17729" formatted="false">"Checking payment status"</string>
+    <string name="msg_03dd0c88d8ac" formatted="false">"Current colors · Wallpaper"</string>
+    <string name="msg_055ff46ac059" formatted="false">"Unexpected water session status. Refresh to verify."</string>
+    <string name="msg_065e184d07a3" formatted="false">"Order result awaiting confirmation"</string>
+    <string name="msg_069619c91b97" formatted="false">"This device has an unpaid order. Resolve it in the original app first."</string>
+    <string name="msg_06e43ba08011" formatted="false">"This account has an active water session. Refresh to restore it."</string>
+    <string name="msg_073fcb8f4117" formatted="false">"Location is required before payment to verify the device's location."</string>
+    <string name="msg_07a3c2feadd0" formatted="false">"Choose the outlet on the dispenser in front of you."</string>
+    <string name="msg_07b375304298" formatted="false">"This order does not belong to the current account"</string>
+    <string name="msg_083c5e6e61a7" formatted="false">"Refresh water status"</string>
+    <string name="msg_0841fa3cbaff" formatted="false">"Use the machine's controls to dispense water. Make sure it has stopped before leaving."</string>
+    <string name="msg_088dce96a836" formatted="false">"Swipe left or right to switch pages"</string>
+    <string name="msg_0910213a8f05" formatted="false">"The quoted item does not match the selected wash mode"</string>
+    <string name="msg_0951f3233237">"CNY %1$s/%2$s"</string>
+    <string name="msg_096a1a09a313" formatted="false">"This device requires Alipay password-free authorization first. Opening Alipay."</string>
+    <string name="msg_09b6b52a8ffc" formatted="false">"Start dispensing water?"</string>
+    <string name="msg_0b0aa02f64fd" formatted="false">"A fresh, clean start to today."</string>
+    <string name="msg_0b29f93e5076" formatted="false">"8. Liability and legal rights\nTo the extent permitted by applicable law, this software is provided as is, without warranties beyond those expressly stated. Users are responsible for their own unauthorized or unlawful acts, infringement of others' rights, or violations of platform rules. This notice does not exclude liability that cannot legally be excluded, remove statutory user rights, or revoke any lawfully obtained open-source license rights."</string>
+    <string name="msg_0b2f1558771b">"Move image %1$s earlier"</string>
+    <string name="msg_0b6e2d0e2cdc">"Estimated finish %1$s · Remaining time is an estimate"</string>
+    <string name="msg_0b8351751e94" formatted="false">"Create a theme from your wallpaper. Turn off to restore the manual palette."</string>
+    <string name="msg_0baa295b60a1" formatted="false">"Payment is not yet confirmed. Check the order status first."</string>
+    <string name="msg_0c1af104f3dc" formatted="false">"Could not check water status"</string>
+    <string name="msg_0d2366e40efe" formatted="false">"Checking order"</string>
+    <string name="msg_0d262993e8d5" formatted="false">"The price has changed. Confirm again."</string>
+    <string name="msg_0dc111847321" formatted="false">"Custom images"</string>
+    <string name="msg_0dcc32f22104" formatted="false">"Unsupported payment status format"</string>
+    <string name="msg_0e5d45e9456f" formatted="false">"Stay hydrated~"</string>
+    <string name="msg_0ee6972c135c" formatted="false">"The water bill could not be created. Return to Water to check the device's status."</string>
+    <string name="msg_0eea89fa9937" formatted="false">"Laundry is disabled. Enable it in Settings first."</string>
+    <string name="msg_0f4d2cd6e467" formatted="false">"This water session has ended and the bill is complete."</string>
+    <string name="msg_0f7345aa9d28" formatted="false">"Order status is not yet confirmed. Check the order first."</string>
+    <string name="msg_0fee128df8c6" formatted="false">"The platform rejected this request. Try again later (403)."</string>
+    <string name="msg_0ffd6956dde5" formatted="false">"This device uses pay-after-use, which this version does not support."</string>
+    <string name="msg_10085fb8523f" formatted="false">"Could not read local orders. Try again later."</string>
+    <string name="msg_109b1efb4f46" formatted="false">"Order was not placed"</string>
+    <string name="msg_119a288b74a7" formatted="false">"This order is no longer among the latest 20 records"</string>
+    <string name="msg_12052867974c" formatted="false">"Ending water session"</string>
+    <string name="msg_1213ea2e1fb5" formatted="false">"Login expired"</string>
+    <string name="msg_12515926f77d" formatted="false">"Image import failed"</string>
+    <string name="msg_1354a76ef3f2" formatted="false">"The quote is missing a wash item"</string>
+    <string name="msg_13758a0f2e76" formatted="false">"End and confirm this water session before creating a new order."</string>
+    <string name="msg_138a7e077b76" formatted="false">"Pine green"</string>
+    <string name="msg_13c1f4bc5d91" formatted="false">"Wallpaper colors are unavailable. Using system colors for now."</string>
+    <string name="msg_13c5cfb46dc9" formatted="false">"Notify when the platform confirms laundry has finished. Remaining time is an estimate; battery saving or network delays may delay background notifications."</string>
+    <string name="msg_13cc658e15e3" formatted="false">"Unsupported Alipay payment product code format"</string>
+    <string name="msg_13cd457fb578" formatted="false">"4. Follow the original service's rules\nUsers must verify that they are legally authorized to operate the account, device services, and payments, and comply with applicable law, valid platform rules, and school or venue requirements. Stop using the software if authorization is absent or such use is prohibited. This software cannot grant permissions on behalf of the original platform and must not be used to evade authentication, risk controls, or payment obligations."</string>
+    <string name="msg_13dabacb2def" formatted="false">"Payment of the water bill is not yet confirmed. Refresh the order status first."</string>
+    <string name="msg_13ee5f6fac47" formatted="false">"Jianxi is an independent open-source project and is not affiliated with the original service platform."</string>
+    <string name="msg_15970fc99c94" formatted="false">"Pledge: I have read the disclaimer and agree to follow the user agreement"</string>
+    <string name="msg_15d2dda731b4" formatted="false">"Waiting for the device to end the water session"</string>
+    <string name="msg_15d8fa4535c2" formatted="false">"User rules (user agreement)"</string>
+    <string name="msg_15dee3b19c6e" formatted="false">"This authorization cannot be opened in your current Alipay version. Update Alipay and try again."</string>
+    <string name="msg_16b6d5550fa5" formatted="false">"We have not confirmed this is your water session. Refresh the status first."</string>
+    <string name="msg_16de867a06ae">"Confirm payment of ¥%1$s"</string>
+    <string name="msg_16e194579f97" formatted="false">"Unsupported order status format. Check in the original app first."</string>
+    <string name="msg_17ec083a8fcc" formatted="false">"Alipay password-free agreement status is not yet confirmed. Refresh and try again."</string>
+    <string name="msg_18e6bb3f9968" formatted="false">"SMS verification code"</string>
+    <string name="msg_18fa003268e3" formatted="false">"Unsupported water payment-method confirmation response. Refresh and try again."</string>
+    <string name="msg_1ad91bc551f7">"The latest %1$s laundry and water orders for this account are stored on this device, grouped by Monday–Sunday weeks."</string>
+    <string name="msg_1b205f76c96d" formatted="false">"Color library open-source license"</string>
+    <string name="msg_1bd91a7d0c53" formatted="false">"Saved"</string>
+    <string name="msg_1c8a94e1b712" formatted="false">"Paste the full contents of a washing machine or water dispenser QR code."</string>
+    <string name="msg_1cecf188f254" formatted="false">"Wallpaper colors applied"</string>
+    <string name="msg_1d1d1e02bdf7" formatted="false">"Payment is not yet confirmed. You can check again later."</string>
+    <string name="msg_1d4fe6ba00ce" formatted="false">"Switch between pages currently shown in the bottom bar"</string>
+    <string name="msg_1e027e8f269f" formatted="false">"This device's password-free authorization requirement is not yet confirmed. Refresh and try again."</string>
+    <string name="msg_1e2df9c3075a" formatted="false">"Log in"</string>
+    <string name="msg_1e75a9bc677c" formatted="false">"Order time"</string>
+    <string name="msg_1ea9145b3d9d" formatted="false">"Balance payment incomplete"</string>
+    <string name="scanner_unsupported_hint" formatted="false">"This camera cannot lower exposure, but can still scan. Change the angle or lower the device screen's brightness."</string>
+    <string name="msg_1f405289ff28">"%1$s bills"</string>
+    <string name="msg_1f407ac21f14" formatted="false">"5. Service and payment risks\nChanges in networks, platform interfaces, system compatibility, device status, or operator maintenance may cause login failures, quote changes, delayed payment status, or devices failing to start. The author does not guarantee permanent availability, error-free operation, or device startup. Before paying, verify the device, item, amount, and payment channel. If results are unexpected, check the order or contact the operator before paying again. Fulfillment, refunds, and disputes are governed by the relevant service providers' valid rules and applicable law."</string>
+    <string name="msg_1fd81704a521">"Remove image %1$s"</string>
+    <string name="msg_2007f308d3da" formatted="false">"Could not check the start command"</string>
+    <string name="msg_2050c192dabd" formatted="false">"Scan the washing machine's QR code,\nchoose a mode, and pay."</string>
+    <string name="msg_208e9e1652bf" formatted="false">"Water bill paid"</string>
+    <string name="msg_217cfe7db1e3" formatted="false">"Follow system"</string>
+    <string name="msg_2198a0a4adaf" formatted="false">"This dispenser has no available balance or Alipay channel. Check payment methods in the original app."</string>
+    <string name="msg_21b69b59b6c5" formatted="false">"Unsupported device password-free authorization requirement format"</string>
+    <string name="msg_21d35783ad6d" formatted="false">"The order response is incomplete. Check the order before continuing."</string>
+    <string name="msg_21f2cb8d89a7" formatted="false">"The platform is processing the water bill refund. Check progress in the original app."</string>
+    <string name="msg_225342a2ef09" formatted="false">"GitHub · Source code"</string>
+    <string name="msg_22739db68677" formatted="false">"The outlet is idle. Confirm water use again."</string>
+    <string name="msg_228cd0b0f24b" formatted="false">"Unable to verify right now"</string>
+    <string name="msg_22c8f9f73dc0" formatted="false">"I agree to use this phone number to log in to my existing Pangguai Life account."</string>
+    <string name="msg_23a79ee9fdd7">"Request failed (%1$s)"</string>
+    <string name="msg_24634c517963" formatted="false">"The dispenser status or rates have changed. Scan again to confirm."</string>
+    <string name="msg_247ab5060860" formatted="false">"Applies only in dark theme"</string>
+    <string name="msg_247ca01ae280" formatted="false">"Notification settings"</string>
+    <string name="msg_2490b9b14fe5" formatted="false">"Choose the app's display language"</string>
+    <string name="msg_24c899792f14" formatted="false">"View payment progress"</string>
+    <string name="msg_24e93eeda994" formatted="false">"Turn on your phone's location services first."</string>
+    <string name="msg_276a8bc45803" formatted="false">"Alipay"</string>
+    <string name="msg_280af617c87f" formatted="false">"Disclaimer"</string>
+    <string name="msg_298186c3f519" formatted="false">"Image import failed. Choose a valid image and try again. Existing images have been kept."</string>
+    <string name="msg_2a28f5ad7c38" formatted="false">"Unsupported water bill payment channel format"</string>
+    <string name="msg_2a4973a587ae" formatted="false">"Session expired"</string>
+    <string name="msg_2b207da009d1" formatted="false">"Jianxi"</string>
+    <string name="msg_2c1288e1d9f3" formatted="false">"Verification code sent"</string>
+    <string name="msg_2c47626fe8e8" formatted="false">"The platform is processing the refund. Check progress in the original app."</string>
+    <string name="msg_2c581506e729" formatted="false">"Starting water dispenser"</string>
+    <string name="msg_2c5b2c20873e" formatted="false">"Complete the Alipay pay-after-use (password-free) agreement first."</string>
+    <string name="msg_2c5f66a724fd" formatted="false">"Water bill refunded"</string>
+    <string name="msg_2cbcfc25120f" formatted="false">"The water start response has no command ID. Refresh the status."</string>
+    <string name="msg_2cc8c71e5e19" formatted="false">"Could not start the water dispenser"</string>
+    <string name="msg_2cd0f3be8738" formatted="false">"Cancel"</string>
+    <string name="msg_2d0222b61b9a" formatted="false">"QR code contents"</string>
+    <string name="msg_2d264ece4497" formatted="false">"Collapse splash settings"</string>
+    <string name="msg_2d65f1558d6f" formatted="false">"Unsupported water dispenser details format"</string>
+    <string name="msg_2dbf7aacc433" formatted="false">"Laundry completion notifications enabled"</string>
+    <string name="msg_2dda33f41051" formatted="false">"Could not save splash image"</string>
+    <string name="msg_2ded5acf5f36" formatted="false">"Water session active · View or stop"</string>
+    <string name="msg_2e1f7be3bcfa" formatted="false">"Payment cancelled. You can continue paying from Orders."</string>
+    <string name="msg_3080976c784d" formatted="false">"Check and complete the agreement in Alipay. When you return, this device's requirements will be checked again. Water will not start automatically."</string>
+    <string name="msg_3098a02a0c34" formatted="false">"The platform marked the water bill refund complete. Check that the money has arrived."</string>
+    <string name="msg_30b6558e1ec2" formatted="false">"Tab animation"</string>
+    <string name="msg_321554ba3c42" formatted="false">"Use the stop button on this device to stop the water, then refresh the status."</string>
+    <string name="msg_323af04842ad" formatted="false">"Hold or drag to try the liquid effect. Tap to switch with an elastic bounce."</string>
+    <string name="msg_325527570302" formatted="false">"Could not verify Alipay order contents"</string>
+    <string name="msg_33a072bb43bc" formatted="false">"The platform still requires password-free authorization for this device. Verify later; confirming water use will open Alipay."</string>
+    <string name="msg_33cdc95be001" formatted="false">"2. Your account and lawful authorization\nOnly operate accounts, device services, and orders that belong to you or for which you have lawful authorization. Do not impersonate others, use their verification codes, steal tokens, or misuse payment accounts. Do not access, save, or disclose others' account, order, device usage, or personal information without authorization."</string>
+    <string name="msg_33df16b4afab" formatted="false">"Needs verification"</string>
+    <string name="msg_3465dd4a34e0">"Move image %1$s later"</string>
+    <string name="msg_34aa2e852e28" formatted="false">"Login response is missing session information"</string>
+    <string name="msg_35cf44ac0fcb" formatted="false">"Once"</string>
+    <string name="scanner_waiting" formatted="false">"Opening camera…"</string>
+    <string name="msg_37bacd3c428f" formatted="false">"Save home message"</string>
+    <string name="msg_37e717d5998d" formatted="false">"Soft"</string>
+    <string name="msg_37f64a4b3e45" formatted="false">"Message"</string>
+    <string name="msg_381f5b6b8dba" formatted="false">"This dispenser requires Bluetooth. Use the original app for water."</string>
+    <string name="msg_3834f9cf9f9b" formatted="false">"Enable notifications"</string>
+    <string name="msg_3987423266ad" formatted="false">"8. No impersonation, fraudulent fees, or misleading claims\nDo not impersonate the author, operator, or administrators to sell nonexistent permissions, guarantee washing results, promise special privileges, solicit transfers, or commit other fraud. The author's client is free; voluntary donations do not affect features or normal use. Rights and obligations for lawful derivatives remain governed by the applicable licenses. Do not imply endorsement by the author or original platform in publicity."</string>
+    <string name="msg_3988d0190748" formatted="false">"Water session ending not confirmed"</string>
+    <string name="msg_399477e1d8d5">"%1$s: %2$s (error code %3$s)"</string>
+    <string name="msg_3a153dab831f" formatted="false">"Invalid device ID format"</string>
+    <string name="msg_3a65247b5242" formatted="false">"10. Stop when something is wrong\nIf prices, orders, payments, or device status are unexpected, stop repeating actions, verify through order queries, the original platform, or the operator, and provide redacted information to the feedback group. Do not exploit errors for further gain, expand testing without permission, or disclose others' sensitive data. Business disputes with the platform or operator should go through their official channels."</string>
+    <string name="msg_3a8a7bac9348" formatted="false">"Could not choose the water payment method"</string>
+    <string name="msg_3b91d186d44e" formatted="false">"Get code"</string>
+    <string name="msg_3cb723dd618e" formatted="false">"Water bill refund in progress"</string>
+    <string name="msg_3cfa1efa202f" formatted="false">"Read and accept the user agreement first."</string>
+    <string name="msg_3d3517709575" formatted="false">"The authorization request has expired. Confirm water use again."</string>
+    <string name="msg_3d3fce810de2" formatted="false">"Before your first use, read everything below and type the pledge to continue."</string>
+    <string name="msg_3d5436ea23d2" formatted="false">"Orders"</string>
+    <string name="msg_3d746aa6be41" formatted="false">"The quote includes an unselected discount. Check it first."</string>
+    <string name="msg_3d872b191e4e" formatted="false">"Null"</string>
+    <string name="msg_3e0d676d2d85" formatted="false">"Home"</string>
+    <string name="msg_3eb2e1441f78" formatted="false">"Water bill not created"</string>
+    <string name="msg_3ecd8517b211" formatted="false">"Could not verify the laundry amount"</string>
+    <string name="msg_3ed8f3a53bb1" formatted="false">"Submitting balance payment"</string>
+    <string name="msg_3f2191b43607" formatted="false">"Page transitions"</string>
+    <string name="msg_3fd47edce45b" formatted="false">"Close"</string>
+    <string name="msg_3fe8a0ad2114" formatted="false">"2. The client is completely free\nThe Jianxi client published by the author is completely free, with no usage, membership, subscription, or feature-unlock fees. Voluntary donations are not a condition of use and do not purchase laundry services or additional privileges. Actual service charges for laundry, account balance, and third-party payments are governed by legitimate orders shown by the operator and payment channel. Free software does not mean free laundry. Fees charged elsewhere are not the author's software fees."</string>
+    <string name="msg_40368cbb8f34" formatted="false">"The server returned no content"</string>
+    <string name="msg_408b4f2cabcf" formatted="false">"Location is required before dispensing water to verify the device's location."</string>
+    <string name="msg_409b911feaf5" formatted="false">"No active water session"</string>
+    <string name="msg_409c4e104012" formatted="false">"Laundry finished"</string>
+    <string name="msg_40b0aade58d7" formatted="false">"Decline and exit"</string>
+    <string name="msg_40ca838c072f" formatted="false">"Saving an empty or whitespace-only message restores the default."</string>
+    <string name="scanner_title" formatted="false">"Scan a washing machine or water dispenser QR code"</string>
+    <string name="msg_4167b9536d27" formatted="false">"Check the device and refresh its status first. No additional start command will be sent while the result is unconfirmed."</string>
+    <string name="msg_4189cc4d71fe" formatted="false">"I have read the disclaimer and agree to follow the user agreement"</string>
+    <string name="msg_41b8dd731e63" formatted="false">"Water bill details are not yet confirmed"</string>
+    <string name="msg_41c71d37f309">"Home message field, up to %1$s characters"</string>
+    <string name="scanner_normal" formatted="false">"Standard code"</string>
+    <string name="msg_43a112a16373" formatted="false">"The platform may charge automatically using existing Alipay authorization. Unpaid bills can be paid from Orders."</string>
+    <string name="msg_44fb814b166e" formatted="false">"Theme mode"</string>
+    <string name="msg_453a3ff82d81">"Alipay authorization status is not yet confirmed: %1$s. Refresh and confirm water use again."</string>
+    <string name="msg_458e4ccaafb1" formatted="false">"Use wallpaper colors"</string>
+    <string name="msg_46b676f80bdc" formatted="false">"Resolve the current unfinished order first."</string>
+    <string name="msg_46bad67d0636" formatted="false">"Dark appearance"</string>
+    <string name="msg_46e651c95c83" formatted="false">"Copy group number"</string>
+    <string name="msg_4741fddebad0" formatted="false">"Language changes take effect immediately. Your account and orders are kept."</string>
+    <string name="msg_475091a94a64">"%1$s · %2$s images"</string>
+    <string name="msg_47528de26047" formatted="false">"Unsupported water status format"</string>
+    <string name="msg_478a69f47b5e">"%1$s records"</string>
+    <string name="msg_47a270081ab2" formatted="false">"Mode"</string>
+    <string name="msg_484d55613910" formatted="false">"None"</string>
+    <string name="msg_4948596875a4" formatted="false">"Accept and continue"</string>
+    <string name="msg_498e1d59b4d7" formatted="false">"Exit"</string>
+    <string name="msg_49e131043706" formatted="false">"Do not tap"</string>
+    <string name="scanner_limit_hint" formatted="false">"Camera brightness is at its minimum. Change the angle slightly or lower the device screen's brightness."</string>
+    <string name="msg_4a3a09acabd9" formatted="false">"Log in before using the water dispenser."</string>
+    <string name="msg_4b6ded8a7f18" formatted="false">"Notifications"</string>
+    <string name="msg_4b77024928a1" formatted="false">"The previous order result is unconfirmed. Check the order in the original app first."</string>
+    <string name="msg_4c0130832ac1">"%1$s palette"</string>
+    <string name="msg_4c4872c43ad4" formatted="false">"Use a device QR code containing IMEI, SN, or NQT."</string>
+    <string name="msg_4c5c6272eeb1" formatted="false">"The final water bill has been created. You can pay now; if already paid in the original app, refresh the status."</string>
+    <string name="msg_4c8eb5753a4e" formatted="false">"Water bill result awaiting confirmation"</string>
+    <string name="msg_4c9c54b14027" formatted="false">"Unsupported quoted order type format"</string>
+    <string name="msg_4d29b30867a0" formatted="false">"Color style"</string>
+    <string name="msg_4d506f9bd318" formatted="false">"Unsupported quoted discount data format"</string>
+    <string name="msg_4d6b40d659e5" formatted="false">"Water dispenser"</string>
+    <string name="msg_4d84a10ccdee" formatted="false">"The actual amount is determined by the platform's final bill"</string>
+    <string name="msg_4dca55259348" formatted="false">"Scan water dispenser again"</string>
+    <string name="msg_4decd6c42efc" formatted="false">"The platform's device authorization requirement is not yet confirmed"</string>
+    <string name="msg_50d9f748385e" formatted="false">"Unsupported Alipay agreement link format. Check in Pangguai and try again."</string>
+    <string name="msg_50dab49f5bab" formatted="false">"The dispenser is currently unavailable. Refresh the device."</string>
+    <string name="msg_5108d2fa0bac" formatted="false">"This order is being refunded. Check progress in the original app."</string>
+    <string name="msg_5124eb2d64ae" formatted="false">"Laundry, made simple"</string>
+    <string name="msg_517e649764b1" formatted="false">"Disclaimer and user rules"</string>
+    <string name="msg_5192dad3dee3" formatted="false">"Estimated time reached. Waiting for platform confirmation."</string>
+    <string name="msg_51ebba34a15f" formatted="false">"Cancel this order?"</string>
+    <string name="msg_51f0310e9d93" formatted="false">"Order complete"</string>
+    <string name="msg_52420fc5327e" formatted="false">"Laundry in progress · Waiting for time estimate"</string>
+    <string name="msg_525fba38cbee" formatted="false">"This water bill has no Alipay single-payment channel. Pay in the original app and refresh."</string>
+    <string name="msg_539a04f13653">"Choose 1 to %1$s images"</string>
+    <string name="msg_53da7f836186">"Unsupported quoted discount option format (%1$s: %2$s)"</string>
+    <string name="msg_53f92c063963" formatted="false">"Object"</string>
+    <string name="msg_542e9ae16505">"Default message: %1$s"</string>
+    <string name="msg_54744c98c1d5" formatted="false">"Jianxi is an independent client. SMS, laundry, and water services are provided by the original platform."</string>
+    <string name="msg_54c9beed47d8" formatted="false">"Alipay is not installed. Install it and confirm water use again."</string>
+    <string name="msg_5509fe43c5e9" formatted="false">"Water bill payment confirmed"</string>
+    <string name="msg_55ae9cf11f5d" formatted="false">"Each image must be 50 MB or smaller"</string>
+    <string name="msg_5642ebf21120" formatted="false">"Refund in progress"</string>
+    <string name="msg_569001c47283">"You can use up to %1$s images. Select fewer images."</string>
+    <string name="msg_56fe9a6dd1aa" formatted="false">"Pure black mode"</string>
+    <string name="msg_570d60206779" formatted="false">"Saving"</string>
+    <string name="scanner_close" formatted="false">"Back"</string>
+    <string name="msg_580b9f75924d" formatted="false">"Alipay pay after use (password-free)"</string>
+    <string name="msg_583465e2a15d" formatted="false">"Scan with Alipay, or save the image and scan it from your gallery."</string>
+    <string name="msg_59124bffa4c0" formatted="false">"Payment confirmed and device sync requested. Check whether the machine has started."</string>
+    <string name="msg_5a1a388ad40c" formatted="false">"Could not verify device status"</string>
+    <string name="msg_5a2665f54deb">"%1$s  Jianxi"</string>
+    <string name="msg_5bcd70afb28d" formatted="false">"Laundry,\nmade simple."</string>
+    <string name="msg_5bdb9263878d" formatted="false">"Dispensing water"</string>
+    <string name="msg_5c22e569d581" formatted="false">"Jianxi feedback group"</string>
+    <string name="msg_5c55a67935af" formatted="false">"All"</string>
+    <string name="msg_5d3f476b86fd" formatted="false">"No laundry orders yet"</string>
+    <string name="msg_5d5c5a7050f5" formatted="false">"Pending order"</string>
+    <string name="msg_5e29d121dda0" formatted="false">"Quantity"</string>
+    <string name="msg_5e7f0dec6dbe" formatted="false">"Order refunded. Check that the money has arrived."</string>
+    <string name="msg_5ecc022c1ca8" formatted="false">"Current colors · Extracting"</string>
+    <string name="msg_5ecee348e4b3">"%1$s. Existing images have been kept."</string>
+    <string name="msg_5ee487891e56" formatted="false">"Enable Water before viewing water records."</string>
+    <string name="msg_5f386787584a" formatted="false">"Water session ended. Checking the bill."</string>
+    <string name="msg_5f63b1959faf">"Show %1$s in the bottom bar"</string>
+    <string name="msg_60404752f27e" formatted="false">"Vivid"</string>
+    <string name="msg_606b515644d2" formatted="false">"The payment amount does not match the confirmed amount"</string>
+    <string name="msg_609c3bd23883" formatted="false">"and up (tiered pricing)"</string>
+    <string name="msg_610654391ab3" formatted="false">"9. Respectful feedback and protecting others\nJoining the feedback group and providing feedback are voluntary. Respect others, describe issues objectively, and do not spam, harass, insult, post unlawful content, or spread unverified personal accusations. Redact sensitive details before submitting screenshots, logs, or QR codes. Do not give group members SMS codes, tokens, payment passwords, or other information that grants account control."</string>
+    <string name="msg_6132aaeef659" formatted="false">"The order has expired or is invalid. Return to Laundry to choose a mode again."</string>
+    <string name="scanner_brightness_accessibility" formatted="false">"Screen code brightness"</string>
+    <string name="scanner_screen" formatted="false">"Screen code"</string>
+    <string name="msg_61ec6116d1f5" formatted="false">"Water is disabled. Enable it in Settings first."</string>
+    <string name="msg_62200c199491" formatted="false">"Unsupported device availability format"</string>
+    <string name="msg_6253728e4fa9" formatted="false">"Continue payment"</string>
+    <string name="msg_62be6c883399" formatted="false">"Choose a wash mode"</string>
+    <string name="msg_62fe8a9e39d9" formatted="false">"This bill is for water already used. Check the amount before paying."</string>
+    <string name="msg_6303308108a0" formatted="false">"Replace the default splash character with your own images. Multiple images appear in your chosen order, one per launch."</string>
+    <string name="msg_630e2611df30" formatted="false">"Could not cancel order"</string>
+    <string name="msg_63109ff6f1bb" formatted="false">"Show splash character"</string>
+    <string name="msg_6337e0867c00" formatted="false">"Pay with Alipay"</string>
+    <string name="msg_634bf913de99" formatted="false">"The server response format has changed and cannot be processed yet"</string>
+    <string name="msg_63ccc6721672" formatted="false">"Enable laundry completion notifications"</string>
+    <string name="msg_6415984a1009" formatted="false">"Scan"</string>
+    <string name="msg_64328cd1a729" formatted="false">"This project's source code is licensed under MIT. The full license and copyright notice are available offline."</string>
+    <string name="msg_643afd7f49a2" formatted="false">"Jianxi disclaimer\nVersion: 1.0.0 · Internal version: 0.1.16 · Updated: November 3, 2026"</string>
+    <string name="msg_64f7d3d535d8" formatted="false">"Read full agreement"</string>
+    <string name="msg_65687255173c" formatted="false">"Payment confirmed"</string>
+    <string name="msg_657c50e3dcf5" formatted="false">"Log in to the account that owns this order first."</string>
+    <string name="msg_65d6f4d9ff07" formatted="false">"6. No modified releases under another's identity\nDo not impersonate the original author or mislead users into believing that a modified package, added content, or changed functionality is the author's original release, an official release, or the original platform's official client. Do not add malware, paid features, advertisements, or false promises in the author's name. When modifying and redistributing under open-source licenses, retain required notices, clearly identify the modifier and changes, and state that it is not the original author's version. Do not present it as official."</string>
+    <string name="msg_65e1d3722879" formatted="false">"The fixed bottom bar does not use liquid glass. The selected level applies when you switch back to the floating bar."</string>
+    <string name="msg_660ffe0aeef5" formatted="false">"Could not check water settlement"</string>
+    <string name="msg_661d94d78724" formatted="false">"Getting payment information"</string>
+    <string name="scanner_normal_hint" formatted="false">"Fit the entire QR code in the frame. Switch to Screen code if the screen is too bright."</string>
+    <string name="msg_670afc87ff0c" formatted="false">"3. Follow service and payment rules\nUse laundry equipment according to the operator's, school's, and venue's valid rules. Verify the clothes, device, item, and amount before paying. Do not evade fees, forge discounts or payment results, repeat requests to obtain improper benefits, or exploit interface differences to bypass restrictions. If status is uncertain, verify the order before placing or paying again."</string>
+    <string name="msg_67105fbcc14e" formatted="false">"Log in to the order's account to view laundry progress."</string>
+    <string name="scanner_screen_hint" formatted="false">"Adjust brightness slowly until the QR pattern is clear. Move slightly farther away to help focus."</string>
+    <string name="msg_685bb17fdb2b" formatted="false">"Array"</string>
+    <string name="msg_694111630619" formatted="false">"Device information is incomplete. Scan again to confirm."</string>
+    <string name="msg_6978239af3fb">"Default %1$s ms, range %2$s–%3$s ms"</string>
+    <string name="msg_698b0d6c12a4" formatted="false">"Pledge confirmation"</string>
+    <string name="msg_69ca3b6b5f60" formatted="false">"This dispenser has no available outlets right now"</string>
+    <string name="msg_6aacc960bae8" formatted="false">"Order detail IDs do not match. Check in the original app first."</string>
+    <string name="msg_6acfa1db6a62" formatted="false">"Washing machine"</string>
+    <string name="msg_6b1933e75c74" formatted="false">"Single payment"</string>
+    <string name="msg_6b30d72d0686" formatted="false">"The selected file is not a readable image"</string>
+    <string name="msg_6b59ed9d733e" formatted="false">"View active water session"</string>
+    <string name="msg_6bdb4435095e" formatted="false">"Saving…"</string>
+    <string name="msg_6be5a3ca9454" formatted="false">"Water bill cancelled. Refer to the platform's records."</string>
+    <string name="msg_6bea77acefb3" formatted="false">"Standard"</string>
+    <string name="msg_6c3a3a160315" formatted="false">"Could not create splash image folder"</string>
+    <string name="msg_6c61dc3a5f3d" formatted="false">"Amount awaiting sync"</string>
+    <string name="msg_6c6594023f60" formatted="false">"Sending verification code"</string>
+    <string name="msg_6cdb2ed0c44e" formatted="false">"Soft frosted glass with subtle refraction and distortion"</string>
+    <string name="msg_6ce4fd181551" formatted="false">"Confirm end of water session"</string>
+    <string name="msg_6d1262e5d2e0" formatted="false">"Final amount returned by the platform"</string>
+    <string name="msg_6d1c3af7a838" formatted="false">"Could not refresh water status. Try again later."</string>
+    <string name="msg_6d41d86f222f" formatted="false">"This dispenser only offers unsupported channels such as UnionPay password-free payment. Use the original app."</string>
+    <string name="msg_6ea618c519a2" formatted="false">"Type the pledge"</string>
+    <string name="msg_6edae041a323" formatted="false">"Water"</string>
+    <string name="msg_6f10af9918f8" formatted="false">"Default image"</string>
+    <string name="msg_6f2d708abb24" formatted="false">"Unsupported water bill status"</string>
+    <string name="msg_6f52cc94db65" formatted="false">"Phone number"</string>
+    <string name="msg_6faf7537a441" formatted="false">"The response is not for a single Alipay payment"</string>
+    <string name="msg_7017c40cec9b" formatted="false">"4. No attacks or damage to networks and data\nDo not use this software, its source code, or derivatives for attacks, malicious bulk requests, stress testing, fake transactions, bypassing authentication, probing others' data, or disrupting services. Do not falsify business data, maliciously alter orders or balances, intercept private information, or interfere with other users or devices. Security research requires separate explicit authorization from the relevant rights holders."</string>
+    <string name="msg_708c97df7bec" formatted="false">"Graphite"</string>
+    <string name="msg_70e229df2e66" formatted="false">"Water status is not yet confirmed. Refresh later."</string>
+    <string name="msg_717d0bf23fb3" formatted="false">"Outlet"</string>
+    <string name="msg_73ddd0a867c2" formatted="false">"Alipay donation QR code"</string>
+    <string name="msg_749b9fdc6f64" formatted="false">"Make sure your clothes are in the machine before paying."</string>
+    <string name="msg_7546a59d0f68" formatted="false">"View order"</string>
+    <string name="msg_755f809f9c52">"Current colors · %1$s"</string>
+    <string name="msg_75c526d48af0" formatted="false">"No animation"</string>
+    <string name="msg_76057ded0624" formatted="false">"AndroidX / Jetpack Compose, Material Color Utilities, OkHttp, Gson, ZXing Embedded, the Alipay Android SDK, and other components follow their respective licenses. See THIRD_PARTY_NOTICES.md in the repository."</string>
+    <string name="msg_7647946e9f07" formatted="false">"Splash duration (ms)"</string>
+    <string name="msg_76ee9a62d31e" formatted="false">"7. Do not disclose nonpublic or sensitive information\nDo not disclose verification codes, tokens, payment receipts, private screenshots, nonpublic personal information from groups, private signing keys, or other confidential material without authorization from the relevant rights holders or data subjects. Verify permission before distributing material explicitly marked nonpublic and not covered by an open-source license. This requirement must not be expanded to prohibit lawful copying, modification, or distribution of public source code and software obtained under MIT or other open-source licenses."</string>
+    <string name="msg_7830ed883845" formatted="false">"Dispenser information has changed. Scan again to confirm."</string>
+    <string name="msg_788db1cfec2a" formatted="false">"Theme"</string>
+    <string name="msg_788ef5156b41" formatted="false">"Third-party components"</string>
+    <string name="msg_7895f1bfe9af" formatted="false">"Amount paid"</string>
+    <string name="msg_79080acb89b3" formatted="false">"Appearance, colors, splash screen, and bottom bar"</string>
+    <string name="msg_793dc584cf9d" formatted="false">"Save duration"</string>
+    <string name="msg_79cea7bbcb4f" formatted="false">"Waiting for dispenser response"</string>
+    <string name="msg_7c315faa6c32" formatted="false">"The platform no longer requires an agreement. Confirm water use again."</string>
+    <string name="msg_7c7dea47f575" formatted="false">"My orders"</string>
+    <string name="msg_7daf2930ebfb">"In use · About %1$s min left"</string>
+    <string name="msg_7db163039817" formatted="false">"Confirming price"</string>
+    <string name="msg_7e1c2cd5e619" formatted="false">"Group number copied. Search for it in QQ to join."</string>
+    <string name="msg_7ea56ad1e29f" formatted="false">"The platform still requires password-free activation for this device. Refresh later to verify."</string>
+    <string name="msg_7eb336e42cb5" formatted="false">"Auto"</string>
+    <string name="msg_7eb9be087d93" formatted="false">"Laundry progress syncs automatically. Remaining time is an estimate."</string>
+    <string name="msg_7f3cf008769d" formatted="false">"Dispenser details are missing a device identifier"</string>
+    <string name="msg_7f48dd3aa586" formatted="false">"Choose images again"</string>
+    <string name="msg_7f48fe35e1c4" formatted="false">"Changes take effect immediately and save automatically."</string>
+    <string name="msg_7f96511c0fa3">"Shown at the top of Home. Supports line breaks, up to %1$s characters."</string>
+    <string name="msg_800bba0b799c" formatted="false">"Alipay authorization status is not yet confirmed. Refresh later to verify."</string>
+    <string name="msg_801916710b48" formatted="false">"1. Read and follow all rules\nBefore use, read the entire disclaimer, these rules, applicable original platform rules, and open-source licenses, and make sure you understand them. Users pledge to follow these rules and applicable law. Not reading them, claiming research purposes, or having typed the pledge does not excuse unlawful, unauthorized, or infringing acts. If you cannot accept them, exit and stop using the software."</string>
+    <string name="msg_8032591e13e5" formatted="false">"Scan the dispenser's QR code,\nchoose an outlet, and start dispensing."</string>
+    <string name="msg_80a1a04791c5" formatted="false">"Last week · "</string>
+    <string name="msg_81f2e88ab5a7">"Version %1$s (%2$s)"</string>
+    <string name="msg_822a8903fcb0" formatted="false">"No water bills to display on this device."</string>
+    <string name="msg_8279f6a35954" formatted="false">"Support with a donation"</string>
+    <string name="msg_829614d0d5f9" formatted="false">"The platform marked the refund complete. Check that the money has arrived."</string>
+    <string name="msg_8313f2a8cb24" formatted="false">"Thank you for supporting Jianxi. Choose any donation amount."</string>
+    <string name="msg_832c13565546" formatted="false">"The final water bill is paid. Refer to the platform's records for the amount and status."</string>
+    <string name="msg_83e008eb7dc4" formatted="false">"Slide"</string>
+    <string name="msg_845461671a4e">"Payment: %1$s · Billed by actual usage"</string>
+    <string name="msg_8481aa8b7737" formatted="false">"The quote contains extra products. Check in the original app first."</string>
+    <string name="msg_85312acee487">"Home message, current text: %1$s"</string>
+    <string name="msg_85c6e00d4cca" formatted="false">"This device has no available single-payment channel"</string>
+    <string name="msg_86a84936749d" formatted="false">"Water bill closed"</string>
+    <string name="msg_874e82006913" formatted="false">"No orders yet"</string>
+    <string name="msg_87b7632a53e5" formatted="false">"Match the text above exactly, including punctuation, without quotation marks."</string>
+    <string name="msg_87c4fd5fd71e" formatted="false">"Laundry completion reminder"</string>
+    <string name="msg_87da2d041151" formatted="false">"Check the washing machine's status."</string>
+    <string name="msg_87e0ca38b1f4" formatted="false">"This data cannot be processed right now. Try again later."</string>
+    <string name="msg_87f08e0c0721" formatted="false">"Alipay password-free authorization"</string>
+    <string name="msg_87f4372ffa2c" formatted="false">"Unsupported dispenser outlet data format"</string>
+    <string name="msg_88c89cff1508" formatted="false">"Network connection failed. Check your connection and try again."</string>
+    <string name="msg_88ef220dbc2f" formatted="false">"Start water session"</string>
+    <string name="msg_88f30d89d6d2" formatted="false">"Unsupported water bill payment method. Check in the original app."</string>
+    <string name="msg_8923664276ca" formatted="false">"This order is no longer stored on this device"</string>
+    <string name="msg_894df8bd55a2" formatted="false">"Bottom bar"</string>
+    <string name="msg_89543c817609" formatted="false">"Water bill cancelled"</string>
+    <string name="msg_898dcb67f920" formatted="false">"9. Feedback and document updates\nFeedback QQ group: 1124696181. Describe issues objectively and provide only necessary, redacted information. Group discussions do not guarantee service outcomes or legal results. The full disclaimer and user rules are always available in About. If their contents change, the client will require you to read and accept them again."</string>
+    <string name="msg_8ac5f3bd798f" formatted="false">"Resolve the unfinished order first."</string>
+    <string name="msg_8bea5e0f6086" formatted="false">"Check this order in the original app first to avoid duplicate orders."</string>
+    <string name="msg_8c5635cc9269" formatted="false">"Could not open Alipay authorization. Try again later."</string>
+    <string name="msg_8e878de7a527" formatted="false">"Paste device code"</string>
+    <string name="msg_8f4733578d9c" formatted="false">"Water payment channels have changed. Refresh and choose again."</string>
+    <string name="msg_8fca8cee3982" formatted="false">"This device cannot be stopped remotely. Press the stop button on the dispenser."</string>
+    <string name="msg_8ffbad496815">"%1$s navigation"</string>
+    <string name="msg_900e6be64ccc" formatted="false">"Refer to the actual device and platform status"</string>
+    <string name="msg_9055c1d4ca6f" formatted="false">"End water session"</string>
+    <string name="msg_91051a21e008" formatted="false">"Could not get payment methods"</string>
+    <string name="msg_914133ec9e6e">"This session uses %1$s and is billed by actual usage. Have your container ready and make sure water has stopped when you finish."</string>
+    <string name="msg_91a1254d600f">"Splash image %1$s"</string>
+    <string name="msg_925fc2ded5b2" formatted="false">"11. Acceptance, updates, and stopping use\nOn first use, type the full pledge displayed by the client yourself. The acceptance record is stored only on this device. Document changes, reinstallation, or clearing data may require acceptance again. You may stop using the software if you disagree with new contents. Stopping use does not affect rights or obligations under applicable law or open-source licenses."</string>
+    <string name="msg_92863c1ad1f0" formatted="false">"Home message"</string>
+    <string name="msg_93f6c90cc986" formatted="false">"Identify device"</string>
+    <string name="msg_93fb54ffd5d4" formatted="false">"Checking payment result"</string>
+    <string name="msg_94654c53105c">"%1$s · %2$s\nOrder details and payment status will be checked first. Cancellation will be requested only if the order is still eligible."</string>
+    <string name="msg_9490a9f00e48" formatted="false">"Floating bottom bar preview"</string>
+    <string name="msg_960aa8eb1c5d" formatted="false">"This session uses Alipay pay-after-use (password-free), with charges settled by the platform based on actual usage. After confirmation, the device's agreement requirements will be checked. If needed, Alipay will open; confirm water use again when you return. Check unpaid bills and payment status in Orders."</string>
+    <string name="msg_960e8d3fc1e1" formatted="false">"Verifying Alipay password-free authorization"</string>
+    <string name="scanner_camera_error" formatted="false">"Camera unavailable. Go back and try again."</string>
+    <string name="msg_976a1c14feb1" formatted="false">"Water settlement ID is not yet confirmed. Refresh later."</string>
+    <string name="msg_97c0474b816d" formatted="false">"Confirm water start"</string>
+    <string name="msg_97d1ee0dcbe2" formatted="false">"The logged-in account has changed. Confirm water use again."</string>
+    <string name="msg_98b03d8bcb49" formatted="false">"Latest water session"</string>
+    <string name="msg_98b8c83eb71c" formatted="false">"Payment result is still being confirmed. Refresh the order later."</string>
+    <string name="msg_996bbd1e69e4" formatted="false">"Rose"</string>
+    <string name="msg_99ae219d44e9" formatted="false">"Order device information has changed. Check in the original app first."</string>
+    <string name="msg_9a81c4e994ca" formatted="false">"Continue water session"</string>
+    <string name="msg_9b1cb6619d40" formatted="false">"Wash mode"</string>
+    <string name="msg_9b3a9a53cd77" formatted="false">"I agree"</string>
+    <string name="msg_9d2e3d5ad46b" formatted="false">"Saving images…"</string>
+    <string name="msg_9d8fb9c546b1">"%1$s toggle"</string>
+    <string name="msg_9da18b06f6bb" formatted="false">"Water session ended. Check and pay the bill in Orders."</string>
+    <string name="msg_9dcdc2b289b9" formatted="false">"seconds"</string>
+    <string name="msg_9e27d3fb2bfb" formatted="false">"Logging in"</string>
+    <string name="msg_9e2becfedaad" formatted="false">"Water session ended and the platform returned the final bill"</string>
+    <string name="msg_9e4949bc0d52" formatted="false">"Enter your phone number and SMS code."</string>
+    <string name="msg_9eaf7337eac7" formatted="false">"Bill time"</string>
+    <string name="msg_9f0d4e4656ee" formatted="false">"Add images"</string>
+    <string name="msg_9f6fee1aba17" formatted="false">"Language"</string>
+    <string name="scanner_brighter" formatted="false">"Brighter"</string>
+    <string name="msg_9ff5a9563ee2" formatted="false">"This water session has ended"</string>
+    <string name="msg_a00234e52c02" formatted="false">"Unsupported wash mode data format. Keep the QR code for later verification."</string>
+    <string name="msg_a01fa2926a83">"Order %1$s"</string>
+    <string name="msg_a0640541affa" formatted="false">"Restore and save default home message"</string>
+    <string name="msg_a0686c2646d6" formatted="false">"This week · "</string>
+    <string name="msg_a07dc2446281" formatted="false">"The device did not provide merchant agreement information. Scan again or check in Pangguai."</string>
+    <string name="msg_a0aa4b780049" formatted="false">"No water records yet"</string>
+    <string name="msg_a0b44537c2b6" formatted="false">"7. Downloading, installing, and choosing to use\nVerify the package source, version, and signature. Do not install unknown or maliciously modified packages. Browsers, third-party download links, and original platform content are the responsibility of their providers. Typing the pledge confirms you have read and will follow the rules. If you disagree, exit and stop using the software. Uninstalling, clearing app data, or changing signatures may make local records unrecoverable. Check unfinished orders in the original platform first."</string>
+    <string name="msg_a158267356f5" formatted="false">"Could not check water bill payment methods"</string>
+    <string name="msg_a24b2df2ec2f" formatted="false">"Start laundry"</string>
+    <string name="msg_a2d0549991f7">"About %1$s min %2$s sec remaining"</string>
+    <string name="msg_a3030bf8f16d" formatted="false">"Save"</string>
+    <string name="msg_a329dd6c8804" formatted="false">"Order ID is incomplete. Check in the original app first."</string>
+    <string name="msg_a367880426a2" formatted="false">"Edit home message"</string>
+    <string name="msg_a527127a2bc6" formatted="false">"The platform confirmed completion. Please collect your laundry soon."</string>
+    <string name="msg_a54c648d6a5d" formatted="false">"Refresh and choose a water payment method first."</string>
+    <string name="msg_a555b7117495" formatted="false">"Cancellation is not yet confirmed. Refresh the order."</string>
+    <string name="msg_a5a749ecf99b" formatted="false">"An independent Android laundry and water client built with Kotlin and Jetpack Compose."</string>
+    <string name="msg_a6b6c3b4d179" formatted="false">"Clear glass with stronger refraction and elastic distortion"</string>
+    <string name="msg_a6b75d068032" formatted="false">"Dark"</string>
+    <string name="msg_a6e01b215620" formatted="false">"The dispenser is in use or its status is uncertain. Refresh first."</string>
+    <string name="msg_a6e3cad608b3" formatted="false">"Unsupported order details format. Check in the original app first."</string>
+    <string name="msg_a74a462db571">"Up to %1$s images, stored on this device. Turning off the splash screen keeps your image settings."</string>
+    <string name="msg_a7761b0a28b0" formatted="false">"This device requires Bluetooth to start, which this version does not support."</string>
+    <string name="msg_a7afd35b9a01" formatted="false">"Check the rates displayed on the machine first."</string>
+    <string name="msg_a7e4da3594db" formatted="false">"6. Accounts, permissions, and personal information\nUse only accounts you own or are lawfully authorized to use. Protect phone numbers, verification codes, login tokens, payment receipts, and local order information. The client stores the session, orders, appearance preferences, and acceptance records needed for use on this device. Camera and location permissions are requested as needed. Understand the applicable rules for third-party SMS, location, scanning, or payment components. Remove sensitive information from screenshots and logs before feedback. Never post verification codes, tokens, or payment passwords in the group."</string>
+    <string name="msg_a7e578b0de6d" formatted="false">"Unsupported water payment method format"</string>
+    <string name="msg_a87629fa5f58">"Liquid glass %1$s preview"</string>
+    <string name="msg_a8bed1fccfdd" formatted="false">"Invalid water billing format. Refresh the device."</string>
+    <string name="msg_a96aae5afee6" formatted="false">"Refreshing water status"</string>
+    <string name="msg_aa0819dfc4d8" formatted="false">"Light"</string>
+    <string name="msg_aa65429cd42b" formatted="false">"liters"</string>
+    <string name="msg_ab47da0b6480" formatted="false">"Confirm the previous water session's status first."</string>
+    <string name="msg_ab98197175b0" formatted="false">"Theme settings"</string>
+    <string name="msg_aba24a0aa5c8" formatted="false">"Water payment method is not yet confirmed"</string>
+    <string name="msg_abbd0e07316e" formatted="false">"Confirm mode and review the price"</string>
+    <string name="msg_abcbef635922" formatted="false">"Order closed. Return to Laundry to choose a mode again."</string>
+    <string name="msg_abdf0bb6c80c" formatted="false">"Tap to copy group number"</string>
+    <string name="msg_ac08701c24ca" formatted="false">"Reading wallpaper colors…"</string>
+    <string name="msg_ac301767677f" formatted="false">"No laundry orders to display on this device."</string>
+    <string name="msg_ac43b33eb622" formatted="false">"Start command submitted. Waiting for dispenser response."</string>
+    <string name="msg_ada841bf67e9">"Service temporarily unavailable (%1$s)"</string>
+    <string name="msg_adcead944a6f" formatted="false">"Cancel unpaid order"</string>
+    <string name="msg_ae8e4d07d70a" formatted="false">"Scan the water dispenser QR code."</string>
+    <string name="msg_af93b6dcf87a" formatted="false">"Solid bottom bar with an elastic indicator"</string>
+    <string name="msg_afb44149eeaf" formatted="false">"Confirm this wash"</string>
+    <string name="msg_afdbcbccf8a9">"QQ group: %1$s"</string>
+    <string name="msg_b01e2d77a8c6" formatted="false">"Order refunded"</string>
+    <string name="msg_b0e7cbd7c9aa">"Could not copy. Group number: %1$s"</string>
+    <string name="msg_b140a6401279" formatted="false">"Expand order details"</string>
+    <string name="msg_b1c9c1d036e2" formatted="false">"Liquid glass"</string>
+    <string name="msg_b25ef479aebd" formatted="false">"Log in to your platform account for laundry and water services."</string>
+    <string name="msg_b31d5141e416" formatted="false">"Checking outlets"</string>
+    <string name="msg_b396db2e9196" formatted="false">"Preview splash screen"</string>
+    <string name="msg_b3b023c8f791" formatted="false">"Material navigation bar"</string>
+    <string name="msg_b3e570b20fb0" formatted="false">"1. Project and usage boundaries\nJianxi is an independently developed project for learning, technical discussion, and personal use within lawful authorization. The author does not represent Pangguai Life, laundry operators, schools, payment institutions, or any other third party, and cannot authorize access to third-party platforms. Source code rights are governed by the included MIT license and each third-party component's license."</string>
+    <string name="msg_b4dfbfba0578" formatted="false">"Jianxi user rules (user agreement)\nVersion: 1.0.0 · Internal version: 0.1.16 · Updated: November 3, 2026"</string>
+    <string name="msg_b4f947a472c7" formatted="false">"Phone login"</string>
+    <string name="msg_b5159bb8082c" formatted="false">"Warm orange"</string>
+    <string name="msg_b5183983ef3a" formatted="false">"Log in again."</string>
+    <string name="msg_b621b6e40986" formatted="false">"Order created. You can pay now; if already paid in the original app, refresh the status."</string>
+    <string name="msg_b646c5129632">"Internal version %1$s"</string>
+    <string name="msg_b6af1a5049fc" formatted="false">"Log out?"</string>
+    <string name="msg_b70c4e8a2e1d" formatted="false">"Floating"</string>
+    <string name="msg_b741efb628be" formatted="false">"Confirm cancellation"</string>
+    <string name="msg_b7b30111f5a8" formatted="false">"Laundry item"</string>
+    <string name="msg_b7b49aebe3b6" formatted="false">"Could not save the local session. Check available storage."</string>
+    <string name="msg_b90a8ac9c488" formatted="false">"Choose language"</string>
+    <string name="msg_b99f9f63102d" formatted="false">"Unsupported quoted discount selection format"</string>
+    <string name="msg_ba2e93e73037" formatted="false">"Restore default"</string>
+    <string name="msg_bb2d9ee15950" formatted="false">"Unsupported quoted discount type"</string>
+    <string name="msg_bb536fd5dbb8" formatted="false">"Splash image 1"</string>
+    <string name="msg_bbad1fd91c78" formatted="false">"The device is being used by someone else"</string>
+    <string name="msg_bc11495c5a35" formatted="false">"Account balance"</string>
+    <string name="msg_bc355408517f" formatted="false">"Order cancelled"</string>
+    <string name="msg_bc8383e2aaa8" formatted="false">"View this device's orders, water records, and payment progress here."</string>
+    <string name="msg_bc982c81c510" formatted="false">"Laundry"</string>
+    <string name="msg_bc99124901b6" formatted="false">"Dynamic colors"</string>
+    <string name="msg_bdf7ecf94b2d" formatted="false">"Splash image 2"</string>
+    <string name="msg_be376c412d1f" formatted="false">"Start water use"</string>
+    <string name="msg_be9fe6a1986a" formatted="false">"Device details are missing an ID"</string>
+    <string name="msg_bf39c4d5884d" formatted="false">"Could not check water payment methods"</string>
+    <string name="msg_bf737f02a6f3" formatted="false">"Type the full pledge below"</string>
+    <string name="msg_bfcf57d4bef3" formatted="false">"Open in browser"</string>
+    <string name="msg_c08142c140ff" formatted="false">"Boolean"</string>
+    <string name="msg_c09c8adbff7c" formatted="false">"Invalid amount. Refresh and try again."</string>
+    <string name="msg_c0b3fbff51cc" formatted="false">"Done"</string>
+    <string name="msg_c1cb5f40de7c" formatted="false">"About Jianxi"</string>
+    <string name="msg_c1cb9b9edad5" formatted="false">"Resolve the active water session first."</string>
+    <string name="msg_c1f658373079" formatted="false">"Not logged in"</string>
+    <string name="msg_c2387dfab4aa" formatted="false">"Water bill awaiting payment"</string>
+    <string name="msg_c46badfbf19c" formatted="false">"This wash mode is unavailable. Refresh the device and try again."</string>
+    <string name="msg_c47810fe6c5c" formatted="false">"Payment result awaiting confirmation"</string>
+    <string name="msg_c47989854d25" formatted="false">"Teal"</string>
+    <string name="msg_c4af153a611c">"Glass intensity · %1$s"</string>
+    <string name="msg_c4bb300b0e62" formatted="false">"Cancelling order"</string>
+    <string name="msg_c5500a58e0c5" formatted="false">"Number"</string>
+    <string name="msg_c6135da0ea76" formatted="false">"Could not check payment status"</string>
+    <string name="msg_c6143fa2daf8" formatted="false">"The platform still requires password-free authorization but has not provided an agreement link. Refresh later."</string>
+    <string name="scanner_rejected_hint" formatted="false">"The camera did not accept the brightness change, but can still scan. Change the angle or lower the device screen's brightness."</string>
+    <string name="msg_c65b3b97b411" formatted="false">"Unknown format"</string>
+    <string name="msg_c66b688131ed" formatted="false">"No app available to open the GitHub link"</string>
+    <string name="msg_c6729b9b5fe1" formatted="false">"Device details are missing an identifier. Check the device in the original app first."</string>
+    <string name="msg_c8592490c32d" formatted="false">"Unexpected device status"</string>
+    <string name="msg_c8f3e8d49eb3" formatted="false">"Could not get the Alipay password-free agreement link"</string>
+    <string name="msg_c9174343f70d" formatted="false">"Full"</string>
+    <string name="msg_c952e1cb7c50" formatted="false">"Dispenser details are missing a device ID"</string>
+    <string name="msg_ca0dffccb99d" formatted="false">"End this water session?"</string>
+    <string name="msg_ca7223717fa6" formatted="false">"Payment method"</string>
+    <string name="msg_ca80d3c72c64">"%1$s · %2$s. Please collect your laundry soon."</string>
+    <string name="msg_cae4a3724dad" formatted="false">"This wash has finished."</string>
+    <string name="msg_cb4ba40bf823" formatted="false">"Instructions"</string>
+    <string name="msg_cbf70e387219" formatted="false">"Iris purple"</string>
+    <string name="msg_cc0bf0ebd2ce" formatted="false">"The water bill has expired or is invalid. Refer to the platform's records."</string>
+    <string name="msg_cc93f0020b76" formatted="false">"Paid · Waiting for device status"</string>
+    <string name="msg_cdc013bc1922" formatted="false">"Unfinished orders stay on this phone. Log in with the same phone number to view them again."</string>
+    <string name="msg_ce33b71f9fdd" formatted="false">"Confirm this is the washing machine in front of you."</string>
+    <string name="msg_cfc54865db1f" formatted="false">"Previous water session result awaiting confirmation"</string>
+    <string name="msg_d0032305b571" formatted="false">"Cancel editing home message"</string>
+    <string name="msg_d00503584e15" formatted="false">"Expand splash settings"</string>
+    <string name="msg_d007cc91971f" formatted="false">"Theme colors"</string>
+    <string name="msg_d03a42384c95" formatted="false">"Automatically use your wallpaper's representative colors"</string>
+    <string name="scanner_darker" formatted="false">"Darker"</string>
+    <string name="msg_d0f6b2e6e6e0" formatted="false">"Waiting for Alipay authorization verification"</string>
+    <string name="msg_d12a5c36eda7" formatted="false">"Payment includes an agreement and was stopped"</string>
+    <string name="msg_d22657dec5d1" formatted="false">"Extract colors again"</string>
+    <string name="msg_d26366e4e8b6" formatted="false">"Water bill complete"</string>
+    <string name="msg_d377abc2010c" formatted="false">"Verifying payment status"</string>
+    <string name="msg_d3c121b15386" formatted="false">"The server response is too large"</string>
+    <string name="msg_d3ceb6ef8429" formatted="false">"Water session ending is not yet confirmed. Check the device and refresh."</string>
+    <string name="msg_d3d991a64f44">"This Alipay payment product is not supported (product code: %1$s)"</string>
+    <string name="msg_d3f08a6ba56a" formatted="false">"Ocean blue"</string>
+    <string name="msg_d438416ae194" formatted="false">"Water bill payment awaiting confirmation"</string>
+    <string name="msg_d49841a540e5" formatted="false">"Invalid amount format. Refresh and try again."</string>
+    <string name="msg_d4b3f49cd2e4" formatted="false">"Fixed"</string>
+    <string name="msg_d4b832a716f8" formatted="false">"Another order needs confirmation"</string>
+    <string name="msg_d657d9bdf227" formatted="false">"Payment QR code saved"</string>
+    <string name="msg_d6aaf25dfadf" formatted="false">"Images rotate in this order on each launch. Reorder or remove them. Removing all restores the default."</string>
+    <string name="msg_d6b68c8c2c0d" formatted="false">"This version supports only washing machines and shoe washers"</string>
+    <string name="msg_d727d75a30fb">"%1$s%2$s to %3$s"</string>
+    <string name="msg_d7bdb38202bb" formatted="false">"Unsupported water settlement data format"</string>
+    <string name="msg_d972edc5aee3" formatted="false">"Invalid amount precision. Refresh and try again."</string>
+    <string name="msg_da9054ac44be" formatted="false">"App language"</string>
+    <string name="msg_dab4ad500f41" formatted="false">"Light effect"</string>
+    <string name="msg_dac56e56e97c" formatted="false">"Invalid dispenser organization ID. Scan again."</string>
+    <string name="msg_dbf549867f16">"Unsupported quoted discount option format (%1$s[]: %2$s)"</string>
+    <string name="msg_dce94891cdfc" formatted="false">"Account authorization is not yet synced. Confirm water use again for the platform to check. Water will not start automatically."</string>
+    <string name="msg_dcfbc5a92a09" formatted="false">"Verifying order"</string>
+    <string name="msg_dd3246e28288" formatted="false">"Scan dispenser"</string>
+    <string name="msg_dd81861811e5" formatted="false">"Text"</string>
+    <string name="msg_de5b158ef2c5" formatted="false">"Water start result is not yet confirmed. Refresh the status."</string>
+    <string name="msg_de5c8ba9ef9a" formatted="false">"QR code contents are too long"</string>
+    <string name="msg_de9d97131bfe" formatted="false">"Could not read the selected image"</string>
+    <string name="msg_dee754f9cb2d" formatted="false">"View water records"</string>
+    <string name="msg_df3d58c7d84b" formatted="false">"Settings"</string>
+    <string name="msg_df647b73b990" formatted="false">"Expanded"</string>
+    <string name="msg_dfb119a5da45" formatted="false">"Allow location access for this action to continue."</string>
+    <string name="msg_dfc443702105" formatted="false">"This device has no available wash modes. Check the device type."</string>
+    <string name="msg_e0a5c5fef33d" formatted="false">"Saved to gallery. Select the image in Alipay's scanner."</string>
+    <string name="msg_e0be747a5d8c" formatted="false">"No app available to open the link"</string>
+    <string name="msg_e1506406a5bd" formatted="false">"Device"</string>
+    <string name="msg_e165b1f5693c" formatted="false">"Device identification response is missing an ID"</string>
+    <string name="msg_e2e2b296fc1f" formatted="false">"Could not save acceptance. Check available storage and try again."</string>
+    <string name="msg_e3526a818011" formatted="false">"5. Follow open-source licenses\nThis project's source code uses the MIT License; third-party components use their own licenses. Lawfully obtained rights to copy, modify, merge, redistribute, and other permitted actions remain governed by those licenses. Retain required copyright, license, and attribution notices, and respect third-party rights. These rules must not be interpreted to revoke, reduce, or replace open-source license rights already obtained."</string>
+    <string name="msg_e3814b406bdf" formatted="false">"This dispenser is not a supported usage-based pay-after-use device. Use the original app."</string>
+    <string name="msg_e3ac6be7bdbd" formatted="false">"The platform returned agreement requirements for multiple merchants. Check in Pangguai and try again."</string>
+    <string name="msg_e622cab1b487" formatted="false">"Save payment QR code"</string>
+    <string name="msg_e64447db76a9" formatted="false">"Collapsed"</string>
+    <string name="msg_e681110952dc" formatted="false">"Identifying device"</string>
+    <string name="msg_e68dcfacd50b" formatted="false">"Allow location access for this payment to continue."</string>
+    <string name="msg_e705494b745f" formatted="false">"Invalid QR code encoding"</string>
+    <string name="msg_e7067503679b" formatted="false">"Payment parameters are missing. Check the order status."</string>
+    <string name="msg_e73c6a05de48" formatted="false">"Payment confirmed; device sync is unverified. Check the washing machine."</string>
+    <string name="msg_e7c7a644b627" formatted="false">"Balance payment is not yet confirmed. Refresh the order later."</string>
+    <string name="msg_e7e3ad41fdb9" formatted="false">"Requires Android 12 or later"</string>
+    <string name="msg_e8a953ca2355" formatted="false">"Could not open Alipay authorization for this device. Go back and try again."</string>
+    <string name="msg_e8d09706ad21">"Enter an integer from %1$s to %2$s (ms)"</string>
+    <string name="msg_e94328786abb" formatted="false">"Splash character"</string>
+    <string name="msg_e97395fabcb3" formatted="false">"Water bill result is unconfirmed. Check the order status first."</string>
+    <string name="msg_ea08ad4c58e1" formatted="false">"Water bill IDs do not match"</string>
+    <string name="msg_ea126e4e9491" formatted="false">"Remind me to collect laundry when the platform confirms completion"</string>
+    <string name="msg_ea579916e03b" formatted="false">"Invalid Alipay payment parameters"</string>
+    <string name="msg_eb8162a8e6be" formatted="false">"Unsupported payment channel response format"</string>
+    <string name="msg_ecf99c00e14f" formatted="false">"Laundry reminders and notification permission"</string>
+    <string name="msg_ed06c8b46087" formatted="false">"Location unavailable. Try again later."</string>
+    <string name="msg_edbdfa509c1e" formatted="false">"A water record needs attention. Scan the original device or restore it from Orders."</string>
+    <string name="msg_eef16f7a3477" formatted="false">"3. Necessary requests and data integrity\nThis software sends only necessary requests such as login, device identification, quotes, orders, payments, order queries, and cancellation in response to explicit user actions and within lawful authorization. It is not intended to tamper with, forge, or damage network data and does not provide fake payment success, malicious price or balance changes, or unauthorized account access. Normal operations update order status on the server. Amounts, payments, and device status must be verified against the server."</string>
+    <string name="msg_ef28a66a21b1" formatted="false">"One image per launch; the next appears on the following launch"</string>
+    <string name="msg_ef9454bff0b4" formatted="false">"Open-source license"</string>
+    <string name="msg_efab9e4d456b" formatted="false">"Jianxi-Alipay-QR.jpg"</string>
+    <string name="msg_f06ac4a79992" formatted="false">"Dispenser or merchant information has changed. Scan again to confirm."</string>
+    <string name="msg_f088643d2a3b" formatted="false">"Refresh and verify the device status."</string>
+    <string name="msg_f0fd094c9fed" formatted="false">"Return to Laundry to choose a mode again."</string>
+    <string name="msg_f2a3913f6de6" formatted="false">"Enter a valid phone number."</string>
+    <string name="msg_f326b0624dab" formatted="false">"Resolve unfinished orders first."</string>
+    <string name="msg_f37173351372" formatted="false">"The client is completely free. Third-party service fees, including laundry, are determined by actual orders."</string>
+    <string name="msg_f3baf4cab336" formatted="false">"The water bill payment method has changed. Check in the original app first."</string>
+    <string name="msg_f3ef5f2ab85b" formatted="false">"Current colors · System (fallback)"</string>
+    <string name="msg_f406fd207594" formatted="false">"Return and verify authorization"</string>
+    <string name="msg_f42a1238b44a" formatted="false">"Could not save. Try again."</string>
+    <string name="msg_f4436c0e1576" formatted="false">"Feedback group"</string>
+    <string name="msg_f60e109fb32b" formatted="false">"This QR code requires Alipay. Scan the original code with Alipay."</string>
+    <string name="msg_f617edd7b975" formatted="false">"View water bill"</string>
+    <string name="msg_f64a02bd16f5" formatted="false">"Laundry progress is not synced yet. Will retry later."</string>
+    <string name="msg_f65b4f1a14a2" formatted="false">"Keep order"</string>
+    <string name="msg_f727d5abd647" formatted="false">"Refresh order status"</string>
+    <string name="msg_f72b83eaba1c" formatted="false">"Fade in"</string>
+    <string name="msg_f78a40791721" formatted="false">"Current theme preview"</string>
+    <string name="msg_f7f924097dc7" formatted="false">"Complete Alipay authorization and return to verify first."</string>
+    <string name="msg_f93b9bd79597" formatted="false">"Could not check Alipay password-free agreement status"</string>
+    <string name="msg_fa732580b1e2" formatted="false">"Hold · Drag · Release"</string>
+    <string name="msg_fac74bbab67c" formatted="false">"Could not get payment information"</string>
+    <string name="msg_fbda4354a3f3" formatted="false">"Could not get order details"</string>
+    <string name="msg_fc984db26cf9" formatted="false">"Paste dispenser code"</string>
+    <string name="msg_fd1190aacfba" formatted="false">"Unsupported dispenser occupancy format"</string>
+    <string name="msg_fd45c5a9fee0" formatted="false">"The server response has no valid status code"</string>
+    <string name="msg_fdc62b523ba2" formatted="false">"Could not create order"</string>
+    <string name="msg_fdcd35336d1d" formatted="false">"Custom splash images"</string>
+    <string name="msg_fe33d85393d6" formatted="false">"Check the rates on the machine and the platform bill"</string>
+    <string name="msg_fef8fbb645c8" formatted="false">"The platform's merchant agreement information is not yet confirmed"</string>
+    <string name="msg_ff4fc4a36c34" formatted="false">"Order closed"</string>
+    <string name="msg_ff536b7aeffd" formatted="false">"Login expired. Log in again."</string>
+    <string name="msg_ff7e349a58d1" formatted="false">"Order awaiting payment"</string>
+    <string name="msg_ffc624300de8" formatted="false">"Amount"</string>
+    <string name="msg_643afd7f49a2_version" formatted="false">"Version: 1.0.0 · Internal version: 0.1.16 · Updated: November 3, 2026"</string>
+</resources>

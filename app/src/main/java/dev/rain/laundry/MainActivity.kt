@@ -1,6 +1,10 @@
 package dev.rain.laundry
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -15,9 +19,10 @@ import dev.rain.laundry.ui.*
 import dev.rain.laundry.data.ConsentStore
 import dev.rain.laundry.scanner.ScreenCodeCaptureActivity
 import dev.rain.laundry.payments.WaterAlipayAuthorizationActivity
+import dev.rain.laundry.notifications.LaundryReminders
 import kotlinx.coroutines.*
 
-class MainActivity : ComponentActivity() {
+class MainActivity : dev.rain.laundry.i18n.LanguageAwareActivity() {
     private val consent by lazy { ConsentStore(applicationContext) }
     private val vm by lazy { ViewModelProvider(this)[LaundryViewModel::class.java] }
     private var pendingLocationAction: String? = null
@@ -34,7 +39,7 @@ class MainActivity : ComponentActivity() {
             pendingLocationAction = null
             if (LocationProvider(this).permitted()) {
                 when (action) { "water" -> vm.startWater(); "laundry" -> vm.pay() }
-            } else vm.notice("允许本次定位后，才能继续操作")
+            } else vm.notice(appText(R.string.msg_dfb119a5da45))
         }
     }
     private val waterAuthorization = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -88,13 +93,13 @@ class MainActivity : ComponentActivity() {
                                     waterAuthorization.launch(WaterAlipayAuthorizationActivity.intent(this@MainActivity, launch))
                                 } catch (_: Exception) {
                                     pendingWaterAuthorizationId = null
-                                    model.waterAuthorizationReturned(launch.id, "无法打开支付宝授权，请稍后重试。")
+                                    model.waterAuthorizationReturned(launch.id, appText(R.string.msg_8c5635cc9269))
                                 }
                             }
                         }
                     }
                     LaundryApp(model, onScan = {
-                        scanner.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt("扫描洗衣机或饮水机二维码")
+                        scanner.launch(ScanOptions().setDesiredBarcodeFormats(ScanOptions.QR_CODE).setPrompt(appText(R.string.scanner_title))
                             .setCaptureActivity(ScreenCodeCaptureActivity::class.java)
                             .setBeepEnabled(false).setOrientationLocked(false))
                     }, onPay = {
@@ -113,6 +118,18 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        if (savedInstanceState == null) handleOrderNotification(intent)
+    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleOrderNotification(intent)
+    }
+    private fun handleOrderNotification(intent: Intent?) {
+        if (!consent.isAccepted() || intent?.getBooleanExtra(LaundryReminders.EXTRA_OPEN_ORDERS, false) != true) return
+        val owner = intent.getStringExtra(LaundryReminders.EXTRA_OWNER) ?: return
+        val key = intent.getStringExtra(LaundryReminders.EXTRA_ORDER_KEY) ?: return
+        vm.openOrderNotification(owner, key)
     }
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putString("pending_location_action", pendingLocationAction)

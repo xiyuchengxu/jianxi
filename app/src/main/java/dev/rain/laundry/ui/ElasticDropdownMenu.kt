@@ -1,5 +1,9 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.spring
@@ -71,7 +75,7 @@ internal fun ElasticDropdownMenu(
                 transformOrigin = TransformOrigin(1f, if (above) 1f else 0f)
                 scaleX = scale.value; scaleY = heightScale.value
                 alpha = opacity.value.coerceIn(0f, 1f)
-            }.semantics { paneTitle = "配色风格" },
+            }.semantics { paneTitle = appText(R.string.msg_4d29b30867a0) },
                 shape = RoundedCornerShape(23.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 border = BorderStroke(.7.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f)),

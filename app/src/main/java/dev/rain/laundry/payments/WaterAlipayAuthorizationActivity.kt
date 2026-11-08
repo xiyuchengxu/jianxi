@@ -1,5 +1,8 @@
 package dev.rain.laundry.payments
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -26,7 +29,7 @@ import dev.rain.laundry.ui.LaundryTheme
 import dev.rain.laundry.ui.ThemePreferences
 
 /** Returns only that the authorization UI ended. The ViewModel must query the merchant again. */
-class WaterAlipayAuthorizationActivity : ComponentActivity() {
+class WaterAlipayAuthorizationActivity : dev.rain.laundry.i18n.LanguageAwareActivity() {
     companion object {
         const val EXTRA_REQUEST_ID = "water_authorization_request_id"
         const val EXTRA_MESSAGE = "water_authorization_message"
@@ -52,11 +55,11 @@ class WaterAlipayAuthorizationActivity : ComponentActivity() {
         // Every result, including cancellation and restoration, carries the request identity.
         setResult(RESULT_CANCELED, resultData())
         if (!ConsentStore(applicationContext).isAccepted()) {
-            finishForRecheck("请先阅读并确认使用协议。")
+            finishForRecheck(appText(R.string.msg_3cfa1efa202f))
             return
         }
         if (getIntent().getStringExtra(EXTRA_REQUEST_ID).isNullOrBlank()) {
-            finishForRecheck("授权请求已失效，请重新确认用水。")
+            finishForRecheck(appText(R.string.msg_3d3517709575))
             return
         }
         if (savedInstanceState != null && launched) {
@@ -73,10 +76,10 @@ class WaterAlipayAuthorizationActivity : ComponentActivity() {
                     Column(Modifier.fillMaxSize().safeDrawingPadding().padding(28.dp),
                         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
                         horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("支付宝免密授权", style = MaterialTheme.typography.headlineSmall)
-                        Text("请在支付宝中核对并完成签约。返回后会重新查询本设备的签约要求，不会自动开始出水。",
+                        Text(appText(R.string.msg_87f08e0c0721), style = MaterialTheme.typography.headlineSmall)
+                        Text(appText(R.string.msg_3080976c784d),
                             style = MaterialTheme.typography.bodyLarge)
-                        Button(onClick = { finishForRecheck() }) { Text("返回并核验授权") }
+                        Button(onClick = { finishForRecheck() }) { Text(appText(R.string.msg_f406fd207594)) }
                     }
                 }
             }
@@ -108,11 +111,11 @@ class WaterAlipayAuthorizationActivity : ComponentActivity() {
                 }
             }
         } catch (_: PackageManager.NameNotFoundException) {
-            finishForRecheck("未安装支付宝，请安装后重新确认用水。")
+            finishForRecheck(appText(R.string.msg_54c9beed47d8))
         } catch (_: ActivityNotFoundException) {
-            finishForRecheck("当前支付宝无法打开此授权，请更新支付宝后重试。")
+            finishForRecheck(appText(R.string.msg_15dee3b19c6e))
         } catch (_: Exception) {
-            finishForRecheck("无法打开本设备的支付宝授权，请返回后重试。")
+            finishForRecheck(appText(R.string.msg_e8a953ca2355))
         }
     }
 

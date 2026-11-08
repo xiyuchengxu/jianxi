@@ -211,7 +211,12 @@ class LaundryApi(
         if (!data.isJsonPrimitive || !data.asJsonPrimitive.isBoolean) throw ClientError("支付状态格式尚未适配")
         return data.asBoolean
     }
-    suspend fun orderStatus(order: LocalOrder): RemoteOrderStatus {
+    /**
+     * One `order/detail` query supplies both the existing order/payment status and the
+     * optional laundry run snapshot. Legacy [orderStatus] delegates here, so callers keep
+     * their old contract without adding a second request.
+     */
+    suspend fun orderDetails(order: LocalOrder): RemoteOrderDetails {
         val fields = when {
             order.orderId.isNotBlank() -> mapOf("orderId" to order.orderId)
             order.orderNo.isNotBlank() -> mapOf("orderNo" to order.orderNo)
@@ -223,10 +228,18 @@ class LaundryApi(
         val matches = if (order.orderId.isNotBlank()) data.text("id") == order.orderId
             else data.text("orderNo") == order.orderNo
         if (!matches) throw ClientError("订单详情编号不一致，请先在原应用核对")
+        if (order.orderNo.isNotBlank() && data.text("orderNo").isNotBlank() && data.text("orderNo") != order.orderNo)
+            throw ClientError("订单详情编号不一致，请先在原应用核对")
+        val previousDevice = order.laundryProgress?.deviceId
+        if (previousDevice != null && data.text("machineId").isNotBlank() && data.text("machineId") != previousDevice)
+            throw ClientError("订单设备信息变化，请先在原应用核对")
         val code = data.text("orderStatus").toIntOrNull()
-        return RemoteOrderStatus.entries.firstOrNull { it.wire == code }
+        val status = RemoteOrderStatus.entries.firstOrNull { it.wire == code }
             ?: throw ClientError("订单状态格式尚未适配，请先在原应用核对")
+        return RemoteOrderDetails(status, LaundryProgressProtocol.parse(data, order, status, now()))
     }
+
+    suspend fun orderStatus(order: LocalOrder): RemoteOrderStatus = orderDetails(order).status
     suspend fun sync(order: LocalOrder) { post("order/sync", mapOf("orderNo" to order.orderNo, "payType" to order.payMethod.wire)) }
     suspend fun cancel(order: LocalOrder) {
         val result = post("order/cancel", mapOf("orderId" to order.orderId))

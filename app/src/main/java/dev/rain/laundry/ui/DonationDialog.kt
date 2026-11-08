@@ -1,5 +1,7 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -52,10 +55,10 @@ internal fun DonationDialog(onClose: () -> Unit) {
                 status = withContext(Dispatchers.IO) {
                     if (destination != null) {
                         copyDonationImage(context, destination)
-                        "收款码已保存"
+                        appText(R.string.msg_d657d9bdf227)
                     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                         saveDonationToGallery(context)
-                        "已保存到相册，可在支付宝扫一扫中选择图片"
+                        appText(R.string.msg_e0a5c5fef33d)
                     } else {
                         throw IOException("A document destination is required")
                     }
@@ -64,7 +67,7 @@ internal fun DonationDialog(onClose: () -> Unit) {
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
-                status = "保存失败，请重试"
+                status = appText(R.string.msg_f42a1238b44a)
             } finally {
                 saving = false
             }
@@ -77,18 +80,18 @@ internal fun DonationDialog(onClose: () -> Unit) {
 
     AlertDialog(
         onDismissRequest = onClose,
-        title = { Text("打赏支持") },
+        title = { Text(appText(R.string.msg_8279f6a35954)) },
         text = {
             Column(Modifier.heightIn(max = 520.dp).verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("感谢你对简洗的支持，打赏金额由你决定。")
+                Text(appText(R.string.msg_8313f2a8cb24))
                 Image(
                     bitmap = image,
-                    contentDescription = "支付宝打赏收款码",
+                    contentDescription = appText(R.string.msg_73ddd0a867c2),
                     contentScale = ContentScale.Fit,
                     modifier = Modifier.fillMaxWidth().heightIn(max = 380.dp)
                 )
-                Text("使用支付宝扫一扫，或保存图片后识别。",
+                Text(appText(R.string.msg_583465e2a15d),
                     style = MaterialTheme.typography.bodySmall)
                 status?.let { Text(it, style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.primary) }
@@ -99,10 +102,10 @@ internal fun DonationDialog(onClose: () -> Unit) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) saveImage()
                 else saveDocument.launch(IMAGE_NAME)
             }, enabled = !saving && !saved) {
-                Text(if (saving) "正在保存" else if (saved) "已保存" else "保存收款码")
+                Text(if (saving) appText(R.string.msg_570d60206779) else if (saved) appText(R.string.msg_1bd91a7d0c53) else appText(R.string.msg_e622cab1b487))
             }
         },
-        dismissButton = { TextButton(onClick = onClose) { Text("关闭") } }
+        dismissButton = { TextButton(onClick = onClose) { Text(appText(R.string.msg_3fd47edce45b)) } }
     )
 }
 

@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import android.graphics.Shader
 import android.os.Build
 import androidx.compose.animation.core.Animatable
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -201,7 +205,7 @@ fun GlassNavigationBar(
                     Column(Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(25.dp))
                         .semantics(mergeDescendants = true) {
                             role = Role.Tab
-                            contentDescription = "${tab.title}导航"
+                            contentDescription = appText(R.string.msg_8ffbad496815 , localizedMessage(tab.title))
                             this.selected = selected == index
                             if (!enabled) disabled()
                             onClick(label = tab.title) {

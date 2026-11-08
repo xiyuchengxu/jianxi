@@ -19,6 +19,10 @@ import dev.rain.laundry.core.scanExposureSetting
 
 /** Keeps ZXing's permission, result delivery and camera lifecycle in CaptureActivity. */
 class ScreenCodeCaptureActivity : CaptureActivity() {
+    override fun attachBaseContext(newBase: android.content.Context) {
+        super.attachBaseContext(dev.rain.laundry.i18n.LanguagePreferences.wrap(newBase))
+    }
+
     private lateinit var scanner: DecoratedBarcodeView
     private lateinit var modes: RadioGroup
     private lateinit var brightness: SeekBar

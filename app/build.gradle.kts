@@ -11,14 +11,16 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 30
-        versionName = "5.0.0"
-        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.29\"")
-        manifestPlaceholders["internalVersion"] = "0.1.29"
+        versionCode = 32
+        versionName = "5.2.0"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.31\"")
+        manifestPlaceholders["internalVersion"] = "0.1.31"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
     buildFeatures { compose = true; buildConfig = true }
+    // Keep every supported language available for offline switching in APKs and app bundles.
+    bundle { language { enableSplit = false } }
     signingConfigs {
         create("production") {
             System.getenv("JIANXI_RELEASE_STORE_FILE")?.takeIf { it.isNotBlank() }?.let {
@@ -82,6 +84,7 @@ dependencies {
     implementation("androidx.exifinterface:exifinterface:1.4.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
+    implementation("androidx.work:work-runtime-ktx:2.10.5")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.animation:animation")

@@ -1,5 +1,8 @@
 package dev.rain.laundry.ui
 
+import dev.rain.laundry.i18n.appText
+import dev.rain.laundry.i18n.localizedMessage
+import dev.rain.laundry.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
@@ -34,47 +38,48 @@ fun FirstLaunchAgreement(store: ConsentStore, onAccepted: () -> Unit, onExit: ()
     val scope = rememberCoroutineScope()
     val disclaimer = remember(documents.revision) { paragraphs(documents.disclaimer) }
     val rules = remember(documents.revision) { paragraphs(documents.rules) }
-    val valid = AgreementPolicy.validConfirmation(confirmation)
+    val localizedConfirmation = localizedMessage(AgreementPolicy.CONFIRMATION)
+    val valid = confirmation == localizedConfirmation
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background))
-    UsageDialogFrame("免责声明与用户守则", dismissible = false, onDismiss = {}) {
-        Text("首次使用，请完整阅读以下内容，并输入承诺后继续。",
+    UsageDialogFrame(appText(R.string.msg_517e649764b1), dismissible = false, onDismiss = {}) {
+        Text(appText(R.string.msg_3d3fce810de2),
             style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(Modifier.height(12.dp))
         LazyColumn(Modifier.weight(1f).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-            documentItems("disclaimer", "免责声明", disclaimer)
-            documentItems("rules", "用户守则（用户协议）", rules)
+            documentItems("disclaimer", appText(R.string.msg_280af617c87f), disclaimer)
+            documentItems("rules", appText(R.string.msg_15d8fa4535c2), rules)
             item(key = "confirmation") {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     HorizontalDivider()
-                    Text("请输入以下完整承诺语句", style = MaterialTheme.typography.titleSmall)
+                    Text(appText(R.string.msg_bf737f02a6f3), style = MaterialTheme.typography.titleSmall)
                     SelectionContainer {
-                        Text(AgreementPolicy.CONFIRMATION, color = MaterialTheme.colorScheme.primary,
+                        Text(localizedConfirmation, localize = false, color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                     }
-                    OutlinedTextField(value = confirmation, onValueChange = { confirmation = it.take(128); saveError = false },
-                        label = { Text("承诺确认") }, enabled = !saving, minLines = 2, maxLines = 3,
-                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = "输入承诺语句" },
-                        supportingText = { Text("需与上方文字完全一致，包含中文逗号，不含引号。") },
-                        isError = confirmation.length >= AgreementPolicy.CONFIRMATION.length && !valid)
-                    if (saveError) Text("确认记录保存失败，请检查可用空间后重试。", color = MaterialTheme.colorScheme.error)
+                    OutlinedTextField(value = confirmation, onValueChange = { confirmation = it.take(maxOf(128, localizedConfirmation.length)); saveError = false },
+                        label = { Text(appText(R.string.msg_698b0d6c12a4)) }, enabled = !saving, minLines = 2, maxLines = 3,
+                        modifier = Modifier.fillMaxWidth().semantics { contentDescription = appText(R.string.msg_6ea618c519a2) },
+                        supportingText = { Text(appText(R.string.msg_87b7632a53e5)) },
+                        isError = confirmation.length >= localizedConfirmation.length && !valid)
+                    if (saveError) Text(appText(R.string.msg_e2e2b296fc1f), color = MaterialTheme.colorScheme.error)
                 }
             }
         }
         Spacer(Modifier.height(12.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = onExit, enabled = !saving, modifier = Modifier.weight(1f)) { Text("不同意并退出") }
+            OutlinedButton(onClick = onExit, enabled = !saving, modifier = Modifier.weight(1f)) { Text(appText(R.string.msg_40b0aade58d7)) }
             Button(onClick = {
                 if (!valid || saving) return@Button
                 saving = true
-                val entered = confirmation
+                val entered = AgreementPolicy.CONFIRMATION
                 scope.launch {
                     val accepted = withContext(Dispatchers.IO) { runCatching { store.accept(entered) }.getOrDefault(false) }
                     saving = false
                     if (accepted) onAccepted() else saveError = true
                 }
             }, enabled = valid && !saving, modifier = Modifier.weight(1f)) {
-                Text(if (saving) "正在保存…" else "确认并进入")
+                Text(if (saving) appText(R.string.msg_6bdb4435095e) else appText(R.string.msg_4948596875a4))
             }
         }
     }
@@ -88,7 +93,7 @@ fun UsageDocumentDialog(title: String, content: String, onDismiss: () -> Unit) {
             documentItems("document", title, text, includeTitle = false)
         }
         Spacer(Modifier.height(12.dp))
-        TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text("关闭") }
+        TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(appText(R.string.msg_3fd47edce45b)) }
     }
 }
 

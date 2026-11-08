@@ -407,8 +407,11 @@ class LocalRuntimeTest {
         instrumentation.runOnMainSync {
             val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
             val status = WaterStatus(2, 2, "0.12", "local-water-usage")
+            val laundry = LocalOrder(fixtureOwner, "分组测试洗衣机", "单脱水", "1.00", PayMethod.ALIPAY, OrderPhase.CLOSED)
+            val vault = SessionVault(instrumentation.targetContext)
+            vault.saveOrder(laundry)
             mutable.value = mutable.value.copy(page = Page.ORDERS, waterDevice = null, waterOutlet = null,
-                order = LocalOrder(fixtureOwner, "分组测试洗衣机", "单脱水", "1.00", PayMethod.ALIPAY, OrderPhase.CLOSED),
+                order = laundry, orderHistory = vault.orders(),
                 waterSession = WaterSession(fixtureOwner, water, outlet, WaterPhase.USING, lastStatus = status))
         }
         awaitText("我的订单")
@@ -441,7 +444,10 @@ class LocalRuntimeTest {
             record("本周饮水机", 0, true), record("前周饮水机", 2, true))
         instrumentation.runOnMainSync {
             val mutable = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }.get(vm) as MutableStateFlow<UiState>
-            mutable.value = mutable.value.copy(page = Page.ORDERS, order = current, orderHistory = history)
+            val vault = SessionVault(instrumentation.targetContext)
+            history.forEach(vault::saveOrder)
+            vault.selectOrder(current)
+            mutable.value = mutable.value.copy(page = Page.ORDERS, order = current, orderHistory = vault.orders())
         }
         awaitText("我的订单")
         click("洗衣")
@@ -596,9 +602,12 @@ class LocalRuntimeTest {
         instrumentation.runOnMainSync {
             val state = LaundryViewModel::class.java.getDeclaredField("_state").apply { isAccessible = true }
                 .get(vm) as MutableStateFlow<UiState>
-            state.value = state.value.copy(page = Page.ORDERS, order = LocalOrder(fixtureOwner,
+            val order = LocalOrder(fixtureOwner,
                 "本地测试洗衣机", "标准洗", "4.00", PayMethod.ALIPAY, OrderPhase.CREATED,
-                orderId = "local-order-id", orderNo = "local-trade-no"))
+                orderId = "local-order-id", orderNo = "local-trade-no")
+            val vault = SessionVault(instrumentation.targetContext)
+            vault.saveOrder(order)
+            state.value = state.value.copy(page = Page.ORDERS, order = order, orderHistory = vault.orders())
         }
     }
 

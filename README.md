@@ -5,11 +5,31 @@
 [GitHub 源码](https://github.com/xiyuchengxu/jianxi) · [问题反馈](https://github.com/xiyuchengxu/jianxi/issues) · [MIT 开源协议](LICENSE)
 
 
-当前已发布版本 **5.0.0**，内部版本 **0.1.29**，Android 构建号 **30**，支持 Android 8.0（API 26）及以上。包名 `dev.rain.laundry`，可与原平台客户端并存。后续只发布正式签名 APK 和源码 ZIP，正式版沿用 1.0.0 的独立正式证书，详见 [签名说明](RELEASE_SIGNING.md)。本项目与原服务平台无隶属关系。
+当前发布版本 **5.2.0**，内部版本 **0.1.31**，Android 构建号 **32**，支持 Android 8.0（API 26）及以上。包名 `dev.rain.laundry`，可与原平台客户端并存。后续只发布正式签名 APK 和源码 ZIP，正式版沿用 1.0.0 的独立正式证书，详见 [签名说明](RELEASE_SIGNING.md)。本项目与原服务平台无隶属关系。
 
-[5.0.0 正式发布](https://github.com/xiyuchengxu/jianxi/releases/tag/v5.0.0) 提供正式 APK 与对应 Android 源码 ZIP。
+[5.2.0 正式发布](https://github.com/xiyuchengxu/jianxi/releases/tag/v5.2.0) 提供正式 APK 与 Android 源码 ZIP；[本版本源码](https://github.com/xiyuchengxu/jianxi/tree/v5.2.0) 与源码 ZIP 对应。
 
-本版本包含以下订单与主题改动，源码提交与发布源码 ZIP 一致。
+历史 **5.0.0 / versionCode 30 / 内部 0.1.29** 保持原标签及附件。本次发布为 **5.2.0 / versionCode 32 / 内部 0.1.31**。
+
+## 5.2.0 · 应用语言
+
+**设置 → 语言** 新增语言选择，支持跟随系统、简体中文、English、日本語、繁體中文、Русский、한국어。更改即时应用并保存，重启后保留，覆盖应用页面、对话框、扫码提示、通知和无障碍文字。自定义主页文案、设备及模式等平台返回名称保留原文；默认主页文案随应用语言显示。
+
+Android 13（API 33）及以上与系统应用语言设置同步，Android 8–12 使用独立的本机语言偏好并重建界面。切换语言保留账户、订单与主题设置。按 UI 版本规则更新为 **5.2.0 / versionCode 32 / 内部 0.1.31**；构建与验证结果以 [VALIDATION.md](VALIDATION.md) 为准。
+
+## 先前本地更新 · 5.1.0 主页文案
+
+主页顶部“今天，也要干干净净。”可在 **设置 → 主题 → 主页文案** 中自定义，支持换行、取消编辑和恢复默认。文案最多 80 个字符，本机保存，重启后保留；清空或只输入空白后保存会恢复原句。外观设置与登录、订单数据独立。
+
+该轮按作者要求更新为 **5.1.0 / versionCode 31 / 内部 0.1.30**，包含下述洗衣进度和结束通知更新，5.2.0 继续保留。
+
+## 先前本地更新 · 洗衣进度与结束通知
+
+该轮按作者要求保持 **5.0.0 / 30 / 0.1.29**；随后并入本地 5.1.0，5.2.0 继续保留。通知状态、记录说明与同步提示统一放在“设置 → 通知”；订单页保留列表及每笔进度。GitHub 已发布的 v5.0.0 标签及附件保持原样。
+
+订单卡片直接显示洗衣进度条、预计剩余分钟和秒、预计结束时间。数据来自同一笔订单详情中的运行状态、总分钟数和预计结束时间，不用付款成功时间猜测开始或结束。缺少计时数据时显示待同步；预计时间归零后仍等待平台完成状态，实际时长可能受进水与衣物影响。
+
+系统通知只提醒本机已观察到运行中的洗衣订单，平台确认完成后每账号、每订单最多通知一次。点击通知返回该订单详情，不替换当前在途订单。“设置 → 通知”可开启通知权限，拒绝权限仍能查看进度。后台使用系统任务核验，同步受联网、省电与厂商限制，可能延迟；强制停止后需重新打开应用。历史已完成记录不会补发提醒，切换账号或退出登录会隔离原账号监控。
 
 ## 5.0.0 · 最近订单与每周分类
 
@@ -291,7 +311,7 @@ Windows 使用 `gradlew.bat`。开发 APK 位于 `app/build/outputs/apk/debug/ap
 ./gradlew :app:assembleProduction :app:testProductionUnitTest :app:lintProduction
 ```
 
-正式 APK 输出为 `app/build/outputs/apk/production/app-production.apk`，发布前运行 `scripts/verify_release_apk.py`。当前 `BuildConfig.INTERNAL_VERSION` 和 Manifest 内部版本元数据为 `0.1.20`，系统版本名为 `1.0.4`。后续版本按 [RELEASE_POLICY.md](RELEASE_POLICY.md) 递增。
+正式 APK 输出为 `app/build/outputs/apk/production/app-production.apk`，发布前运行 `scripts/verify_release_apk.py`。当前 `BuildConfig.INTERNAL_VERSION` 和 Manifest 内部版本元数据为 `0.1.31`，系统版本名为 `5.2.0`。后续版本按 [RELEASE_POLICY.md](RELEASE_POLICY.md) 递增。
 
 ### 本地 Android 运行测试
 
