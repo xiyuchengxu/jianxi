@@ -98,14 +98,14 @@ internal fun DonationDialog(onClose: () -> Unit) {
             }
         },
         confirmButton = {
-            TextButton(onClick = {
+            AppTextButton(onClick = {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) saveImage()
                 else saveDocument.launch(IMAGE_NAME)
             }, enabled = !saving && !saved) {
                 Text(if (saving) appText(R.string.msg_570d60206779) else if (saved) appText(R.string.msg_1bd91a7d0c53) else appText(R.string.msg_e622cab1b487))
             }
         },
-        dismissButton = { TextButton(onClick = onClose) { Text(appText(R.string.msg_3fd47edce45b)) } }
+        dismissButton = { AppTextButton(onClick = onClose) { Text(appText(R.string.msg_3fd47edce45b)) } }
     )
 }
 

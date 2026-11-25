@@ -1,6 +1,9 @@
 package dev.rain.laundry.data
 
 import dev.rain.laundry.core.*
+import dev.rain.laundry.diagnostics.DiagnosticOperation
+import dev.rain.laundry.diagnostics.DiagnosticStatus
+import dev.rain.laundry.diagnostics.DiagnosticsLog
 import com.google.gson.JsonParser
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.*
@@ -34,6 +37,13 @@ class LaundryApiTest {
     @Test fun loginUsesRealContractAndSignsRequest() = runTest {
         server.enqueue(MockResponse().setBody("""{"code":0,"data":{"token":"new-token"}}"""))
         assertEquals("new-token", api.login("13800000000", "123456"))
+        val loginEntry = DiagnosticsLog.entries.value.last()
+        assertEquals(DiagnosticOperation.LOGIN, loginEntry.operation)
+        assertEquals(DiagnosticStatus.SUCCESS, loginEntry.status)
+        assertNotNull(loginEntry.durationMs)
+        val exported = DiagnosticsLog.exportText()
+        for (privateValue in listOf("new-token", "13800000000", "/user/reg", "example-token"))
+            assertFalse(exported.contains(privateValue))
         val request = server.takeRequest()
         assertEquals("/user/reg", request.path); assertEquals("POST", request.method)
         assertEquals("", request.getHeader("Authorization"))
@@ -45,6 +55,10 @@ class LaundryApiTest {
         server.enqueue(MockResponse().setBody("""{"code":1001,"msg":"验证码错误","data":null}"""))
         val error = runCatching { api.login("13800000000", "123456") }.exceptionOrNull()
         assertTrue(error is ClientError); assertEquals("验证码错误", error?.message)
+        val entry = DiagnosticsLog.entries.value.last()
+        assertEquals(DiagnosticStatus.REJECTED, entry.status)
+        assertEquals(1001, entry.errorCode)
+        assertFalse(DiagnosticsLog.exportText().contains("验证码错误"))
     }
     @Test fun membershipEndpointsAreNotCallable() = runTest {
         assertTrue(runCatching { api.post("alipay/periodicDeductSignUrl", emptyMap()) }.isFailure)
@@ -64,7 +78,8 @@ class LaundryApiTest {
     @Test fun previewExplicitlyDisablesAutoSelection() = runTest {
         server.enqueue(MockResponse().setBody("""{"code":0,"data":true}"""))
         server.enqueue(MockResponse().setBody("""{"code":0,"data":{"realPrice":"4","items":[{"goodsId":"g","skuId":"s","amount":"1"}],"promotions":[]}}"""))
-        api.quote(Device("g", "test", "1234", "WASH", "shop", "org", 0, emptyList()), WashMode("s", "wash", "4"))
+        val mode = WashMode("s", "wash", "4")
+        api.quote(Device("g", "test", "1234", "WASH", "shop", "org", 0, listOf(mode)), mode)
         val availability = server.takeRequest()
         assertEquals("/appoint/checkMachineCanUse", availability.path)
         assertTrue(availability.body.readUtf8().contains("skuId=s"))
@@ -88,14 +103,16 @@ class LaundryApiTest {
                 else """{"code":1,"msg":"参数不正确","data":null}""")
             }
         }
-        val quote = api.quote(Device("g", "test", "1234", "00", "shop", "test-org", 0, emptyList()), WashMode("s", "wash", "4"))
+        val mode = WashMode("s", "wash", "4")
+        val quote = api.quote(Device("g", "test", "1234", "00", "shop", "test-org", 0, listOf(mode)), mode)
         assertEquals("4.00", quote.amount)
         assertEquals(2, server.requestCount)
     }
     @Test fun previewOmitsOrgSpecificExclusionWhenNoOrgWasReturned() = runTest {
         server.enqueue(MockResponse().setBody("""{"code":0,"data":true}"""))
         server.enqueue(MockResponse().setBody("""{"code":0,"data":{"realPrice":"4.00","items":[{"goodsId":"g","skuId":"s","amount":"1"}],"promotions":[]}}"""))
-        api.quote(Device("g", "test", "1234", "00", "shop", "", 0, emptyList()), WashMode("s", "wash", "4"))
+        val mode = WashMode("s", "wash", "4")
+        api.quote(Device("g", "test", "1234", "00", "shop", "", 0, listOf(mode)), mode)
         server.takeRequest()
         val body = server.takeRequest().body.readUtf8()
         assertTrue(body.contains("isAutoSelectPromotion=0"))
@@ -147,7 +164,8 @@ class LaundryApiTest {
     }
     @Test fun anUnavailableModeNeverReachesPreviewOrCreate() = runTest {
         server.enqueue(MockResponse().setBody("""{"code":0,"data":false}"""))
-        val error = runCatching { api.quote(Device("g", "test", "1234", "00", "shop", "org", 0, emptyList()), WashMode("s", "wash", "4")) }.exceptionOrNull()
+        val mode = WashMode("s", "wash", "4")
+        val error = runCatching { api.quote(Device("g", "test", "1234", "00", "shop", "org", 0, listOf(mode)), mode) }.exceptionOrNull()
         assertTrue(error is ClientError)
         assertEquals(1, server.requestCount)
         assertEquals("/appoint/checkMachineCanUse", server.takeRequest().path)
@@ -161,6 +179,40 @@ class LaundryApiTest {
         assertEquals("/goods/scan/v2", server.takeRequest().path)
         assertTrue(server.takeRequest().body.readUtf8().contains("goodsId=scan-id"))
         assertTrue(server.takeRequest().body.readUtf8().contains("goodsId=canonical-id"))
+    }
+    @Test fun scanCategory02RoutesToDryerAndFiltersUnavailableTimes() = runTest {
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":{"id":"scan-dryer","categoryCode":"02"}}"""))
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":{"goodsId":"dryer-1","imei":"dryer-imei","name":"烘干机","isBluetooth":0,"payment":"before","orgId":"31001"}}"""))
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":[{"skuId":"sku-d","name":"标准烘","extAttr":{"perPrice":[{"time":"60","price":"3.00","status":true,"selected":true},{"time":"30","price":"2.00","status":false}]}}]}"""))
+        val scanned = api.scanDevice(DeviceCode("SN", "dryer-serial")) as ScannedDevice.Dryer
+        assertTrue(scanned.device.isDryer)
+        assertEquals("dryer-1", scanned.device.id)
+        assertEquals(listOf(60), scanned.device.modes.single().dryerDurations.map { it.minutes })
+        assertTrue(scanned.device.modes.single().dryerDurations.single().selectedByPlatform)
+        assertEquals(listOf("/goods/scan/v2", "/goods/normal/details", "/goods/normal/skus"),
+            List(3) { server.takeRequest().path })
+    }
+    @Test fun dryerPreviewRefreshesSkuAndSendsSelectedMinutesAsAmountAndNum() = runTest {
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":[{"skuId":"sku-d","name":"标准烘","extAttr":{"perPrice":[{"time":"60","price":"3.00","status":true,"selected":true}]}}]}"""))
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":true}"""))
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":{"realPrice":"3.00","items":[{"goodsId":"dryer-1","skuId":"sku-d","amount":"60","soldType":"1","num":"60"}],"promotions":[]}}"""))
+        val device = Device("dryer-1", "烘干机", "dryer-imei", "02", "shop", "org", 0, emptyList())
+        val duration = DryerDuration(60, "3.00", selectedByPlatform = true)
+        val mode = WashMode("sku-d", "标准烘", "3.00", dryerDurations = listOf(duration))
+        val quote = api.quoteDryer(device, mode, duration)
+        assertEquals(duration, quote.dryerDuration)
+        assertEquals("3.00", quote.amount)
+        assertEquals("/goods/normal/skus", server.takeRequest().path)
+        assertEquals("/appoint/checkMachineCanUse", server.takeRequest().path)
+        val preview = server.takeRequest()
+        assertEquals("/trade/preview/v4", preview.path)
+        val fields = preview.body.readUtf8().split('&').associate {
+            URLDecoder.decode(it.substringBefore('='), "UTF-8") to URLDecoder.decode(it.substringAfter('='), "UTF-8")
+        }
+        val item = JsonParser.parseString(fields.getValue("items")).asJsonArray.single().asJsonObject
+        assertEquals("60", item.get("amount").asString)
+        assertEquals("60", item.get("num").asString)
+        assertEquals("1", item.get("soldType").asString)
     }
     @Test fun unsupportedApplianceStopsBeforeFetchingWashModes() = runTest {
         server.enqueue(MockResponse().setBody("""{"code":0,"data":{"id":"g1"}}"""))
@@ -242,9 +294,11 @@ class LaundryApiTest {
         val routes = api.channels(quote)
         val route = routes.single { it.method == PayMethod.ALIPAY }
         assertEquals("route-1", route.thirdChannel)
+        server.enqueue(MockResponse().setBody("""{"code":0,"data":{"orderNo":"t1","payPrice":"4.00","promotionList":[]}}"""))
         server.enqueue(MockResponse().setBody("""{"code":0,"data":{"prepayParam":"payload"}}"""))
         api.prepay(LocalOrder("owner", "test", "wash", "4.00", route.method, OrderPhase.CREATED, orderNo = "t1", thirdChannel = route.thirdChannel, outVoucherId = route.outVoucherId))
         server.takeRequest()
+        assertEquals("/order/detail", server.takeRequest().path)
         val request = server.takeRequest()
         assertEquals("/pay/unify/prePay", request.path)
         val body = request.body.readUtf8()
@@ -269,6 +323,8 @@ class LaundryApiTest {
             "查询付款状态失败" to { api.paid(order); Unit }
         )
         for ((operation, request) in cases) {
+            if (operation == "获取支付信息失败") server.enqueue(MockResponse().setBody(
+                """{"code":0,"data":{"orderNo":"trade1","payPrice":"4.00","promotionList":[]}}"""))
             server.enqueue(MockResponse().setBody("""{"code":1001,"msg":"参数不正确","data":null}"""))
             val error = runCatching { request() }.exceptionOrNull() as BusinessRejected
             assertEquals(operation, error.operation)

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_submitted_unconfirmed">"支払いリクエストを送信しました。注文を更新して最終状態を確認してください。"</string>
+    <string name="water_submitted_unconfirmed">"給水の指示を送信しました。更新して状態を確認してください。水が出ている場合は、使用中のセッションを確認して終了してください。"</string>
+    <string name="payment_deduction_unsupported">"この注文に未対応の割引が適用されたため、支払いを停止しました。元のアプリで変更してから、もう一度お試しください。"</string>
+    <string name="payment_deduction_unconfirmed">"注文の割引明細を確認できないため、支払いを停止しました。注文を更新してから、もう一度お試しください。"</string>
+</resources>

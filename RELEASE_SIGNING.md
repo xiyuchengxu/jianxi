@@ -1,52 +1,36 @@
-# 正式版签名
+# 发行构建与 APK 验证
 
-当前发布版本：5.2.0；内部版本：0.1.31；Android versionCode：32。历史 v5.0.0 的标签与附件保持原样。
+## 校验官方下载
 
-5.2.0 新增“设置 → 语言”，支持跟随系统、简体中文、英语、日语、繁体中文、俄语、韩语，选择即时应用并保存；自定义主页文案及平台返回名称保留原文。Android 13 起使用系统应用语言，Android 8–12 使用本机偏好及界面重建。签名证书保持原正式证书，构建与验证结果见 `VALIDATION.md`。
+正式包使用同一发行证书，SHA-256 指纹为 `74c2680384903d371b0a8a2e0ccd17de687ec3ecd12b4266c41faae30e565770`。发布说明列出了该版本 APK 和源码 ZIP 各自的 SHA-256。
 
-5.1.0 新增“设置 → 主题 → 主页文案”自定义入口，支持本机保存与恢复默认；包含此前最近 20 条本机订单与周分组、洗衣进度及结束通知、主题开屏设置折叠，保留屏幕二维码扫码、透明开屏及饮水签约修复。正式包支持覆盖原正式证书版本。
-
-后续发布只提供正式签名 APK 和源码 ZIP，按 [发布与版本规则](RELEASE_POLICY.md) 执行。正式版继续沿用 1.0.0 起使用的同一份私有正式密钥，证书 SHA-256 为：
-
-```text
-74c2680384903d371b0a8a2e0ccd17de687ec3ecd12b4266c41faae30e565770
-```
-
-## 签名方案
-
-正式 APK 显式启用 v1（JAR）、v2 和 v3 签名。v1 会生成 `META-INF/MANIFEST.MF`、`.SF` 和证书文件；v2/v3 保持完整 APK 签名校验。三种方案使用相同的正式证书。
-
-1.0.4 补齐了 v1 证书文件，以适配 Mate 70 RS / HarmonyOS 4.3.0 报告的安装失败；该机型实际安装仍需复测。历史 1.0.3 只有 v2 签名。
-
-## 构建
-
-真实私钥和密码由作者私下保管。现有私有备份为 `简洗_1.0.0_正式签名备份_请勿公开.zip`，包含 PKCS12 私钥、密码和证书；源码和 Release 附件均排除此备份及其内容。
-
-在本地设置以下环境变量：
-
-```text
-JIANXI_RELEASE_STORE_FILE=<原正式 p12 文件的绝对路径>
-JIANXI_RELEASE_STORE_PASSWORD=<仓库密码>
-JIANXI_RELEASE_KEY_ALIAS=jianxi-release
-JIANXI_RELEASE_KEY_PASSWORD=<密钥密码>
-```
+安装 Python 3 及 Android SDK Build Tools 35.0.0 后，可在工程根目录验证正式 APK。下面的命令适用于已设置 `ANDROID_HOME` 的 macOS 或 Linux 终端。
 
 ```sh
-./gradlew :app:assembleProduction :app:testProductionUnitTest :app:lintProduction
+python3 scripts/verify_release_apk.py jianxi-11.1.0-release.apk --build-tools "$ANDROID_HOME/build-tools/35.0.0" --version 11.1.0 --version-code 49
 ```
 
-输出为 `app/build/outputs/apk/production/app-production.apk`。打包前会执行 `verifyProductionSigning`，缺少正式签名配置时构建失败。发布名为 `jianxi-<版本号>-release.apk`。
+Windows PowerShell 使用以下命令。
 
-`production` 和 `release` 均使用正式签名，不启用调试、代码混淆或资源删除，以保留订单序列化字段和完整离线许可文档。本地 `debug` 使用 Android Gradle Plugin 的默认开发签名。
+```powershell
+python scripts/verify_release_apk.py jianxi-11.1.0-release.apk --build-tools "$env:ANDROID_HOME/build-tools/35.0.0" --version 11.1.0 --version-code 49
+```
 
-## 发布前验证
+验证脚本会检查包名、版本、非调试标志、ZIP 完整性、发行证书和 v1/v2/v3 签名。脚本固定使用官方证书指纹。
 
-发布验证程序固定校验上述原正式证书，同时要求 v1/v2/v3 全部有效、独立 v1 验证通过、包名及版本匹配，APK 非调试且 ZIP 完整。将参数替换成实际发布版本和构建号：
+## 使用自己的证书构建
+
+开发测试可直接运行 `:app:assembleDebug`。需要签名的发行构建时，准备自己的 PKCS#12 密钥库，并通过环境变量配置 Gradle。
+
+| 环境变量 | 用途 |
+|---|---|
+| `JIANXI_RELEASE_STORE_FILE` | PKCS#12 密钥库的完整路径 |
+| `JIANXI_RELEASE_STORE_PASSWORD` | 密钥库密码 |
+| `JIANXI_RELEASE_KEY_ALIAS` | 密钥别名，默认 `jianxi-release` |
+| `JIANXI_RELEASE_KEY_PASSWORD` | 私钥密码，缺省时使用密钥库密码 |
 
 ```sh
-python scripts/verify_release_apk.py path/to/app.apk --build-tools path/to/sdk/build-tools/35.0.0 --version 5.2.0 --version-code 32
+./gradlew :app:assembleProduction
 ```
 
-## 旧覆盖升级版的迁移
-
-历史覆盖升级版使用公开测试证书，与正式证书不同。后续正式 APK 可直接覆盖旧正式版；已有覆盖升级版不能直接切换签名。迁移至正式版需要重新安装，卸载会删除本机登录和本机订单记录；迁移前先在原平台核对未完成订单。
+Windows 使用 `.\gradlew.bat`。产物位于 `app/build/outputs/apk/production/app-production.apk`。Android 仅允许使用匹配签名对已安装的应用执行覆盖更新。

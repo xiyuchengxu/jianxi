@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+    <string name="theme_design_style_title" formatted="false">"Стиль интерфейса"</string>
+    <string name="theme_design_material" formatted="false">"Material"</string>
+    <string name="theme_design_miuix" formatted="false">"MIUIX"</string>
+    <string name="theme_design_miuix_fixed_colors" formatted="false">"В MIUIX используется фиксированная палитра"</string>
     <string name="msg_001914d23f0c" formatted="false">"Туманный синий"</string>
     <string name="msg_00612aad0812" formatted="false">"Будет отправлен запрос остановки подачи воды и проверен итоговый счёт платформы. Убедитесь также, что вода перестала течь."</string>
     <string name="msg_00d78bd5bca3" formatted="false">"Свернуть сведения о заказе"</string>
@@ -72,12 +76,10 @@
     <string name="msg_1c8a94e1b712" formatted="false">"Вставьте полное содержимое QR-кода стиральной машины или автомата воды."</string>
     <string name="msg_1cecf188f254" formatted="false">"Применены цвета обоев"</string>
     <string name="msg_1d1d1e02bdf7" formatted="false">"Оплата пока не подтверждена. Можно проверить позже."</string>
-    <string name="msg_1d4fe6ba00ce" formatted="false">"Переключаться между страницами нижней панели"</string>
     <string name="msg_1e027e8f269f" formatted="false">"Требование устройства к беспарольной авторизации пока не подтверждено. Обновите и повторите."</string>
     <string name="msg_1e2df9c3075a" formatted="false">"Войти"</string>
     <string name="msg_1e75a9bc677c" formatted="false">"Время заказа"</string>
     <string name="msg_1ea9145b3d9d" formatted="false">"Оплата с баланса не завершена"</string>
-    <string name="scanner_unsupported_hint" formatted="false">"Камера не поддерживает снижение экспозиции, но сканирование доступно. Измените угол или уменьшите яркость экрана устройства."</string>
     <string name="msg_1f405289ff28">"Счетов: %1$s"</string>
     <string name="msg_1f407ac21f14" formatted="false">"5. Риски услуг и платежей\nИзменения сети, интерфейсов платформы, совместимости системы, состояния устройств или обслуживание оператором могут вызвать сбои входа, изменение цены, задержку состояния оплаты или незапуск устройства. Автор не гарантирует постоянную доступность, отсутствие ошибок или обязательный запуск. Перед оплатой проверьте устройство, услугу, сумму и способ оплаты. При неожиданном результате сначала проверьте заказ или свяжитесь с оператором во избежание повторной оплаты. Исполнение услуг, возвраты и споры регулируются действующими правилами поставщиков и применимым законодательством."</string>
     <string name="msg_1fd81704a521">"Удалить изображение %1$s"</string>
@@ -125,7 +127,6 @@
     <string name="msg_3098a02a0c34" formatted="false">"Платформа отметила возврат за воду завершённым. Проверьте зачисление денег."</string>
     <string name="msg_30b6558e1ec2" formatted="false">"Анимация вкладок"</string>
     <string name="msg_321554ba3c42" formatted="false">"Остановите подачу кнопкой на самом устройстве, затем обновите состояние."</string>
-    <string name="msg_323af04842ad" formatted="false">"Удерживайте или перетаскивайте для эффекта жидкости. Касайтесь для переключения с упругим отскоком."</string>
     <string name="msg_325527570302" formatted="false">"Не удалось проверить содержимое заказа Alipay"</string>
     <string name="msg_33a072bb43bc" formatted="false">"Платформа по-прежнему требует беспарольную авторизацию устройства. Проверьте позже; после подтверждения использования воды откроется Alipay."</string>
     <string name="msg_33cdc95be001" formatted="false">"2. Собственный аккаунт и законное разрешение\nРаботайте только со своими аккаунтами, услугами устройств и заказами либо с теми, на которые получено законное разрешение. Не присваивайте чужую личность, не используйте чужие коды, не крадите токены и не используйте чужие платёжные аккаунты. Без разрешения нельзя запрашивать, сохранять или распространять чужие данные аккаунтов, заказов, использования устройств и персональные сведения."</string>
@@ -133,7 +134,6 @@
     <string name="msg_3465dd4a34e0">"Переместить изображение %1$s назад"</string>
     <string name="msg_34aa2e852e28" formatted="false">"В ответе входа отсутствуют сведения о сеансе"</string>
     <string name="msg_35cf44ac0fcb" formatted="false">"Один раз"</string>
-    <string name="scanner_waiting" formatted="false">"Открытие камеры…"</string>
     <string name="msg_37bacd3c428f" formatted="false">"Сохранить текст главной страницы"</string>
     <string name="msg_37e717d5998d" formatted="false">"Мягкие"</string>
     <string name="msg_37f64a4b3e45" formatted="false">"Текст"</string>
@@ -166,12 +166,10 @@
     <string name="msg_409c4e104012" formatted="false">"Стирка завершена"</string>
     <string name="msg_40b0aade58d7" formatted="false">"Отклонить и выйти"</string>
     <string name="msg_40ca838c072f" formatted="false">"Сохранение пустого текста или одних пробелов восстановит текст по умолчанию."</string>
-    <string name="scanner_title" formatted="false">"Сканировать QR-код машины или автомата воды"</string>
     <string name="msg_4167b9536d27" formatted="false">"Сначала проверьте устройство и обновите состояние. Пока результат не подтверждён, команда запуска повторно не отправляется."</string>
     <string name="msg_4189cc4d71fe" formatted="false">"Я прочитал отказ от ответственности и обязуюсь соблюдать пользовательское соглашение"</string>
     <string name="msg_41b8dd731e63" formatted="false">"Сведения о счёте за воду пока не подтверждены"</string>
     <string name="msg_41c71d37f309">"Поле текста главной страницы, не более %1$s символов"</string>
-    <string name="scanner_normal" formatted="false">"Обычный код"</string>
     <string name="msg_43a112a16373" formatted="false">"Платформа может автоматически списать средства по действующему разрешению Alipay. Неоплаченные счета можно оплатить в заказах."</string>
     <string name="msg_44fb814b166e" formatted="false">"Режим темы"</string>
     <string name="msg_453a3ff82d81">"Состояние авторизации Alipay пока не подтверждено: %1$s. Обновите и заново подтвердите использование воды."</string>
@@ -188,7 +186,6 @@
     <string name="msg_4948596875a4" formatted="false">"Принять и продолжить"</string>
     <string name="msg_498e1d59b4d7" formatted="false">"Выйти"</string>
     <string name="msg_49e131043706" formatted="false">"Не нажимать"</string>
-    <string name="scanner_limit_hint" formatted="false">"Достигнут минимум яркости камеры. Слегка измените угол или уменьшите яркость экрана устройства."</string>
     <string name="msg_4a3a09acabd9" formatted="false">"Войдите перед использованием автомата воды."</string>
     <string name="msg_4b6ded8a7f18" formatted="false">"Уведомления"</string>
     <string name="msg_4b77024928a1" formatted="false">"Результат прошлого заказа не подтверждён. Сначала проверьте его в исходном приложении."</string>
@@ -225,7 +222,6 @@
     <string name="msg_569001c47283">"Можно использовать до %1$s изображений. Уменьшите количество."</string>
     <string name="msg_56fe9a6dd1aa" formatted="false">"Чисто чёрный режим"</string>
     <string name="msg_570d60206779" formatted="false">"Сохранение"</string>
-    <string name="scanner_close" formatted="false">"Назад"</string>
     <string name="msg_580b9f75924d" formatted="false">"Alipay: оплата после использования (без пароля)"</string>
     <string name="msg_583465e2a15d" formatted="false">"Отсканируйте в Alipay или сохраните изображение и распознайте его из галереи."</string>
     <string name="msg_59124bffa4c0" formatted="false">"Оплата подтверждена, запрошена синхронизация. Проверьте, запустилась ли машина."</string>
@@ -249,8 +245,6 @@
     <string name="msg_609c3bd23883" formatted="false">"и выше (ступенчатый тариф)"</string>
     <string name="msg_610654391ab3" formatted="false">"9. Уважительное общение и защита других\nВступление в группу и отзывы добровольны. Уважайте других, объективно описывайте проблемы, не спамьте, не преследуйте, не оскорбляйте, не публикуйте незаконные материалы и непроверенные личные обвинения. Перед отправкой снимков, журналов и QR-кодов скрывайте конфиденциальные данные. Не передавайте участникам SMS-коды, токены, платёжные пароли и другие данные доступа к аккаунту."</string>
     <string name="msg_6132aaeef659" formatted="false">"Срок заказа истёк или он недействителен. Вернитесь к стирке и выберите режим заново."</string>
-    <string name="scanner_brightness_accessibility" formatted="false">"Яркость экранного кода"</string>
-    <string name="scanner_screen" formatted="false">"Код на экране"</string>
     <string name="msg_61ec6116d1f5" formatted="false">"Вода отключена. Сначала включите её в настройках."</string>
     <string name="msg_62200c199491" formatted="false">"Формат доступности устройства не поддерживается"</string>
     <string name="msg_6253728e4fa9" formatted="false">"Продолжить оплату"</string>
@@ -272,10 +266,8 @@
     <string name="msg_65e1d3722879" formatted="false">"Фиксированная нижняя панель не использует жидкое стекло. Выбранный уровень применится при возврате к плавающей панели."</string>
     <string name="msg_660ffe0aeef5" formatted="false">"Не удалось проверить расчёт за воду"</string>
     <string name="msg_661d94d78724" formatted="false">"Получение данных оплаты"</string>
-    <string name="scanner_normal_hint" formatted="false">"Поместите весь QR-код в рамку. Если экран слишком яркий, выберите «Код на экране»."</string>
     <string name="msg_670afc87ff0c" formatted="false">"3. Соблюдение правил услуг и оплаты\nИспользуйте стиральное оборудование по действующим правилам оператора, учебного заведения и места установки. Перед оплатой проверьте бельё, устройство, услугу и сумму. Нельзя уклоняться от оплаты, подделывать скидки или результаты платежа, повторять запросы ради неправомерных преимуществ или обходить ограничения за счёт различий интерфейсов. При неясном состоянии сначала проверьте заказ, не оформляйте и не оплачивайте его вслепую повторно."</string>
     <string name="msg_67105fbcc14e" formatted="false">"Для просмотра хода стирки войдите в аккаунт владельца заказа."</string>
-    <string name="scanner_screen_hint" formatted="false">"Медленно меняйте яркость до чёткого рисунка QR-кода. Немного отдалите камеру для фокусировки."</string>
     <string name="msg_685bb17fdb2b" formatted="false">"Массив"</string>
     <string name="msg_694111630619" formatted="false">"Сведения об устройстве неполные. Отсканируйте заново."</string>
     <string name="msg_6978239af3fb">"По умолчанию %1$s мс, диапазон %2$s–%3$s мс"</string>
@@ -292,7 +284,6 @@
     <string name="msg_6c3a3a160315" formatted="false">"Не удалось создать папку изображений заставки"</string>
     <string name="msg_6c61dc3a5f3d" formatted="false">"Сумма ожидает синхронизации"</string>
     <string name="msg_6c6594023f60" formatted="false">"Отправка кода"</string>
-    <string name="msg_6cdb2ed0c44e" formatted="false">"Мягкое матовое стекло с лёгким преломлением и деформацией"</string>
     <string name="msg_6ce4fd181551" formatted="false">"Подтвердить завершение подачи воды"</string>
     <string name="msg_6d1262e5d2e0" formatted="false">"Итоговая сумма от платформы"</string>
     <string name="msg_6d1c3af7a838" formatted="false">"Не удалось обновить состояние подачи воды. Повторите позже."</string>
@@ -384,7 +375,6 @@
     <string name="msg_9490a9f00e48" formatted="false">"Предпросмотр плавающей панели"</string>
     <string name="msg_960aa8eb1c5d" formatted="false">"Используется Alipay с оплатой после использования без пароля; платформа спишет сумму по фактическому расходу. После подтверждения будут проверены требования устройства к соглашению. При необходимости откроется Alipay; после возврата подтвердите воду заново. Неоплаченные счета и состояние оплаты проверяйте в заказах."</string>
     <string name="msg_960e8d3fc1e1" formatted="false">"Проверка беспарольной авторизации Alipay"</string>
-    <string name="scanner_camera_error" formatted="false">"Камера недоступна. Вернитесь и повторите."</string>
     <string name="msg_976a1c14feb1" formatted="false">"Номер расчёта за воду пока не подтверждён. Обновите позже."</string>
     <string name="msg_97c0474b816d" formatted="false">"Подтвердить начало подачи воды"</string>
     <string name="msg_97d1ee0dcbe2" formatted="false">"Аккаунт изменился. Подтвердите использование воды заново."</string>
@@ -405,7 +395,6 @@
     <string name="msg_9eaf7337eac7" formatted="false">"Время счёта"</string>
     <string name="msg_9f0d4e4656ee" formatted="false">"Добавить изображения"</string>
     <string name="msg_9f6fee1aba17" formatted="false">"Язык"</string>
-    <string name="scanner_brighter" formatted="false">"Ярче"</string>
     <string name="msg_9ff5a9563ee2" formatted="false">"Сеанс подачи воды завершён"</string>
     <string name="msg_a00234e52c02" formatted="false">"Формат режимов стирки не поддерживается. Сохраните QR-код для дальнейшей проверки."</string>
     <string name="msg_a01fa2926a83">"Заказ %1$s"</string>
@@ -424,7 +413,6 @@
     <string name="msg_a54c648d6a5d" formatted="false">"Сначала обновите и выберите способ оплаты воды."</string>
     <string name="msg_a555b7117495" formatted="false">"Отмена пока не подтверждена. Обновите заказ."</string>
     <string name="msg_a5a749ecf99b" formatted="false">"Независимый Android-клиент для стирки и воды на Kotlin и Jetpack Compose."</string>
-    <string name="msg_a6b6c3b4d179" formatted="false">"Прозрачное стекло с выраженным преломлением и упругой деформацией"</string>
     <string name="msg_a6b75d068032" formatted="false">"Тёмная"</string>
     <string name="msg_a6e01b215620" formatted="false">"Автомат занят или его состояние не подтверждено. Сначала обновите."</string>
     <string name="msg_a6e3cad608b3" formatted="false">"Формат сведений о заказе не поддерживается. Сначала проверьте в исходном приложении."</string>
@@ -450,7 +438,6 @@
     <string name="msg_ada841bf67e9">"Сервис временно недоступен (%1$s)"</string>
     <string name="msg_adcead944a6f" formatted="false">"Отменить неоплаченный заказ"</string>
     <string name="msg_ae8e4d07d70a" formatted="false">"Отсканируйте QR-код автомата воды."</string>
-    <string name="msg_af93b6dcf87a" formatted="false">"Сплошная нижняя панель с упругим индикатором"</string>
     <string name="msg_afb44149eeaf" formatted="false">"Подтвердить эту стирку"</string>
     <string name="msg_afdbcbccf8a9">"Группа QQ: %1$s"</string>
     <string name="msg_b01e2d77a8c6" formatted="false">"Возврат выполнен"</string>
@@ -505,7 +492,6 @@
     <string name="msg_c5500a58e0c5" formatted="false">"Число"</string>
     <string name="msg_c6135da0ea76" formatted="false">"Не удалось проверить оплату"</string>
     <string name="msg_c6143fa2daf8" formatted="false">"Платформа ещё требует беспарольную авторизацию, но не предоставила ссылку. Обновите позже."</string>
-    <string name="scanner_rejected_hint" formatted="false">"Камера не приняла изменение яркости, но сканирование доступно. Измените угол или уменьшите яркость экрана устройства."</string>
     <string name="msg_c65b3b97b411" formatted="false">"Неизвестный формат"</string>
     <string name="msg_c66b688131ed" formatted="false">"Нет приложения для открытия ссылки GitHub"</string>
     <string name="msg_c6729b9b5fe1" formatted="false">"В сведениях об устройстве нет идентификатора. Сначала проверьте устройство в исходном приложении."</string>
@@ -528,7 +514,6 @@
     <string name="msg_d00503584e15" formatted="false">"Развернуть настройки заставки"</string>
     <string name="msg_d007cc91971f" formatted="false">"Цвета темы"</string>
     <string name="msg_d03a42384c95" formatted="false">"Автоматически использовать основные цвета обоев"</string>
-    <string name="scanner_darker" formatted="false">"Темнее"</string>
     <string name="msg_d0f6b2e6e6e0" formatted="false">"Ожидание проверки авторизации Alipay"</string>
     <string name="msg_d12a5c36eda7" formatted="false">"Платёж содержит соглашение и остановлен"</string>
     <string name="msg_d22657dec5d1" formatted="false">"Извлечь цвета заново"</string>
@@ -593,7 +578,6 @@
     <string name="msg_ed06c8b46087" formatted="false">"Геопозиция недоступна. Повторите позже."</string>
     <string name="msg_edbdfa509c1e" formatted="false">"Есть запись о воде, требующая обработки. Отсканируйте исходное устройство или восстановите сеанс из заказов."</string>
     <string name="msg_eef16f7a3477" formatted="false">"3. Необходимые запросы и целостность данных\nПрограмма отправляет только необходимые запросы входа, определения устройства, расчёта, заказа, оплаты, проверки и отмены по явным действиям пользователя и в пределах законного разрешения. Она не предназначена для изменения, подделки или повреждения сетевых данных и не предоставляет поддельного успешного платежа, злонамеренного изменения цены или баланса либо доступа без разрешения. Обычные действия обновляют заказ на сервере. Суммы, оплату и состояние устройств нужно сверять с сервером."</string>
-    <string name="msg_ef28a66a21b1" formatted="false">"Одно изображение за запуск; следующее появится при следующем запуске"</string>
     <string name="msg_ef9454bff0b4" formatted="false">"Открытая лицензия"</string>
     <string name="msg_efab9e4d456b" formatted="false">"Jianxi-Alipay-QR.jpg"</string>
     <string name="msg_f06ac4a79992" formatted="false">"Сведения об автомате или продавце изменились. Отсканируйте код заново."</string>
@@ -631,4 +615,77 @@
     <string name="msg_ff7e349a58d1" formatted="false">"Заказ ожидает оплаты"</string>
     <string name="msg_ffc624300de8" formatted="false">"Сумма"</string>
     <string name="msg_643afd7f49a2_version" formatted="false">"Версия: 1.0.0 · Внутренняя версия: 0.1.16 · Обновлено: 3 ноября 2026 г."</string>
+    <string name="cloud_title" formatted="false">"Облачные напоминания WeChat"</string>
+    <string name="cloud_subtitle" formatted="false">"Собственный сервер отслеживает завершение стирки и отправляет напоминание в WeChat через сервисный аккаунт Miaotixing."</string>
+    <string name="cloud_voluntary" formatted="false">"Необязательно и не зависит от локальных уведомлений. Отключение не влияет на существующие напоминания о стирке."</string>
+    <string name="cloud_status_disabled" formatted="false">"Не включено"</string>
+    <string name="cloud_status_bound" formatted="false">"Привязано"</string>
+    <string name="cloud_status_pending" formatted="false">"Ожидает синхронизации"</string>
+    <string name="cloud_status_error" formatted="false">"Ошибка"</string>
+    <string name="cloud_status_auth_required" formatted="false">"Требуется повторная авторизация"</string>
+    <string name="cloud_server_url" formatted="false">"Адрес сервера"</string>
+    <string name="cloud_server_hint" formatted="false">"Только HTTPS. Проверка сертификата не отключается, перенаправления не выполняются."</string>
+    <string name="cloud_pairing_code" formatted="false">"Код привязки сервера"</string>
+    <string name="cloud_miaotixing_code" formatted="false">"Код Miaotixing"</string>
+    <string name="cloud_miaotixing_hint" formatted="false">"Используется только для напоминаний в WeChat. После успеха очищается и не сохраняется."</string>
+    <string name="cloud_consent" formatted="false">"Я согласен передать текущие учетные данные платформы и отслеживаемые заказы этому собственному серверу только для запросов на чтение."</string>
+    <string name="cloud_security_note" formatted="false">"Только стандартный TLS. Сервер читает детали заказа и не может запускать стирку, оплачивать или отменять ее."</string>
+    <string name="cloud_bind" formatted="false">"Привязать облачные напоминания"</string>
+    <string name="cloud_login_required" formatted="false">"Войдите, прежде чем привязывать облачные напоминания."</string>
+    <string name="cloud_bound_server">"Сервер: %1$s"</string>
+    <string name="cloud_notification_configured" formatted="false">"Код Miaotixing настроен"</string>
+    <string name="cloud_notification_missing" formatted="false">"Код Miaotixing не настроен"</string>
+    <string name="cloud_pending_sync" formatted="false">"Есть заказ на стирку, ожидающий синхронизации с сервером. Функции стирки не затронуты; можно повторить."</string>
+    <string name="cloud_auth_note" formatted="false">"Вход в платформу на сервере истек. Повторно авторизуйтесь либо отвяжите и привяжите заново."</string>
+    <string name="cloud_no_subscriptions" formatted="false">"Подписок на сервере пока нет."</string>
+    <string name="cloud_subscription_summary">"Подписки сервера: активных %1$d · завершенных %2$d"</string>
+    <string name="cloud_delivery_accepted" formatted="false">"Провайдер принял напоминание, но это не означает доставку в WeChat."</string>
+    <string name="cloud_delivery_unknown" formatted="false">"Результат последнего напоминания неизвестен. Не отправляйте его повторно."</string>
+    <string name="cloud_refresh" formatted="false">"Обновить состояние сервера"</string>
+    <string name="cloud_retry" formatted="false">"Повторить синхронизацию"</string>
+    <string name="cloud_reauthorize" formatted="false">"Повторно авторизоваться"</string>
+    <string name="cloud_test" formatted="false">"Отправить тестовое напоминание"</string>
+    <string name="cloud_test_cooldown">"Тест на паузе. Повторите через %1$d с."</string>
+    <string name="cloud_test_accepted" formatted="false">"Провайдер принял тестовое напоминание; это не означает доставку в WeChat."</string>
+    <string name="cloud_test_unknown" formatted="false">"Результат теста неизвестен. Не нажимайте повторно."</string>
+    <string name="cloud_test_failed" formatted="false">"Провайдер отклонил тестовое напоминание."</string>
+    <string name="cloud_update_code" formatted="false">"Обновить код Miaotixing"</string>
+    <string name="cloud_update_code_label" formatted="false">"Новый код Miaotixing"</string>
+    <string name="cloud_save" formatted="false">"Сохранить"</string>
+    <string name="cloud_cancel" formatted="false">"Отмена"</string>
+    <string name="cloud_unbind" formatted="false">"Отвязать облачные напоминания"</string>
+    <string name="cloud_unbind_confirm_title" formatted="false">"Отвязать облачные напоминания?"</string>
+    <string name="cloud_unbind_confirm_text" formatted="false">"Это отзовет учетные данные устройства на сервере и отслеживаемые подписки. При сбое сети локальная привязка сохранится для повторной попытки."</string>
+    <string name="cloud_error_network" formatted="false">"Не удается подключиться к серверу облачных напоминаний. Проверьте сеть и повторите."</string>
+    <string name="cloud_error_auth" formatted="false">"Учетные данные устройства на сервере или авторизация платформы истекли. Повторно авторизуйтесь или привяжите заново."</string>
+    <string name="cloud_error_pairing" formatted="false">"Код привязки недействителен, истек или введен не полностью."</string>
+    <string name="cloud_error_url" formatted="false">"Введите действительный HTTPS-адрес без учетных данных, параметров запроса и фрагментов."</string>
+    <string name="cloud_error_login" formatted="false">"Войдите, прежде чем использовать облачные напоминания."</string>
+    <string name="cloud_error_consent" formatted="false">"Отметьте согласие на передачу данных, необходимых для запросов на чтение, собственному серверу."</string>
+    <string name="cloud_error_server" formatted="false">"Сервер отклонил запрос. Повторите позже."</string>
+    <string name="cloud_error_rate" formatted="false">"Слишком много запросов. Повторите позже."</string>
+    <string name="cloud_error_rate_seconds">"Слишком много запросов. Повторите через %1$d с."</string>
+    <string name="cloud_error_invalid_response" formatted="false">"Неверный формат ответа сервера. Проверьте адрес и версию сервиса."</string>
+    <string name="cloud_error_unbind" formatted="false">"Не удалось подтвердить отвязку на сервере. Локальная привязка сохранена; проверьте сеть и повторите."</string>
+    <string name="cloud_error_notification" formatted="false">"Сначала введите код Miaotixing."</string>
+    <string name="cloud_error_binding" formatted="false">"Этот аккаунт не привязан к облачным напоминаниям."</string>
+    <string name="cloud_error_sync" formatted="false">"Синхронизация заказа временно не удалась. Он останется в ожидании и будет повторен позже."</string>
+    <string name="cloud_error_generic" formatted="false">"Операция с облачными напоминаниями временно не удалась. Повторите позже."</string>
+    <string name="cloud_logout_unbind_failed" formatted="false">"Вы вышли локально; отвязка в облаке не подтверждена. Старые учетные данные устройства сохранены для повторных попыток."</string>
+    <string name="font_settings_title" formatted="false">"Шрифт"</string>
+    <string name="font_settings_desc" formatted="false">"Выберите шрифт интерфейса приложения; подписи параметров и подсказки всегда используют системный шрифт"</string>
+    <string name="font_system_title" formatted="false">"Как в системе"</string>
+    <string name="font_system_desc" formatted="false">"Использовать системный шрифт Android"</string>
+    <string name="font_yunzhuan_title" formatted="false">"Yunzhuan Duren (云篆度人经)"</string>
+    <string name="font_yunzhuan_desc" formatted="false">"Охватывает только часть иероглифов; отсутствующие символы дополняются системным шрифтом"</string>
+    <string name="font_preview_label" formatted="false">"Предпросмотр шрифта"</string>
+    <string name="font_preview_sample" formatted="false">"元始无量度人上品妙经"</string>
+    <string name="font_preview_notice" formatted="false">"Шрифт Yunzhuan охватывает только часть иероглифов; неподдерживаемые символы, например цифры и латинские буквы, отображаются системным шрифтом"</string>
+    <string name="font_license_entry" formatted="false">"Yunzhuan Duren (云篆度人经) · SIL OFL 1.1"</string>
+    <string name="font_license_title" formatted="false">"Лицензия на шрифт Yunzhuan Duren (云篆度人经)"</string>
+    <string name="font_license_author" formatted="false">"Автор: 执笔之龙"</string>
+    <string name="font_license_upstream" formatted="false">"Источник: github.com/Lawrence-of-AnKing/yunzhuan-duren"</string>
+    <string name="font_license_revision" formatted="false">"Ревизия: bcedee13ee0cb6b491f59f781ae1e5cdf5276dd8"</string>
+    <string name="font_license_note" formatted="false">"Приложение включает исходный шрифт без изменений; файлы шрифта не изменялись. Шрифт охватывает только часть иероглифов, неподдерживаемые символы отображаются системным шрифтом; полное покрытие набора символов не гарантируется."</string>
+    <string name="settings_log_out">Выйти из аккаунта</string>
 </resources>

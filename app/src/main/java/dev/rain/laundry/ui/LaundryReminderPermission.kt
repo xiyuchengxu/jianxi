@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.NotificationsActive
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -23,16 +24,36 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import dev.rain.laundry.notifications.LaundryLiveMonitor
 import dev.rain.laundry.notifications.LaundryReminders
 import dev.rain.laundry.core.OrderHistory
+import dev.rain.laundry.cloud.CloudReminderUiState
 
 @Composable
-internal fun NotificationSettingsScreen(syncError: String?) {
+internal fun NotificationSettingsScreen(syncError: String?, cloud: CloudReminderUiState,
+    loggedIn: Boolean,
+    onBind: (String, String, String, Boolean) -> Unit,
+    onCloudRefresh: () -> Unit,
+    onCloudRetry: () -> Unit,
+    onCloudUnbind: () -> Unit,
+    onCloudReauthorize: () -> Unit,
+    onCloudUpdateCode: (String) -> Unit,
+    onCloudTest: () -> Unit,
+    onCloudEnableDeviceAssisted: () -> Unit = {}
+) {
     Text(appText(R.string.msg_1ad91bc551f7 , OrderHistory.LIMIT),
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     LaundryReminderPermission()
+    LiveLaundrySettings()
+    ShizukuKeepAliveSettings()
     Text(syncError ?: appText(R.string.msg_7eb9be087d93),
         style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    LaunchedEffect(loggedIn) {
+        if (loggedIn) onCloudRefresh()
+    }
+    CloudReminderSettings(cloud, loggedIn, onBind, onCloudRefresh, onCloudRetry,
+        onCloudUnbind, onCloudReauthorize, onCloudUpdateCode, onCloudTest,
+        onEnableDeviceAssisted = onCloudEnableDeviceAssisted)
 }
 
 @Composable
@@ -43,26 +64,32 @@ internal fun LaundryReminderPermission() {
     var requested by rememberSaveable { mutableStateOf(false) }
     val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         enabled = LaundryReminders.notificationsEnabled(context)
-        if (enabled) LaundryReminders.publishPending(context)
+        if (enabled) {
+            LaundryReminders.publishPending(context)
+            LaundryLiveMonitor.onAppForeground(context)
+        }
     }
     DisposableEffect(lifecycle, context) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
                 enabled = LaundryReminders.notificationsEnabled(context)
                 if (enabled) LaundryReminders.publishPending(context)
+                // The notification settings page is a visible Activity; this is a safe place
+                // to resume a live countdown after the system killed the service.
+                LaundryLiveMonitor.onAppForeground(context)
             }
         }
         lifecycle.addObserver(observer)
         onDispose { lifecycle.removeObserver(observer) }
     }
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerLow,
+    AdjustableSurface("notifications.permission", color = MaterialTheme.colorScheme.surfaceContainerLow,
         shape = MaterialTheme.shapes.large) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 Icon(Icons.Outlined.NotificationsActive, null, tint = MaterialTheme.colorScheme.primary)
                 Text(if (enabled) appText(R.string.msg_2dbf7aacc433) else appText(R.string.msg_63ccc6721672),
                     style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
-                if (!enabled) TextButton(onClick = {
+                if (!enabled) AppTextButton(onClick = {
                     if (Build.VERSION.SDK_INT >= 33 && !requested) {
                         requested = true
                         permission.launch(Manifest.permission.POST_NOTIFICATIONS)

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"자주 쓰는 기기"</string>
+    <string name="saved_device_title_laundry" formatted="false">"자주 쓰는 세탁기"</string>
+    <string name="saved_device_title_water" formatted="false">"자주 쓰는 정수기"</string>
+    <string name="saved_device_title_dryer" formatted="false">"자주 쓰는 건조기"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"건조기"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"아직 자주 쓰는 건조기가 없습니다. 스캔 성공 후 자동 저장됩니다"</string>
+    <string name="saved_device_entry_count_dryer">"건조기 %1$d대 저장됨, 눌러서 선택"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"여기에는 건조기 기록만 표시됩니다. 선택하면 플랫폼에서 현재 시간과 가격을 다시 확인합니다."</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"아직 자주 쓰는 건조기가 없습니다"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"스캔과 확인에 성공한 건조기가 여기에 저장됩니다. 선택할 때 플랫폼에 다시 조회합니다."</string>
+    <string name="saved_device_entry_empty" formatted="false">"스캔 성공 후 자동 저장되며, 다음에 한 번에 선택할 수 있습니다"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"아직 자주 쓰는 세탁기가 없습니다. 스캔 성공 후 자동 저장됩니다"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"아직 자주 쓰는 정수기가 없습니다. 스캔 성공 후 자동 저장됩니다"</string>
+    <string name="saved_device_entry_count">"%1$d대 저장됨, 눌러서 선택"</string>
+    <string name="saved_device_entry_count_laundry">"세탁기 %1$d대 저장됨, 눌러서 선택"</string>
+    <string name="saved_device_entry_count_water">"정수기 %1$d대 저장됨, 눌러서 선택"</string>
+    <string name="saved_device_hint" formatted="false">"선택하면 플랫폼에서 기기와 현재 상태를 다시 확인합니다. 이전 가격, 모드, 인증은 사용하지 않습니다."</string>
+    <string name="saved_device_hint_laundry" formatted="false">"여기에는 세탁기 기록만 표시됩니다. 선택하면 플랫폼에서 기기와 현재 상태를 다시 확인합니다. 이전 가격, 모드, 인증은 사용하지 않습니다."</string>
+    <string name="saved_device_hint_water" formatted="false">"여기에는 정수기 기록만 표시됩니다. 선택하면 플랫폼에서 기기와 현재 상태를 다시 확인합니다. 이전 가격, 모드, 인증은 사용하지 않습니다."</string>
+    <string name="saved_device_empty_title" formatted="false">"아직 자주 쓰는 기기가 없습니다"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"아직 자주 쓰는 세탁기가 없습니다"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"아직 자주 쓰는 정수기가 없습니다"</string>
+    <string name="saved_device_empty_body" formatted="false">"스캔과 확인에 성공한 기기가 여기에 자동 저장됩니다. 선택할 때 플랫폼에 다시 조회합니다."</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"스캔과 확인에 성공한 세탁기가 여기에 자동 저장됩니다. 선택할 때 플랫폼에 다시 조회합니다."</string>
+    <string name="saved_device_empty_body_water" formatted="false">"스캔과 확인에 성공한 정수기가 여기에 자동 저장됩니다. 선택할 때 플랫폼에 다시 조회합니다."</string>
+    <string name="saved_device_kind_laundry" formatted="false">"세탁기"</string>
+    <string name="saved_device_kind_water" formatted="false">"정수기"</string>
+    <string name="saved_device_last_used">"최근 사용: %1$s"</string>
+    <string name="saved_device_select" formatted="false">"선택"</string>
+    <string name="saved_device_rename" formatted="false">"이름 변경"</string>
+    <string name="saved_device_delete" formatted="false">"삭제"</string>
+    <string name="saved_device_close" formatted="false">"닫기"</string>
+    <string name="saved_device_note_label" formatted="false">"메모(선택)"</string>
+    <string name="saved_device_note_hint" formatted="false">"예: 기숙사 1층"</string>
+    <string name="saved_device_save" formatted="false">"저장"</string>
+    <string name="saved_device_cancel" formatted="false">"취소"</string>
+    <string name="saved_device_delete_title" formatted="false">"이 자주 쓰는 기기를 삭제할까요?"</string>
+    <string name="saved_device_delete_body" formatted="false">"이 기기의 기록만 삭제하며 플랫폼 계정이나 기기에는 영향을 주지 않습니다."</string>
+    <string name="saved_device_deleted" formatted="false">"자주 쓰는 기기를 삭제했습니다"</string>
+    <string name="saved_device_renamed" formatted="false">"메모를 저장했습니다"</string>
+    <string name="saved_device_not_found" formatted="false">"이 자주 쓰는 기기 기록이 더 이상 없습니다"</string>
+    <string name="saved_device_login_required" formatted="false">"자주 쓰는 기기를 사용하려면 로그인하세요"</string>
+    <string name="saved_device_invalid" formatted="false">"이 자주 쓰는 기기 기록이 유효하지 않습니다. 다시 스캔하세요"</string>
+    <string name="saved_device_identity_changed" formatted="false">"이 QR 코드는 다른 기기에 연결되어 있습니다. 다시 스캔해 확인하세요"</string>
+    <string name="saved_device_save_failed" formatted="false">"자주 쓰는 기기를 저장할 수 없습니다. 저장 공간을 확인하세요"</string>
+    <string name="saved_device_rename_title" formatted="false">"자주 쓰는 기기 이름 변경"</string>
+    <string name="dryer_duration_title" formatted="false">"건조 시간 선택"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d분"</string>
+    <string name="dryer_order_count" formatted="false">"주문 %1$d건"</string>
+    <string name="dryer_order_empty" formatted="false">"건조기 주문이 없습니다"</string>
+</resources>

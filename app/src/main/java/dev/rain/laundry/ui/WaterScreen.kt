@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,7 +26,8 @@ import dev.rain.laundry.core.*
 internal fun WaterScreen(
     state: UiState, scan: () -> Unit, paste: () -> Unit, select: (WaterOutlet) -> Unit,
     start: () -> Unit, finish: () -> Unit, refresh: () -> Unit, orders: () -> Unit,
-    selectPayment: (WaterPayRoute) -> Unit = {}
+    selectPayment: (WaterPayRoute) -> Unit = {}, openSavedDevices: (SavedDeviceKind) -> Unit = {},
+    scannerEnabled: Boolean = true
 ) {
     val device = state.waterDevice
     val outlet = state.waterOutlet
@@ -38,21 +40,25 @@ internal fun WaterScreen(
     var endDialog by rememberSaveable { mutableStateOf(false) }
     Row(Modifier.fillMaxWidth().testTag("waterHeader"), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
+        Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer.controlContainer()) {
             Icon(Icons.Outlined.WaterDrop, null, Modifier.padding(18.dp).size(32.dp).testTag("waterHeaderIcon"),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer)
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(if (device == null) appText(R.string.msg_88ef220dbc2f) else device.name, Modifier.testTag("waterDeviceName"),
-                style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, localize = false)
-            Text(appText(R.string.msg_0e5d45e9456f), style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            AdjustableWallpaperLabel("water.title", Modifier.testTag("waterDeviceName")) { label ->
+                Text(if (device == null) appText(R.string.msg_88ef220dbc2f) else device.name, label,
+                    style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold, localize = false)
+            }
+            AdjustableWallpaperLabel("water.reminder") { label ->
+                Text(appText(R.string.msg_0e5d45e9456f), modifier = label,
+                    style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.primary)
+            }
         }
     }
     if (device == null) {
-        Text(appText(R.string.msg_8032591e13e5), style = MaterialTheme.typography.bodyLarge)
         if (state.waterSession?.active == true) {
-            Text(appText(R.string.msg_edbdfa509c1e), color = MaterialTheme.colorScheme.onSurfaceVariant)
-            OutlinedButton(onClick = orders, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+            Text(appText(R.string.msg_edbdfa509c1e), modifier = Modifier.wallpaperTextBacking(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+            AppOutlinedButton(controlId = "water.orders", onClick = orders, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
                 Text(appText(R.string.msg_6b59ed9d733e))
             }
         }
@@ -72,7 +78,7 @@ internal fun WaterScreen(
                 else appText(R.string.msg_07a3c2feadd0)
             else -> appText(R.string.msg_f088643d2a3b)
         }
-        Card(shape = RoundedCornerShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+        AppCard(controlId = "water.device.card", shape = appShape(24.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
             Column(Modifier.fillMaxWidth().padding(22.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(title, style = MaterialTheme.typography.titleLarge)
                 Text(appText(R.string.msg_845461671a4e , payment?.title?.let(::localizedMessage) ?: appText(R.string.msg_33df16b4afab)), color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -87,13 +93,14 @@ internal fun WaterScreen(
                 }
             }
         }
-        if (device.announcement.isNotBlank()) Text(device.announcement.take(600), color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
-        if (device.error.isNotBlank()) Text(device.error, color = MaterialTheme.colorScheme.error)
-        Text(appText(R.string.msg_717d0bf23fb3), style = MaterialTheme.typography.titleMedium)
+        if (device.announcement.isNotBlank()) Text(device.announcement.take(600), modifier = Modifier.wallpaperTextBacking(),
+            color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
+        if (device.error.isNotBlank()) Text(device.error, modifier = Modifier.wallpaperTextBacking(), color = MaterialTheme.colorScheme.error)
+        Text(appText(R.string.msg_717d0bf23fb3), modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.titleMedium)
         device.outlets.forEach { candidate ->
             val selected = outlet?.id == candidate.id
-            OutlinedCard(onClick = { select(candidate) }, enabled = !state.busy && !active && !authorizationPending,
-                shape = RoundedCornerShape(22.dp), border = BorderStroke(if (selected) 2.dp else 1.dp,
+            AppOutlinedCard(controlId = privateControlId("water.outlet", "${device.id}\u0000${candidate.id}"), onClick = { select(candidate) }, enabled = !state.busy && !active && !authorizationPending,
+                shape = appShape(22.dp), border = BorderStroke(if (selected) 2.dp else 1.dp,
                     if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)) {
                 Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
                     RadioButton(selected, null)
@@ -108,11 +115,13 @@ internal fun WaterScreen(
             }
         }
         if (!active && state.waterPayments.isNotEmpty()) {
-            Text(appText(R.string.msg_ca7223717fa6), style = MaterialTheme.typography.titleMedium)
+            AdjustableWallpaperLabel("water.payment.title") { label ->
+                Text(appText(R.string.msg_ca7223717fa6), modifier = label, style = MaterialTheme.typography.titleMedium)
+            }
             state.waterPayments.forEach { candidate ->
                 val selected = candidate == state.waterPayment
-                OutlinedCard(onClick = { selectPayment(candidate) }, enabled = !state.busy && !authorizationPending,
-                    shape = RoundedCornerShape(22.dp), border = BorderStroke(if (selected) 2.dp else 1.dp,
+                AppOutlinedCard(controlId = privateControlId("water.payment", candidate.wire), onClick = { selectPayment(candidate) }, enabled = !state.busy && !authorizationPending,
+                    shape = appShape(22.dp), border = BorderStroke(if (selected) 2.dp else 1.dp,
                         if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)) {
                     Row(Modifier.fillMaxWidth().padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
                         RadioButton(selected, null)
@@ -122,13 +131,16 @@ internal fun WaterScreen(
                 }
             }
         }
-        state.waterPaymentError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
-        state.waterUpdateError?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
+        state.waterPaymentError?.let { Text(it, modifier = Modifier.wallpaperTextBacking(),
+            color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
+        state.waterUpdateError?.let { Text(it, modifier = Modifier.wallpaperTextBacking(),
+            color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodyMedium) }
         state.waterAuthorizationMessage?.let {
-            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+            Text(it, modifier = Modifier.wallpaperTextBacking(),
+                color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
         if (!active) {
-            Button(onClick = { startDialog = true },
+            AppButton(controlId = "water.start", onClick = { startDialog = true },
                 enabled = !state.busy && outlet != null && device.error.isBlank() && state.waterPaymentAllowed &&
                     state.waterStatus?.available == true,
                 modifier = Modifier.fillMaxWidth().height(56.dp)) {
@@ -136,27 +148,32 @@ internal fun WaterScreen(
                 Text(if (authorizationPending) appText(R.string.msg_d0f6b2e6e6e0) else appText(R.string.msg_be376c412d1f))
             }
         } else if (device.supportAppFinish && state.waterStatus?.mine == true) {
-            Button(onClick = { endDialog = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(56.dp)) {
+            AppButton(controlId = "water.finish", onClick = { endDialog = true }, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(56.dp)) {
                 Icon(Icons.Outlined.StopCircle, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_9055c1d4ca6f))
             }
         }
         if (active && !device.supportAppFinish) Text(appText(R.string.msg_321554ba3c42),
-            style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         if (active && session?.phase == WaterPhase.UNKNOWN) Text(appText(R.string.msg_4167b9536d27),
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        OutlinedButton(onClick = refresh, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+            modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        AppOutlinedButton(controlId = "water.refresh", onClick = refresh, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
             Icon(Icons.Outlined.Refresh, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_083c5e6e61a7))
         }
-        if (session?.settlementOrder != null) OutlinedButton(onClick = orders, enabled = !state.busy,
+        if (session?.settlementOrder != null) AppOutlinedButton(controlId = "water.orders", onClick = orders, enabled = !state.busy,
             modifier = Modifier.fillMaxWidth().height(52.dp)) { Text(appText(R.string.msg_f617edd7b975)) }
     }
     if (!active) {
-        if (device == null) Button(onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(54.dp)) {
+        if (scannerEnabled && device == null) AppButton(controlId = "water.scan", onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(54.dp)) {
             Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_dd3246e28288))
-        } else OutlinedButton(onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+        } else if (scannerEnabled) AppOutlinedButton(controlId = "water.scan", onClick = scan, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
             Text(appText(R.string.msg_4dca55259348))
         }
-        OutlinedButton(onClick = paste, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+    }
+    SavedDevicesEntry(SavedDeviceKind.WATER, state.savedDevices,
+        !state.busy && !authorizationPending,
+        onClick = { openSavedDevices(SavedDeviceKind.WATER) })
+    if (!active) {
+        AppOutlinedButton(controlId = "water.paste", onClick = paste, enabled = !state.busy && !authorizationPending, modifier = Modifier.fillMaxWidth().height(52.dp)) {
             Icon(Icons.Outlined.ContentPaste, null); Spacer(Modifier.width(8.dp)); Text(appText(R.string.msg_fc984db26cf9))
         }
     }
@@ -170,11 +187,11 @@ internal fun WaterScreen(
             } else if (payment.method == PayMethod.ALIPAY) {
                 Text(appText(R.string.msg_43a112a16373))
             }
-        } }, confirmButton = { TextButton(onClick = { startDialog = false; start() },
+        } }, confirmButton = { AppTextButton(onClick = { startDialog = false; start() },
             enabled = !state.busy && state.waterPaymentAllowed) { Text(appText(R.string.msg_97c0474b816d)) } },
-        dismissButton = { TextButton(onClick = { startDialog = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
+        dismissButton = { AppTextButton(onClick = { startDialog = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
     if (endDialog) AlertDialog(onDismissRequest = { endDialog = false }, title = { Text(appText(R.string.msg_ca0dffccb99d)) },
         text = { Text(appText(R.string.msg_00612aad0812)) },
-        confirmButton = { TextButton(onClick = { endDialog = false; finish() }, enabled = !state.busy) { Text(appText(R.string.msg_6ce4fd181551)) } },
-        dismissButton = { TextButton(onClick = { endDialog = false }) { Text(appText(R.string.msg_9a81c4e994ca)) } })
+        confirmButton = { AppTextButton(onClick = { endDialog = false; finish() }, enabled = !state.busy) { Text(appText(R.string.msg_6ce4fd181551)) } },
+        dismissButton = { AppTextButton(onClick = { endDialog = false }) { Text(appText(R.string.msg_9a81c4e994ca)) } })
 }

@@ -58,7 +58,8 @@ fun GlassNavigationBar(
     enabled: Boolean = true,
     glassLevel: GlassLevel = GlassLevel.FULL,
     backdropOrigin: Offset = Offset.Zero,
-    tabs: List<dev.rain.laundry.core.NavigationTab> = dev.rain.laundry.core.visibleNavigationTabs()
+    tabs: List<dev.rain.laundry.core.NavigationTab> = dev.rain.laundry.core.visibleNavigationTabs(),
+    dryerOnly: Boolean = false
 ) {
     var positionInRoot by remember { mutableStateOf(Offset.Zero) }
     val origin = positionInRoot - backdropOrigin
@@ -72,6 +73,7 @@ fun GlassNavigationBar(
     val density = LocalDensity.current
     val dark = LocalLaundryDarkTheme.current
     val scheme = MaterialTheme.colorScheme
+    val controlOpacity = LocalControlOpacity.current
     val scene = rememberGraphicsLayer()
     val optical = glassLevel != GlassLevel.NONE
     val scope = rememberCoroutineScope()
@@ -151,6 +153,7 @@ fun GlassNavigationBar(
                             while (true) {
                                 val event = awaitPointerEvent(PointerEventPass.Initial)
                                 val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                                if (change.isConsumed) break
                                 pointer.floatValue = change.position.x.coerceIn(0f, widthPx)
                                 if (change.position.y < -size.height || change.position.y > size.height * 2) cancelled = true
                                 if (change.pressed && (change.position - down.position).getDistance() > viewConfiguration.touchSlop) {
@@ -177,7 +180,10 @@ fun GlassNavigationBar(
                     }
                 }
             }) {
-            if (optical) Canvas(Modifier.matchParentSize().graphicsLayer { renderEffect = backdropBlur }) {
+            if (optical && controlOpacity > 0f) Canvas(Modifier.matchParentSize().graphicsLayer {
+                alpha = controlOpacity
+                renderEffect = backdropBlur
+            }) {
                 withTransform({ translate(-origin.x, -origin.y - trackTop) }) { drawLayer(layer) }
             }
             val surfaceAlpha = when {
@@ -187,8 +193,8 @@ fun GlassNavigationBar(
                 else -> if (dark) .30f else .42f
             }
             Box(Modifier.matchParentSize().background(
-                (if (optical) scheme.surface else scheme.surfaceContainerHigh).copy(alpha = surfaceAlpha)))
-            if (optical) Box(Modifier.matchParentSize().background(trackTint).border(.8.dp, trackBorder, trackShape))
+                (if (optical) scheme.surface else scheme.surfaceContainerHigh).copy(alpha = surfaceAlpha).controlContainer()))
+            if (optical) Box(Modifier.matchParentSize().background(trackTint, alpha = controlOpacity).border(.8.dp, trackBorder, trackShape))
             else Box(Modifier.matchParentSize().border(.8.dp, scheme.outlineVariant.copy(alpha = .55f), trackShape))
             Box(Modifier.offset { IntOffset((visualCenter.value - slot / 2).roundToInt(), paddingPx.roundToInt()) }
                 .width(with(density) { slot.toDp() }).height(50.dp)
@@ -198,23 +204,28 @@ fun GlassNavigationBar(
                     scaleX = 1f + .15f * lag + .045f * touchPressure.value - .075f * tapPulse.value
                     scaleY = 1f - .08f * lag - .07f * touchPressure.value + .065f * tapPulse.value
                 }
-                .background(scheme.primary.copy(alpha = if (dark) .15f else .105f), RoundedCornerShape(25.dp)))
-            Row(Modifier.fillMaxSize().padding(5.dp)) {
+                .background(scheme.primary.copy(alpha = if (dark) .15f else .105f).controlContainer(), RoundedCornerShape(25.dp)))
+            Row(Modifier.fillMaxSize().padding(5.dp).controlForegroundOutline()) {
                 tabs.forEachIndexed { index, tab ->
                     val color = if (active == index) scheme.primary else scheme.onSurfaceVariant
                     Column(Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(25.dp))
                         .semantics(mergeDescendants = true) {
                             role = Role.Tab
-                            contentDescription = appText(R.string.msg_8ffbad496815 , localizedMessage(tab.title))
+                            contentDescription = appText(R.string.msg_8ffbad496815 ,
+                                if (dryerOnly && tab == dev.rain.laundry.core.NavigationTab.LAUNDRY) appText(R.string.saved_device_kind_dryer)
+                                else localizedMessage(tab.title))
                             this.selected = selected == index
                             if (!enabled) disabled()
-                            onClick(label = tab.title) {
+                            onClick(label = if (dryerOnly && tab == dev.rain.laundry.core.NavigationTab.LAUNDRY)
+                                appText(R.string.saved_device_kind_dryer) else tab.title) {
                                 if (enabled) { select(index); true } else false
                             }
                         }, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                         Icon(tab.icon, contentDescription = null, tint = color, modifier = Modifier.size(20.dp))
                         Spacer(Modifier.height(2.dp))
-                        Text(tab.title, color = color, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
+                        Text(if (dryerOnly && tab == dev.rain.laundry.core.NavigationTab.LAUNDRY)
+                            appText(R.string.saved_device_kind_dryer) else tab.title,
+                            color = color, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium)
                     }
                 }
             }
@@ -240,6 +251,7 @@ private fun GlassLensOverlay(
     level: GlassLevel
 ) {
     val density = LocalDensity.current
+    val controlOpacity = LocalControlOpacity.current
     // Keep a little spring overshoot in the silhouette; shader/alpha remain bounded.
     val amount = pressure.value.coerceIn(0f, 1.14f)
     val strength = if (level == GlassLevel.LIGHT) .32f else 1f
@@ -282,7 +294,8 @@ private fun GlassLensOverlay(
             val corner = androidx.compose.ui.geometry.CornerRadius(borderSize.height / 2)
             drawRoundRect(border, topLeft = Offset(inset, inset), size = borderSize, cornerRadius = corner,
                 alpha = amount.coerceIn(0f, 1f), style = Stroke(1.15.dp.toPx()))
-            drawRoundRect(tint, topLeft = Offset(inset, inset), size = borderSize, cornerRadius = corner, alpha = amount.coerceIn(0f, 1f))
+            drawRoundRect(tint, topLeft = Offset(inset, inset), size = borderSize, cornerRadius = corner,
+                alpha = amount.coerceIn(0f, 1f) * controlOpacity)
         }
     }
 }

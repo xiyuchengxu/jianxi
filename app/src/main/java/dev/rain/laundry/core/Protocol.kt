@@ -43,9 +43,14 @@ object WireProtocol {
 }
 
 object PurchaseRules {
-    fun items(device: Device, mode: WashMode): String = JsonObject().apply {
+    fun items(device: Device, mode: WashMode, dryerDuration: DryerDuration? = null): String = JsonObject().apply {
+        if (device.isDryer && dryerDuration == null) throw ClientError("请选择烘干时长")
+        if (!device.isDryer && dryerDuration != null) throw ClientError("洗衣设备不能使用烘干时长")
+        if (dryerDuration != null && (dryerDuration !in mode.dryerDurations || dryerDuration.minutes <= 0))
+            throw ClientError("烘干时长已变化，请重新选择")
+        val amount = dryerDuration?.minutes?.toString() ?: "1"
         addProperty("goodsId", device.id); addProperty("skuId", mode.id)
-        addProperty("amount", "1"); addProperty("soldType", "1"); addProperty("num", "1"); addProperty("price", "")
+        addProperty("amount", amount); addProperty("soldType", "1"); addProperty("num", amount); addProperty("price", "")
     }.let { "[$it]" }
 
     /** Original client's explicit no-gold choice; this does not select or purchase an asset. */
@@ -54,19 +59,24 @@ object PurchaseRules {
         addProperty("assetId", "0"); addProperty("oldPromotionId", "3482"); addProperty("orgId", orgId)
     }.let { "[$it]" }
 
-    fun verifyQuote(data: JsonObject, device: Device, mode: WashMode): Quote {
-        val items = data.getAsJsonArray("items") ?: throw ClientError("报价缺少洗衣项目")
+    fun verifyQuote(data: JsonObject, device: Device, mode: WashMode, duration: DryerDuration? = null): Quote {
+        val expected = JsonParser.parseString(items(device, mode, duration)).asJsonArray.single().asJsonObject
+        val items = data.getAsJsonArray("items") ?: throw ClientError("报价缺少所选项目")
         if (items.size() != 1) throw ClientError("报价包含额外商品，请先在原应用核对")
-        val item = items[0].asJsonObject
-        if (item.text("goodsId") != device.id || item.text("skuId") != mode.id || item.text("amount", "1") != "1")
-            throw ClientError("报价项目与所选洗衣模式不一致")
+        val item = items[0].takeIf { it.isJsonObject }?.asJsonObject ?: throw ClientError("报价项目格式尚未适配")
+        for (key in listOf("goodsId", "skuId", "amount", "soldType", "num")) {
+            if (key == "num" && !device.isDryer && !item.has(key)) continue
+            if (item.text(key, if (key == "soldType") "1" else "") != expected.text(key))
+                throw ClientError("报价项目与所选${if (device.isDryer) "烘干模式或时长" else "洗衣模式"}不一致")
+        }
         verifyPromotions(data, device.orgId)
+        NoPointsPayment.verifyResponse(data)
         val rawTradeType = data.get("tradeType")?.takeUnless { it.isJsonNull }
         val tradeType = if (rawTradeType == null) 0 else {
             if (!rawTradeType.isJsonPrimitive) throw ClientError("报价订单类型格式尚未适配")
             rawTradeType.asString.toIntOrNull() ?: throw ClientError("报价订单类型格式尚未适配")
         }
-        return Quote(device, mode, money(data.text("realPrice")), items(device, mode), tradeType)
+        return Quote(device, mode, money(data.text("realPrice")), items(device, mode, duration), tradeType, duration)
     }
 
     private fun verifyPromotions(data: JsonObject, orgId: String) {
@@ -104,11 +114,14 @@ object PurchaseRules {
                 for (option in options.asJsonArray) {
                     if (!option.isJsonObject) throw ClientError("报价优惠选项格式尚未适配（$key[]：${shape(option)}）")
                     if (used(option.asJsonObject)) {
+                        if (promotionType == 8 || option.asJsonObject.text("promotionType") == "8")
+                            throw PointsDeductionDetected()
                         if (!goldExcluded(option.asJsonObject)) throw ClientError("报价附加了未选择的优惠，请先核对")
                         excludesGold = true
                     }
                 }
             }
+            if (used(promotion) && promotionType == 8) throw PointsDeductionDetected()
             if (used(promotion) && !(promotionType == 4 && excludesGold)) {
                 throw ClientError("报价附加了未选择的优惠，请先核对")
             }

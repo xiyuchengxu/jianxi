@@ -15,6 +15,7 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class SessionVault(context: Context) {
+    private val appContext = context.applicationContext
     private val preferences = context.getSharedPreferences("laundry_vault", Context.MODE_PRIVATE)
     private val alias = "simple_laundry_session_v1"
     private fun key(): SecretKey {
@@ -54,9 +55,14 @@ class SessionVault(context: Context) {
     fun login(phone: String, token: String) = synchronized(orderLock) {
         putAll(mapOf("owner" to WireProtocol.sha256(phone),
             "phone_label" to phone.take(3) + " **** " + phone.takeLast(4), "token" to token))
+        // Session changes and live-notification posts share orderLock. An old post cannot
+        // reappear after the old session's notification has been removed.
+        runCatching { dev.rain.laundry.notifications.LaundryLiveMonitor.stop(appContext) }
+        Unit
     }
     fun logout() = synchronized(orderLock) {
         preferences.edit().remove("token").remove("owner").remove("phone_label").commit()
+        runCatching { dev.rain.laundry.notifications.LaundryLiveMonitor.stop(appContext) }
         Unit
     }
     /** The current workflow pointer is independent of the bounded browsing history. */
@@ -105,6 +111,60 @@ class SessionVault(context: Context) {
     }
     fun water(): WaterSession? = readWater(owner())
 
+    /**
+     * Saved devices are a separate owner-scoped encrypted list. They survive logout, but are only
+     * readable while the same account has a live token, so switching accounts cannot leak them.
+     */
+    fun savedDevices(): List<SavedDevice> = synchronized(orderLock) {
+        val account = owner().takeIf { it.isNotBlank() && token().isNotBlank() }
+            ?: return@synchronized emptyList()
+        SavedDevices.merge(account, readSavedDevices(account))
+    }
+
+    private fun readSavedDevices(account: String): List<SavedDevice> =
+        get("devices_$account")?.let { raw -> SavedDevices.decode(raw) }.orEmpty()
+
+    /** Recheck owner/token/revision under the same lock as the write; a stale scan is discarded. */
+    fun saveSavedDevice(candidate: SavedDevice, expectedOwner: String, expectedToken: String,
+        isCurrent: () -> Boolean = { true }
+    ): Boolean = synchronized(orderLock) {
+        if (!SavedDevices.isValid(expectedOwner, candidate)) return@synchronized false
+        if (!SavedDevices.acceptsStoredResponse(expectedOwner, expectedToken, owner(), token(),
+                candidate.owner, isCurrent())) return@synchronized false
+        val merged = SavedDevices.merge(expectedOwner, readSavedDevices(expectedOwner), candidate)
+        put("devices_$expectedOwner", Gson().toJson(merged))
+        true
+    }
+
+    fun deleteSavedDevice(record: SavedDevice): Boolean = synchronized(orderLock) {
+        val account = owner().takeIf { it.isNotBlank() && token().isNotBlank() }
+            ?: return@synchronized false
+        if (record.owner != account) return@synchronized false
+        val existing = readSavedDevices(account)
+        val updated = existing.filterNot { it.kind == record.kind && it.deviceId == record.deviceId }
+        if (updated.size == existing.size) return@synchronized false
+        put("devices_$account", Gson().toJson(SavedDevices.merge(account, updated)))
+        true
+    }
+
+    fun renameSavedDevice(record: SavedDevice, note: String): Boolean = synchronized(orderLock) {
+        val account = owner().takeIf { it.isNotBlank() && token().isNotBlank() }
+            ?: return@synchronized false
+        if (record.owner != account) return@synchronized false
+        val existing = readSavedDevices(account)
+        val normalized = SavedDevices.normalizeNote(note)
+        var found = false
+        val updated = existing.map {
+            if (it.kind == record.kind && it.deviceId == record.deviceId) {
+                found = true
+                it.copy(note = normalized)
+            } else it
+        }
+        if (!found) return@synchronized false
+        if (updated != existing) put("devices_$account", Gson().toJson(SavedDevices.merge(account, updated)))
+        true
+    }
+
     /** Reminder intent and delivery claims survive history truncation and process recreation. */
     fun laundryReminders(): List<LaundryReminderRecord> = synchronized(orderLock) {
         val account = owner().takeIf { it.isNotBlank() && token().isNotBlank() }
@@ -115,7 +175,7 @@ class SessionVault(context: Context) {
         get("laundry_reminders_$account")?.let { raw ->
             runCatching { Gson().fromJson<List<LaundryReminderRecord>>(raw,
                 object : TypeToken<List<LaundryReminderRecord>>() {}.type).orEmpty()
-                .filter { it.order.owner == account && !it.order.isWater } }.getOrNull()
+                .filter { it.order.owner == account && it.order.isLaundry } }.getOrNull()
         }.orEmpty()
 
     fun updateLaundryReminders(expectedOwner: String,
@@ -123,10 +183,13 @@ class SessionVault(context: Context) {
     ): List<LaundryReminderRecord>? = synchronized(orderLock) {
         if (expectedOwner.isBlank() || owner() != expectedOwner || token().isBlank()) return@synchronized null
         val updated = transform(readLaundryReminders(expectedOwner))
-            .filter { it.order.owner == expectedOwner && !it.order.isWater }
+            .filter { it.order.owner == expectedOwner && it.order.isLaundry }
         put("laundry_reminders_$expectedOwner", Gson().toJson(updated))
         updated
     }
+
+    /** Serialize live-notification start/cancel and state reads with account changes and posts. */
+    internal fun <T> withLaundryStateLock(block: () -> T): T = synchronized(orderLock) { block() }
 
     /** A stale worker reply cannot overwrite a later foreground update or another login session. */
     fun withLaundrySession(expectedOwner: String, expectedToken: String, isCurrent: () -> Boolean,

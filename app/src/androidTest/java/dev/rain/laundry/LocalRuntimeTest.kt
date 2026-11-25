@@ -17,6 +17,7 @@ import dev.rain.laundry.data.SessionVault
 import dev.rain.laundry.data.LaundryApi
 import dev.rain.laundry.core.*
 import dev.rain.laundry.ui.GlassLevel
+import dev.rain.laundry.ui.DesignStyle
 import dev.rain.laundry.ui.ThemePreferences
 import dev.rain.laundry.ui.BottomBarStyle
 import com.google.gson.JsonObject
@@ -49,6 +50,29 @@ class LocalRuntimeTest {
     private val fixturePhone = "local-runtime-owner"
     private val fixtureOwner = WireProtocol.sha256(fixturePhone)
     private val screenshots get() = File(instrumentation.targetContext.getExternalFilesDir(null), "runtime-checks").apply { mkdirs() }
+
+    @Test fun designStylePersistsAndDefaultsToMaterialForExistingPreferences() {
+        val context = instrumentation.targetContext
+        val preferences = context.getSharedPreferences("appearance", 0)
+        val previous = preferences.getString("design_style", null)
+        val appearance = ThemePreferences(context)
+        val original = appearance.settings
+        try {
+            preferences.edit().putString("design_style", DesignStyle.MATERIAL.name).commit()
+            instrumentation.runOnMainSync { appearance.update(original.copy(designStyle = DesignStyle.MATERIAL)) }
+            assertEquals(DesignStyle.MATERIAL, ThemePreferences(context).settings.designStyle)
+            instrumentation.runOnMainSync {
+                appearance.update(original.copy(designStyle = DesignStyle.MIUIX))
+            }
+            await { ThemePreferences(context).settings.designStyle == DesignStyle.MIUIX }
+            assertEquals("MIUIX", preferences.getString("design_style", null))
+            assertEquals(DesignStyle.MIUIX, ThemePreferences(context).settings.designStyle)
+        } finally {
+            instrumentation.runOnMainSync { appearance.update(original) }
+            if (previous == null) preferences.edit().remove("design_style").commit()
+            else preferences.edit().putString("design_style", previous).commit()
+        }
+    }
 
     @Test fun glassControlsPersistAndFixedBarRetainsTheSelectedLevel() {
         val context = instrumentation.targetContext

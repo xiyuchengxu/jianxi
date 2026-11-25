@@ -63,6 +63,40 @@
                 android:text="@string/scanner_screen"
                 android:textColor="#FFFFFF" />
         </RadioGroup>
+
+        <!-- Fixed-height rows: text and auto state changes must not resize the preview/crop. -->
+        <LinearLayout
+            android:id="@+id/scanner_auto_row"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <Switch
+                android:id="@+id/scanner_auto"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:checked="true"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:minWidth="88dp"
+                android:text="@string/scanner_auto"
+                android:textColor="#FFFFFF"
+                android:textSize="13sp" />
+            <TextView
+                android:id="@+id/scanner_auto_status"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:accessibilityLiveRegion="polite"
+                android:ellipsize="end"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:paddingStart="8dp"
+                android:text="@string/scanner_auto_waiting"
+                android:textColor="#B5D7F4"
+                android:textSize="11sp" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/scanner_brightness_controls"
             android:layout_width="match_parent"
@@ -93,9 +127,11 @@
         <TextView
             android:id="@+id/scanner_hint"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:accessibilityLiveRegion="polite"
-            android:minHeight="36dp"
+            android:ellipsize="end"
+            android:gravity="center_vertical"
+            android:maxLines="3"
             android:text="@string/scanner_waiting"
             android:textColor="#E5ECF2"
             android:textSize="13sp" />

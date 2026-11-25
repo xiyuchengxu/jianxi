@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_background_title">"システムの壁紙を背景に使う"</string>
+    <string name="wallpaper_background_brightness">"背景の明るさ"</string>
+    <string name="wallpaper_background_darker">"暗く"</string>
+    <string name="wallpaper_background_lighter">"明るく"</string>
+    <string name="wallpaper_background_original">"元の明るさ"</string>
+    <string name="wallpaper_background_dimmed">"暗く %1$d%%"</string>
+    <string name="wallpaper_background_brightened">"明るく %1$d%%"</string>
+    <string name="wallpaper_background_reset">"元の明るさに戻す"</string>
+    <string name="wallpaper_background_unsupported">"この端末ではシステムの壁紙を表示できません"</string>
+    <string name="wallpaper_settings_title">"壁紙"</string>
+    <string name="control_transparency">コントロールの透明度</string>
+    <string name="control_adjust_individual">このコントロールの透明度を調整</string>
+    <string name="control_follow_global">全体設定に合わせる</string>
+    <string name="control_done">完了</string>
+    <string name="control_long_press_hint">コントロールを長押しすると、その透明度を調整できます。入力欄は右端を長押ししてください。</string>
+</resources>

@@ -1,0 +1,25 @@
+<resources>
+    <string name="scanner_title">Scan a washing machine or water dispenser QR code</string>
+    <string name="scanner_close">Back</string>
+    <string name="scanner_normal">Normal code</string>
+    <string name="scanner_screen">Screen code</string>
+    <string name="scanner_brighter">Brighter</string>
+    <string name="scanner_darker">Darker</string>
+    <string name="scanner_brightness_accessibility">Lower exposure for screen codes</string>
+    <string name="scanner_waiting">Opening camera…</string>
+    <string name="scanner_normal_hint">Fit the whole QR code in the frame; switch to “Screen code” if the screen is very bright</string>
+    <string name="scanner_screen_hint">Adjust brightness slowly until the QR texture is clear; moving slightly farther back can help focus</string>
+    <string name="scanner_limit_hint">The camera is already at its darkest exposure; change the angle slightly or lower the device screen brightness</string>
+    <string name="scanner_unsupported_hint">This camera cannot lower exposure, but scanning still works; change the angle or lower the device screen brightness</string>
+    <string name="scanner_rejected_hint">The camera did not accept the brightness change, but scanning still works; change the angle or lower the device screen brightness</string>
+    <string name="scanner_camera_error">Camera unavailable; go back and try again</string>
+    <string name="scanner_auto">Auto adjust</string>
+    <string name="scanner_auto_off">Auto adjust is off; use the brightness slider if needed</string>
+    <string name="scanner_auto_waiting">Auto adjust: reading camera capabilities…</string>
+    <string name="scanner_auto_stable">Auto adjust: holding the view steady</string>
+    <string name="scanner_auto_adjusting">Auto adjust: optimizing from the live image</string>
+    <string name="scanner_auto_manual">Manual brightness has priority; auto resumes shortly</string>
+    <string name="scanner_auto_limit">Camera adjustment limit reached; change distance or angle</string>
+    <string name="scanner_auto_limited">This camera supports only some auto adjustments</string>
+    <string name="scanner_auto_unsupported">This camera does not support auto exposure or zoom; scanning still works</string>
+</resources>

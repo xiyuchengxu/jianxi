@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_submitted_unconfirmed">"The payment request has been submitted. Refresh the order to check its final status."</string>
+    <string name="water_submitted_unconfirmed">"The water command has been submitted. Refresh to check its status. If water is flowing, confirm the active session and end it."</string>
+    <string name="payment_deduction_unsupported">"The platform applied an unsupported deduction to this order. Payment has been stopped. Adjust it in the original app and try again."</string>
+    <string name="payment_deduction_unconfirmed">"The order deductions could not be verified. Payment has been stopped. Refresh the order and try again."</string>
+</resources>

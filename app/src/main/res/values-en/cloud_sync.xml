@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"Order sync failed temporarily (HTTP %1$s). It stays pending for automatic retry; you can also retry manually."</string>
+    <string name="cloud_sync_rejected">"The server did not accept the cloud subscription for this order; no reminder was created. Confirm the order is still running, then retry manually."</string>
+    <string name="cloud_sync_rejected_http">"The server did not accept the cloud subscription for this order (HTTP %1$s); no reminder was created. Confirm the order is still running, then retry manually."</string>
+    <string name="cloud_upstream_http_405">"The platform rejected the server query (405); no order subscription was created. Retry manually later; if it persists, contact the maintainer to check the server query permission."</string>
+    <string name="cloud_upstream_http_403">"The platform rejected the server query (403); no order subscription was created. Check the platform login and retry manually."</string>
+    <string name="cloud_upstream_retryable">"The platform query is temporarily unavailable; no order subscription was created yet. It will retry automatically."</string>
+    <string name="cloud_upstream_terminal">"The platform rejected the order query; no order subscription was created. Retry manually later."</string>
+    <string name="cloud_upstream_identity_mismatch">"The platform order identity did not match; no order subscription was created."</string>
+    <string name="cloud_device_unsupported">"This server version does not support phone-assisted reminders, so it was not enabled. Upgrade the server or keep using platform verification."</string>
+    <string name="cloud_device_rejected">"The server did not accept the phone report; the reminder was not updated. Retry manually later."</string>
+    <string name="cloud_device_assist_desc">"When enabled, the phone sends its locally observed running state and platform estimate to the server. The server reminds at the estimate, and the phone explicitly confirms completion. Unknown estimates are never invented; an unsupported server reports a clear error."</string>
+    <string name="cloud_device_assist_enable">"Enable phone-assisted reminders"</string>
+    <string name="cloud_device_assist_unbind">"To stop phone assistance, use Unbind below; there is no silent mode switch."</string>
+    <string name="cloud_device_assist_enabled">"Phone-assisted reminders are enabled"</string>
+    <string name="cloud_device_assist_pending">"Syncing running evidence…"</string>
+    <string name="cloud_device_assist_pending_terminal">"Phone report is pending sync; completion or cancellation is not claimed before an explicit receipt."</string>
+    <string name="cloud_device_assist_scheduled">"Estimate reminder scheduled (expected %1$s)."</string>
+    <string name="cloud_device_assist_awaiting">"Waiting for phone confirmation of completion."</string>
+    <string name="cloud_device_assist_awaiting_unknown">"Waiting for phone confirmation of completion (the platform provided no estimate)."</string>
+    <string name="cloud_device_assist_completed">"Phone confirmed completion."</string>
+    <string name="cloud_device_assist_cancelled">"Order cancelled/refunded; unsent reminders were revoked."</string>
+    <string name="cloud_device_assist_accepted">"The provider accepted the estimate reminder; this does not mean WeChat delivery."</string>
+    <string name="cloud_source_label">"Cloud source: %1$s"</string>
+    <string name="cloud_source_device">"Phone-assisted"</string>
+    <string name="cloud_source_platform">"Platform-verified"</string>
+</resources>

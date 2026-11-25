@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="live_laundry_channel_name">Live laundry progress</string>
+    <string name="live_laundry_channel_description" formatted="false">"Estimated finish time and status for an active wash."</string>
+    <string name="live_laundry_title_running">Laundry running · %1$s</string>
+    <string name="live_laundry_text_running">Estimated end %1$s. The countdown is an estimate; reaching zero does not mean the wash is complete.</string>
+    <string name="live_laundry_title_unknown">Laundry running · %1$s</string>
+    <string name="live_laundry_text_unknown">The platform has not provided an end time. Status is checked periodically; remaining time cannot be shown.</string>
+    <string name="live_laundry_title_expired">"Waiting for confirmation · %1$s"</string>
+    <string name="live_laundry_text_expired">Estimated end %1$s has passed. Waiting for platform confirmation; a zero countdown does not mean completion.</string>
+    <string name="live_laundry_title_offline">"Laundry status not synced · %1$s"</string>
+    <string name="live_laundry_text_offline">"Status could not be synced. Last estimated finish: %1$s. Retrying; completion is not confirmed."</string>
+    <string name="live_laundry_text_offline_unknown" formatted="false">"Status could not be synced and no finish estimate is available. Retrying."</string>
+    <string name="live_laundry_text_offline_expired" formatted="false">"Status could not be synced. The estimate has expired; waiting for platform confirmation."</string>
+    <string name="live_laundry_text_stale">Estimated end %1$s; status needs verification.</string>
+    <string name="live_laundry_title_checking">Checking laundry status</string>
+    <string name="live_laundry_text_checking">Waiting for the platform to confirm the running state. The estimated remaining time appears after confirmation.</string>
+    <string name="live_laundry_short_waiting">Confirming</string>
+    <string name="live_laundry_short_unknown">Time pending</string>
+    <string name="live_laundry_setting_title">Live laundry progress</string>
+    <string name="live_laundry_setting_summary" formatted="false">"View the estimated time remaining for the current wash."</string>
+    <string name="live_laundry_setting_note" formatted="false">"Supported systems can show live updates. Appearance depends on your system and notification settings. The platform must confirm completion after the estimate expires."</string>
+    <string name="live_laundry_setting_status_idle">On. It appears when a laundry order is running.</string>
+    <string name="live_laundry_setting_status_running">Estimated end: %1$s.</string>
+    <string name="live_laundry_setting_status_expired">The estimated end time has passed. Waiting for platform confirmation.</string>
+    <string name="live_laundry_setting_status_unknown">The platform has not provided an end time, so remaining time cannot be shown.</string>
+    <string name="live_laundry_setting_status_offline" formatted="false">"Status is not synced. Retaining the last estimate and retrying."</string>
+    <string name="live_laundry_setting_status_off">Live progress is off.</string>
+    <string name="live_laundry_setting_status_finished">The wash is complete. Live progress has ended.</string>
+    <string name="live_laundry_setting_notifications_off">System notifications are off, so live progress cannot appear. Enable notification permission first.</string>
+    <string name="live_laundry_manage_system" formatted="false">"System notification settings"</string>
+    <string name="live_laundry_resume_current" formatted="false">"Show current order again"</string>
+    <string name="live_laundry_setting_status_hidden" formatted="false">"The live update for this order is hidden."</string>
+</resources>

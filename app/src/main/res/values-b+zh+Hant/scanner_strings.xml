@@ -1,0 +1,25 @@
+<resources>
+    <string name="scanner_title">掃描洗衣機或飲水機二維碼</string>
+    <string name="scanner_close">返回</string>
+    <string name="scanner_normal">普通碼</string>
+    <string name="scanner_screen">螢幕碼</string>
+    <string name="scanner_brighter">較亮</string>
+    <string name="scanner_darker">較暗</string>
+    <string name="scanner_brightness_accessibility">螢幕碼降低亮度</string>
+    <string name="scanner_waiting">正在開啟相機…</string>
+    <string name="scanner_normal_hint">將完整二維碼放入取景框；螢幕太亮時切換「螢幕碼」</string>
+    <string name="scanner_screen_hint">慢慢調整亮度，直到二維碼紋理清楚；稍微移遠可幫助對焦</string>
+    <string name="scanner_limit_hint">已到相機降亮度下限；請稍微改變角度或降低裝置螢幕亮度</string>
+    <string name="scanner_unsupported_hint">此相機不支援降低曝光，仍可掃碼；請改變角度或降低裝置螢幕亮度</string>
+    <string name="scanner_rejected_hint">相機未接受亮度調整，仍可掃碼；請改變角度或降低裝置螢幕亮度</string>
+    <string name="scanner_camera_error">相機暫不可用，請返回後重試</string>
+    <string name="scanner_auto">自動調整</string>
+    <string name="scanner_auto_off">自動調整已關閉；需要時可手動調整亮度</string>
+    <string name="scanner_auto_waiting">自動調整：正在讀取相機能力…</string>
+    <string name="scanner_auto_stable">自動調整中：保持畫面穩定</string>
+    <string name="scanner_auto_adjusting">自動調整中：已依畫面最佳化</string>
+    <string name="scanner_auto_manual">手動亮度優先，稍後恢復自動</string>
+    <string name="scanner_auto_limit">已達相機調整上限，請改變距離或角度</string>
+    <string name="scanner_auto_limited">此相機僅支援部分自動調整</string>
+    <string name="scanner_auto_unsupported">此相機不支援自動曝光或縮放，仍可掃碼</string>
+</resources>

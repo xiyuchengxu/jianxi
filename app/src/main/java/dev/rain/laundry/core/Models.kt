@@ -4,18 +4,27 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 
 data class DeviceCode(val key: String, val value: String)
-data class WashMode(val id: String, val name: String, val price: String, val feature: String = "")
+data class DryerDuration(val minutes: Int, val price: String, val description: String = "", val selectedByPlatform: Boolean = false)
+data class WashMode(
+    val id: String, val name: String, val price: String, val feature: String = "",
+    val dryerDurations: List<DryerDuration> = emptyList()
+)
 data class Device(
     val id: String, val name: String, val imei: String, val category: String,
     val shopId: String, val orgId: String, val remainingMinutes: Int,
     val modes: List<WashMode>, val error: String = ""
+) {
+    val isDryer: Boolean get() = category == "02"
+}
+data class Quote(
+    val device: Device, val mode: WashMode, val amount: String, val itemsJson: String, val tradeType: Int,
+    val dryerDuration: DryerDuration? = null
 )
-data class Quote(val device: Device, val mode: WashMode, val amount: String, val itemsJson: String, val tradeType: Int)
 enum class PayMethod(val wire: String, val title: String) { ALIPAY("13", "支付宝"), BALANCE("2", "账户余额") }
 data class PayRoute(val method: PayMethod, val thirdChannel: String = "", val outVoucherId: String = "") {
     val title: String get() = method.title
 }
-data class CreatedOrder(val id: String, val number: String)
+data class CreatedOrder(val id: String, val number: String, val paymentIssue: ClientError? = null)
 data class LocationFix(val latitude: Double, val longitude: Double)
 enum class OrderPhase { CREATING, UNCONFIRMED, CREATED, PAYMENT_PENDING, PAID, CANCELLED, REJECTED, CLOSED, COMPLETED, REFUNDING, REFUNDED }
 val OrderPhase.finished: Boolean get() = this in setOf(OrderPhase.PAID, OrderPhase.CANCELLED, OrderPhase.REJECTED,
@@ -28,6 +37,13 @@ data class LocalOrder(
     val laundryProgress: LaundryProgress? = null
 ) {
     val isWater: Boolean get() = category == "04"
+    val isDryer: Boolean get() = category == "02"
+    val isLaundry: Boolean get() = category.isNullOrBlank() || category in setOf("00", "01")
+    val workflowKind: String get() = when {
+        isWater -> "water"
+        isDryer -> "dryer"
+        else -> "laundry"
+    }
 }
 open class ClientError(message: String) : Exception(message)
 class BusinessRejected(val code: Int, message: String, val operation: String? = null) : ClientError(message) {

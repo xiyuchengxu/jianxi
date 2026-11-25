@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 
 internal data class WallpaperColorInfo(
     val seed: Int? = null,
+    val primary: Int? = null,
     val loading: Boolean = false,
     val revision: Int = 0,
     val refresh: () -> Unit = {}
@@ -25,7 +26,7 @@ internal data class WallpaperColorInfo(
 internal val LocalWallpaperColorInfo = staticCompositionLocalOf { WallpaperColorInfo() }
 
 /** Only reads wallpaper color metadata. Does not access the wallpaper bitmap or request storage access. */
-@RequiresApi(Build.VERSION_CODES.S)
+@RequiresApi(Build.VERSION_CODES.O_MR1)
 @Composable
 internal fun rememberDesktopWallpaperColors(): WallpaperColorInfo {
     val context = LocalContext.current.applicationContext
@@ -33,21 +34,18 @@ internal fun rememberDesktopWallpaperColors(): WallpaperColorInfo {
     val lifecycleOwner = LocalLifecycleOwner.current
     val manager = remember(context) { runCatching { WallpaperManager.getInstance(context) }.getOrNull() }
     var revision by remember { mutableIntStateOf(0) }
-    var seed by remember { mutableStateOf<Int?>(null) }
+    var colors by remember { mutableStateOf<android.app.WallpaperColors?>(null) }
     var loading by remember { mutableStateOf(true) }
 
     LaunchedEffect(manager, configuration, revision) {
         loading = true
-        suspend fun readSeed(): Int? = withContext(Dispatchers.IO) {
+        suspend fun readColors() = withContext(Dispatchers.IO) {
             try {
-                manager?.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)?.let { colors ->
-                    selectWallpaperSeed(listOfNotNull(colors.primaryColor, colors.secondaryColor, colors.tertiaryColor).map { it.toArgb() })
-                }
+                manager?.getWallpaperColors(WallpaperManager.FLAG_SYSTEM)
             } catch (_: RuntimeException) { null }
         }
-        val first = readSeed()
         // Color metadata can briefly be unavailable while a new wallpaper is being processed.
-        seed = if (first != null) first else { delay(350); readSeed() }
+        colors = readColors() ?: run { delay(350); readColors() }
         loading = false
     }
 
@@ -68,5 +66,9 @@ internal fun rememberDesktopWallpaperColors(): WallpaperColorInfo {
             if (registered) runCatching { manager?.removeOnColorsChangedListener(listener) }
         }
     }
-    return WallpaperColorInfo(seed, loading, revision, refresh = { revision++ })
+    val seed = remember(colors) {
+        colors?.let { selectWallpaperSeed(listOfNotNull(it.primaryColor, it.secondaryColor, it.tertiaryColor).map { color -> color.toArgb() }) }
+    }
+    return WallpaperColorInfo(seed = seed, primary = colors?.primaryColor?.toArgb(),
+        loading = loading, revision = revision, refresh = { revision++ })
 }

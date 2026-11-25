@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_status_title" formatted="false">今回確認した機器の状態</string>
+    <string name="saved_status_checking" formatted="false">現在の状態を確認中…</string>
+    <string name="saved_status_laundry_available" formatted="false">確認した洗濯モードは利用可能</string>
+    <string name="saved_status_water_available" formatted="false">確認した給水口は空いています</string>
+    <string name="saved_status_laundry_using" formatted="false">機器は使用中です</string>
+    <string name="saved_status_water_using" formatted="false">この給水口を使用中です</string>
+    <string name="saved_status_occupied" formatted="false">他の利用者が使用中です</string>
+    <string name="saved_status_unavailable" formatted="false">機器は現在利用できません</string>
+    <string name="saved_status_unknown" formatted="false">現在の状態は未確認です</string>
+    <string name="saved_status_failed" formatted="false">今回の状態確認に失敗しました</string>
+    <string name="saved_status_failed_detail" formatted="false">現在の機器の状態を確認できません。後でもう一度お試しください。</string>
+    <string name="saved_status_mode">確認したモード：%1$s</string>
+    <string name="saved_status_outlet">確認した給水口：%1$s</string>
+    <string name="saved_status_remaining">プラットフォームによる残り時間：約 %1$d 分</string>
+    <string name="saved_status_checked_at">確認時刻：%1$s</string>
+    <string name="saved_status_snapshot_hint" formatted="false">今回の確認結果です。利用前に再度確認します。</string>
+    <string name="saved_status_list_available" formatted="false">現在利用可能</string>
+    <string name="saved_status_list_unavailable" formatted="false">現在利用不可</string>
+    <string name="saved_status_list_checking" formatted="false">確認中</string>
+    <string name="saved_status_list_unknown" formatted="false">状態未確認</string>
+    <string name="saved_status_list_failed" formatted="false">確認失敗</string>
+</resources>

@@ -83,6 +83,7 @@ class WaterTest {
         var statusReads = 0
         var startedDevice: WaterDevice? = null
         var error: Exception? = null
+        var verificationIssue: ClientError? = null
         var persisted: WaterSession? = null
         val workflow = WaterWorkflow(this, { persisted }, { persisted = it })
         override suspend fun refreshWaterDevice(device: WaterDevice): WaterDevice { refreshes++; return fresh }
@@ -93,7 +94,7 @@ class WaterTest {
             assertEquals(WaterPhase.STARTING, persisted?.phase)
             assertEquals(payment, persisted?.payment)
             error?.let { throw it }
-            return WaterStart("order-no", "message-id")
+            return WaterStart("order-no", "message-id", verificationIssue)
         }
         override suspend fun endWater(device: WaterDevice) { stops++; assertEquals(WaterPhase.ENDING, persisted?.phase) }
         override suspend fun startWaterAfterAuthorization(device: WaterDevice, outlet: WaterOutlet, fix: LocationFix,
@@ -107,6 +108,18 @@ class WaterTest {
         assertEquals(WaterPhase.WAITING, gateway.workflow.start(device, outlet, "owner", fix).phase)
         assertTrue(runCatching { gateway.workflow.start(device, outlet, "owner", fix) }.isFailure)
         assertEquals(1, gateway.starts)
+    }
+    @Test fun submittedCommandWithVerificationIssueKeepsIdentityAndCanBeStoppedWithoutReplay() = runTest {
+        val gateway = Gateway().apply { verificationIssue = WaterCommandSubmittedUnconfirmed() }
+        assertTrue(runCatching { gateway.workflow.start(device, outlet, "owner", fix) }.exceptionOrNull() is WaterCommandSubmittedUnconfirmed)
+        assertEquals(WaterPhase.UNKNOWN, gateway.persisted?.phase)
+        assertEquals("order-no", gateway.persisted?.orderNo)
+        assertEquals("message-id", gateway.persisted?.msgId)
+        assertTrue(runCatching { gateway.workflow.start(device, outlet, "owner", fix) }.isFailure)
+        assertEquals(1, gateway.starts)
+        gateway.status = using
+        gateway.workflow.finish()
+        assertEquals(1, gateway.stops)
     }
     @Test fun aNewExplicitConfirmationAfterAuthorizationStillStoresIntentAndCannotRepeatAnActiveStart() = runTest {
         val gateway = Gateway()

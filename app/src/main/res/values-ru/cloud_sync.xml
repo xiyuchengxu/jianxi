@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"Синхронизация заказа временно не удалась (HTTP %1$s). Заказ остается в ожидании и будет повторен автоматически; можно повторить вручную."</string>
+    <string name="cloud_sync_rejected">"Сервер не принял облачную подписку для этого заказа; напоминание не создано. Убедитесь, что заказ еще выполняется, и повторите вручную."</string>
+    <string name="cloud_sync_rejected_http">"Сервер не принял облачную подписку для этого заказа (HTTP %1$s); напоминание не создано. Убедитесь, что заказ еще выполняется, и повторите вручную."</string>
+    <string name="cloud_upstream_http_405">"Платформа отклонила запрос сервера (405); подписка на заказ не создана. Повторите вручную позже; если это повторяется, обратитесь к сопровождающему для проверки прав запроса сервера."</string>
+    <string name="cloud_upstream_http_403">"Платформа отклонила запрос сервера (403); подписка на заказ не создана. Проверьте вход в платформу и повторите вручную."</string>
+    <string name="cloud_upstream_retryable">"Запрос к платформе временно недоступен; подписка на заказ пока не создана. Повтор будет выполнен автоматически."</string>
+    <string name="cloud_upstream_terminal">"Платформа отклонила запрос заказа; подписка на заказ не создана. Повторите вручную позже."</string>
+    <string name="cloud_upstream_identity_mismatch">"Идентификатор заказа платформы не совпал; подписка на заказ не создана."</string>
+    <string name="cloud_device_unsupported">"Эта версия сервера не поддерживает напоминания с помощью телефона, поэтому режим не включен. Обновите сервер или продолжайте использовать проверку платформы."</string>
+    <string name="cloud_device_rejected">"Сервер не принял отчет телефона; напоминание не обновлено. Повторите вручную позже."</string>
+    <string name="cloud_device_assist_desc">"После включения телефон отправляет на сервер локально наблюдаемое состояние и оценку времени платформы. Сервер напоминает к расчетному времени, а завершение явно подтверждает телефон. Неизвестное время не выдумывается; при отсутствии поддержки сервер явно сообщает об ошибке."</string>
+    <string name="cloud_device_assist_enable">"Включить напоминания с помощью телефона"</string>
+    <string name="cloud_device_assist_unbind">"Чтобы остановить помощь телефона, используйте «Отвязать» ниже; скрытого переключения нет."</string>
+    <string name="cloud_device_assist_enabled">"Напоминания с помощью телефона включены"</string>
+    <string name="cloud_device_assist_pending">"Синхронизация данных о выполнении…"</string>
+    <string name="cloud_device_assist_pending_terminal">"Отчет телефона ожидает синхронизации; завершение или отмена не заявляются до явного ответа."</string>
+    <string name="cloud_device_assist_scheduled">"Расчетное напоминание запланировано (ожидается %1$s)."</string>
+    <string name="cloud_device_assist_awaiting">"Ожидание подтверждения завершения телефоном."</string>
+    <string name="cloud_device_assist_awaiting_unknown">"Ожидание подтверждения завершения телефоном (платформа не дала оценку)."</string>
+    <string name="cloud_device_assist_completed">"Телефон подтвердил завершение."</string>
+    <string name="cloud_device_assist_cancelled">"Заказ отменен/возвращен; неотправленные напоминания отозваны."</string>
+    <string name="cloud_device_assist_accepted">"Провайдер принял расчетное напоминание; это не означает доставку в WeChat."</string>
+    <string name="cloud_source_label">"Источник в облаке: %1$s"</string>
+    <string name="cloud_source_device">"Помощь телефона"</string>
+    <string name="cloud_source_platform">"Проверка платформы"</string>
+</resources>

@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"常用裝置"</string>
+    <string name="saved_device_title_laundry" formatted="false">"常用洗衣機"</string>
+    <string name="saved_device_title_water" formatted="false">"常用飲水機"</string>
+    <string name="saved_device_title_dryer" formatted="false">"常用烘乾機"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"烘乾機"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"還沒有常用烘乾機，掃碼成功後自動儲存"</string>
+    <string name="saved_device_entry_count_dryer">"已儲存 %1$d 台烘乾機，點擊選用"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"這裡只顯示烘乾機記錄。選用後會重新向平台核驗目前時長與價格。"</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"還沒有常用烘乾機"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"識別並確認烘乾機後會自動儲存在這裡；下次點選仍會重新查詢平台。"</string>
+    <string name="saved_device_entry_empty" formatted="false">"掃碼成功後自動儲存，下次一鍵選用"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"還沒有常用洗衣機，掃碼成功後自動儲存"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"還沒有常用飲水機，掃碼成功後自動儲存"</string>
+    <string name="saved_device_entry_count">"已儲存 %1$d 台，點擊選用"</string>
+    <string name="saved_device_entry_count_laundry">"已儲存 %1$d 台洗衣機，點擊選用"</string>
+    <string name="saved_device_entry_count_water">"已儲存 %1$d 台飲水機，點擊選用"</string>
+    <string name="saved_device_hint" formatted="false">"選用後會重新向平台核驗裝置與目前狀態，不會沿用舊價格、模式或授權。"</string>
+    <string name="saved_device_hint_laundry" formatted="false">"這裡只顯示洗衣機記錄。選用後會重新向平台核驗裝置與目前狀態，不會沿用舊價格、模式或授權。"</string>
+    <string name="saved_device_hint_water" formatted="false">"這裡只顯示飲水機記錄。選用後會重新向平台核驗裝置與目前狀態，不會沿用舊價格、模式或授權。"</string>
+    <string name="saved_device_empty_title" formatted="false">"還沒有常用裝置"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"還沒有常用洗衣機"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"還沒有常用飲水機"</string>
+    <string name="saved_device_empty_body" formatted="false">"成功識別並確認裝置後會自動儲存在這裡；下次點選仍會重新查詢平台。"</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"識別並確認洗衣機後會自動儲存在這裡；下次點選仍會重新查詢平台。"</string>
+    <string name="saved_device_empty_body_water" formatted="false">"識別並確認飲水機後會自動儲存在這裡；下次點選仍會重新查詢平台。"</string>
+    <string name="saved_device_kind_laundry" formatted="false">"洗衣機"</string>
+    <string name="saved_device_kind_water" formatted="false">"飲水機"</string>
+    <string name="saved_device_last_used">"最近使用：%1$s"</string>
+    <string name="saved_device_select" formatted="false">"選用"</string>
+    <string name="saved_device_rename" formatted="false">"重新命名"</string>
+    <string name="saved_device_delete" formatted="false">"刪除"</string>
+    <string name="saved_device_close" formatted="false">"關閉"</string>
+    <string name="saved_device_note_label" formatted="false">"備註（選填）"</string>
+    <string name="saved_device_note_hint" formatted="false">"例如：宿舍樓下"</string>
+    <string name="saved_device_save" formatted="false">"儲存"</string>
+    <string name="saved_device_cancel" formatted="false">"取消"</string>
+    <string name="saved_device_delete_title" formatted="false">"刪除常用裝置？"</string>
+    <string name="saved_device_delete_body" formatted="false">"只刪除本機記錄，不會影響平台帳戶或裝置。"</string>
+    <string name="saved_device_deleted" formatted="false">"已刪除常用裝置"</string>
+    <string name="saved_device_renamed" formatted="false">"備註已儲存"</string>
+    <string name="saved_device_not_found" formatted="false">"這筆常用裝置記錄已不存在"</string>
+    <string name="saved_device_login_required" formatted="false">"請先登入後再使用常用裝置"</string>
+    <string name="saved_device_invalid" formatted="false">"這筆常用裝置記錄無效，請重新掃碼"</string>
+    <string name="saved_device_identity_changed" formatted="false">"二維碼已綁定到另一台裝置，請重新掃碼確認"</string>
+    <string name="saved_device_save_failed" formatted="false">"無法儲存常用裝置，請檢查儲存空間"</string>
+    <string name="saved_device_rename_title" formatted="false">"重新命名常用裝置"</string>
+    <string name="dryer_duration_title" formatted="false">"選擇烘乾時長"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d 分鐘"</string>
+    <string name="dryer_order_count" formatted="false">"%1$d 筆訂單"</string>
+    <string name="dryer_order_empty" formatted="false">"還沒有烘乾訂單"</string>
+</resources>

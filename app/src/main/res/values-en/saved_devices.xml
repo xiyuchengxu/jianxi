@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"Saved devices"</string>
+    <string name="saved_device_title_laundry" formatted="false">"Saved washers"</string>
+    <string name="saved_device_title_water" formatted="false">"Saved water dispensers"</string>
+    <string name="saved_device_title_dryer" formatted="false">"Saved dryers"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"Dryer"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"No saved dryers yet; saved automatically after a successful scan"</string>
+    <string name="saved_device_entry_count_dryer">"Saved dryers: %1$d · tap to select"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"Only saved dryers are shown here. Selecting one re-checks the current duration and price with the platform."</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"No saved dryers yet"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"Dryers are saved here after a successful scan and verification. Selecting one will query the platform again."</string>
+    <string name="saved_device_entry_empty" formatted="false">"Saved automatically after a successful scan; tap to select next time"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"No saved washers yet; saved automatically after a successful scan"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"No saved water dispensers yet; saved automatically after a successful scan"</string>
+    <string name="saved_device_entry_count">"%1$d saved; tap to select"</string>
+    <string name="saved_device_entry_count_laundry">"Saved washers: %1$d · tap to select"</string>
+    <string name="saved_device_entry_count_water">"Saved water dispensers: %1$d · tap to select"</string>
+    <string name="saved_device_hint" formatted="false">"Selecting one re-checks the device and current status with the platform. Old prices, modes, and authorizations are never reused."</string>
+    <string name="saved_device_hint_laundry" formatted="false">"Only saved washers are shown here. Selecting one re-checks the device and current status with the platform. Old prices, modes, and authorizations are never reused."</string>
+    <string name="saved_device_hint_water" formatted="false">"Only saved water dispensers are shown here. Selecting one re-checks the device and current status with the platform. Old prices, modes, and authorizations are never reused."</string>
+    <string name="saved_device_empty_title" formatted="false">"No saved devices yet"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"No saved washers yet"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"No saved water dispensers yet"</string>
+    <string name="saved_device_empty_body" formatted="false">"Devices are saved here after a successful scan and verification. Selecting one will query the platform again."</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"Washers are saved here after a successful scan and verification. Selecting one will query the platform again."</string>
+    <string name="saved_device_empty_body_water" formatted="false">"Water dispensers are saved here after a successful scan and verification. Selecting one will query the platform again."</string>
+    <string name="saved_device_kind_laundry" formatted="false">"Washer"</string>
+    <string name="saved_device_kind_water" formatted="false">"Water dispenser"</string>
+    <string name="saved_device_last_used">"Last used: %1$s"</string>
+    <string name="saved_device_select" formatted="false">"Select"</string>
+    <string name="saved_device_rename" formatted="false">"Rename"</string>
+    <string name="saved_device_delete" formatted="false">"Delete"</string>
+    <string name="saved_device_close" formatted="false">"Close"</string>
+    <string name="saved_device_note_label" formatted="false">"Note (optional)"</string>
+    <string name="saved_device_note_hint" formatted="false">"e.g. Downstairs dorm"</string>
+    <string name="saved_device_save" formatted="false">"Save"</string>
+    <string name="saved_device_cancel" formatted="false">"Cancel"</string>
+    <string name="saved_device_delete_title" formatted="false">"Delete this saved device?"</string>
+    <string name="saved_device_delete_body" formatted="false">"This only removes the local record. Your platform account and the device are not affected."</string>
+    <string name="saved_device_deleted" formatted="false">"Saved device deleted"</string>
+    <string name="saved_device_renamed" formatted="false">"Note saved"</string>
+    <string name="saved_device_not_found" formatted="false">"This saved device no longer exists"</string>
+    <string name="saved_device_login_required" formatted="false">"Sign in before using saved devices"</string>
+    <string name="saved_device_invalid" formatted="false">"This saved device record is invalid. Scan the code again."</string>
+    <string name="saved_device_identity_changed" formatted="false">"This QR code now points to a different device. Scan it again to confirm."</string>
+    <string name="saved_device_save_failed" formatted="false">"Could not save the device. Check available storage."</string>
+    <string name="saved_device_rename_title" formatted="false">"Rename saved device"</string>
+    <string name="dryer_duration_title" formatted="false">"Select drying time"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d minutes"</string>
+    <string name="dryer_order_count" formatted="false">"%1$d orders"</string>
+    <string name="dryer_order_empty" formatted="false">"No dryer orders yet"</string>
+</resources>

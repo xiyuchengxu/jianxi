@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_background_title">"Использовать системные обои как фон"</string>
+    <string name="wallpaper_background_brightness">"Яркость фона"</string>
+    <string name="wallpaper_background_darker">"Темнее"</string>
+    <string name="wallpaper_background_lighter">"Светлее"</string>
+    <string name="wallpaper_background_original">"Исходная яркость"</string>
+    <string name="wallpaper_background_dimmed">"Темнее на %1$d%%"</string>
+    <string name="wallpaper_background_brightened">"Светлее на %1$d%%"</string>
+    <string name="wallpaper_background_reset">"Сбросить яркость"</string>
+    <string name="wallpaper_background_unsupported">"Системные обои недоступны на этом устройстве"</string>
+    <string name="wallpaper_settings_title">"Обои"</string>
+    <string name="control_transparency">Прозрачность элементов</string>
+    <string name="control_adjust_individual">Изменить прозрачность этого элемента</string>
+    <string name="control_follow_global">Как в общих настройках</string>
+    <string name="control_done">Готово</string>
+    <string name="control_long_press_hint">Нажмите и удерживайте элемент, чтобы настроить его прозрачность. Для поля ввода удерживайте правый край.</string>
+</resources>

@@ -11,14 +11,14 @@ android {
         applicationId = "dev.rain.laundry"
         minSdk = 26
         targetSdk = 35
-        versionCode = 32
-        versionName = "5.2.0"
-        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.31\"")
-        manifestPlaceholders["internalVersion"] = "0.1.31"
+        versionCode = 49
+        versionName = "11.1.0"
+        buildConfigField("String", "INTERNAL_VERSION", "\"0.1.48\"")
+        manifestPlaceholders["internalVersion"] = "0.1.48"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
-    buildFeatures { compose = true; buildConfig = true }
+    buildFeatures { compose = true; buildConfig = true; aidl = true }
     // Keep every supported language available for offline switching in APKs and app bundles.
     bundle { language { enableSplit = false } }
     signingConfigs {
@@ -85,10 +85,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.work:work-runtime-ktx:2.10.5")
+    implementation("dev.rikka.shizuku:api:13.1.5")
+    implementation("dev.rikka.shizuku:provider:13.1.5")
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.animation:animation")
     implementation("androidx.compose.material3:material3")
+    // Stable Miuix release based on Compose 1.7.3, matching this app's Compose runtime.
+    implementation("top.yukonga.miuix.kmp:miuix-android:0.3.4")
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

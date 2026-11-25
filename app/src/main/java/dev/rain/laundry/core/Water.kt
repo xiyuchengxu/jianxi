@@ -20,6 +20,7 @@ data class WaterDevice(
 )
 sealed interface ScannedDevice {
     data class Laundry(val device: Device) : ScannedDevice
+    data class Dryer(val device: Device) : ScannedDevice
     data class Water(val device: WaterDevice) : ScannedDevice
 }
 data class WaterStatus(val status: Int, val workStatus: Int, val amount: String = "", val identify: String = "") {
@@ -38,8 +39,9 @@ data class WaterSession(
 ) {
     val active: Boolean get() = phase != WaterPhase.ENDED && phase != WaterPhase.REJECTED
 }
-data class WaterStart(val orderNo: String, val msgId: String)
+data class WaterStart(val orderNo: String, val msgId: String, val verificationIssue: ClientError? = null)
 class WaterStartNotSent(message: String, val authorization: WaterAlipayAuthorization? = null) : ClientError(message)
+class WaterCommandSubmittedUnconfirmed : ClientError("用水指令已提交，请刷新查询状态；如设备正在出水，请确认后结束用水")
 
 object WaterRules {
     private fun falseFlag(value: String) = value in setOf("", "0", "false")
@@ -75,7 +77,7 @@ object WaterRules {
     // Explicit no-coupon/no-water-card/no-points choices from AfterPayUseAct.unLock, APK 1.144.0.
     fun promotions(): String = listOf("-6", "-7", "-8").map { type -> JsonObject().apply {
         addProperty("promotionId", "0"); addProperty("promotionType", type); addProperty("assetId", "0")
-        addProperty("oldPromotionId", ""); addProperty("orgId", "0")
+        addProperty("oldPromotionId", if (type == "-8") "0" else ""); addProperty("orgId", "0")
     } }.joinToString(prefix = "[", postfix = "]")
 
     fun decimal(raw: String): String {
@@ -187,10 +189,9 @@ class WaterWorkflow(private val gateway: WaterGateway, private val read: () -> W
         val attempt = WaterSession(owner, fresh, outlet, WaterPhase.STARTING, lastStatus = status,
             initialIdentify = status.identify, payment = payment)
         save(attempt)
-        try {
-            val result = if (returnedAuthorizationTradeMain != null) gateway.startWaterAfterAuthorization(fresh, outlet, fix, payment, returnedAuthorizationTradeMain)
+        val result = try {
+            if (returnedAuthorizationTradeMain != null) gateway.startWaterAfterAuthorization(fresh, outlet, fix, payment, returnedAuthorizationTradeMain)
                 else gateway.startWater(fresh, outlet, fix, payment)
-            attempt.copy(phase = WaterPhase.WAITING, orderNo = result.orderNo, msgId = result.msgId).also(save)
         } catch (error: WaterStartNotSent) {
             save(attempt.copy(phase = WaterPhase.REJECTED)); throw error
         } catch (error: BusinessRejected) {
@@ -198,6 +199,10 @@ class WaterWorkflow(private val gateway: WaterGateway, private val read: () -> W
         } catch (error: Exception) {
             save(attempt.copy(phase = WaterPhase.UNKNOWN)); throw error
         }
+        val session = attempt.copy(phase = if (result.verificationIssue == null) WaterPhase.WAITING else WaterPhase.UNKNOWN,
+            orderNo = result.orderNo, msgId = result.msgId).also(save)
+        result.verificationIssue?.let { throw it }
+        session
     }
 
     suspend fun finish(): WaterSession = mutex.withLock {

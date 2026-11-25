@@ -62,7 +62,7 @@ object LaundryReminders {
     internal fun observe(vault: SessionVault, order: LocalOrder, running: Boolean, completed: Boolean,
         expectedEndAtMs: Long?, nowMs: Long, delivery: LaundryReminderDelivery
     ): Boolean {
-        if (order.isWater || order.owner.isBlank() || (running && completed) ||
+        if (!order.isLaundry || order.owner.isBlank() || (running && completed) ||
             (order.orderId.isBlank() && order.orderNo.isBlank())) return false
         val records = vault.updateLaundryReminders(order.owner) { previous ->
             val existing = previous.firstOrNull { OrderHistory.sameOrder(it.order, order) }
@@ -132,7 +132,7 @@ object LaundryReminders {
             val tap = PendingIntent.getActivity(context, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
             val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_laundry)
+                .setSmallIcon(R.drawable.ic_laundry_notification)
                 .setContentTitle(appText(R.string.msg_409c4e104012))
                 .setContentText(appText(R.string.msg_ca80d3c72c64 , order.deviceName, order.modeName))
                 .setContentIntent(tap).setAutoCancel(true).setOnlyAlertOnce(true)

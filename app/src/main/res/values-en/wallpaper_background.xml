@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_background_title">"Use system wallpaper as background"</string>
+    <string name="wallpaper_background_brightness">"Background brightness"</string>
+    <string name="wallpaper_background_darker">"Darker"</string>
+    <string name="wallpaper_background_lighter">"Brighter"</string>
+    <string name="wallpaper_background_original">"Original brightness"</string>
+    <string name="wallpaper_background_dimmed">"Dimmer by %1$d%%"</string>
+    <string name="wallpaper_background_brightened">"Brighter by %1$d%%"</string>
+    <string name="wallpaper_background_reset">"Reset brightness"</string>
+    <string name="wallpaper_background_unsupported">"System wallpaper is unavailable on this device"</string>
+    <string name="wallpaper_settings_title">"Wallpaper"</string>
+    <string name="control_transparency">Control transparency</string>
+    <string name="control_adjust_individual">Adjust this control’s transparency</string>
+    <string name="control_follow_global">Use global setting</string>
+    <string name="control_done">Done</string>
+    <string name="control_long_press_hint">Touch and hold a control to adjust its transparency. For a text field, hold its right edge.</string>
+</resources>

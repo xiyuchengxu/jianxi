@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_status_title" formatted="false">Device status from this check</string>
+    <string name="saved_status_checking" formatted="false">Checking current status…</string>
+    <string name="saved_status_laundry_available" formatted="false">Queried wash mode is available</string>
+    <string name="saved_status_water_available" formatted="false">Queried outlet is idle</string>
+    <string name="saved_status_laundry_using" formatted="false">Machine is in use</string>
+    <string name="saved_status_water_using" formatted="false">You are using this outlet</string>
+    <string name="saved_status_occupied" formatted="false">In use by someone else</string>
+    <string name="saved_status_unavailable" formatted="false">Device is currently unavailable</string>
+    <string name="saved_status_unknown" formatted="false">Current status is unconfirmed</string>
+    <string name="saved_status_failed" formatted="false">This status check failed</string>
+    <string name="saved_status_failed_detail" formatted="false">Unable to check the current device status. Please try again.</string>
+    <string name="saved_status_mode">Queried mode: %1$s</string>
+    <string name="saved_status_outlet">Queried outlet: %1$s</string>
+    <string name="saved_status_remaining">Platform reports about %1$d min remaining</string>
+    <string name="saved_status_checked_at">Checked at: %1$s</string>
+    <string name="saved_status_snapshot_hint" formatted="false">This is a snapshot from this check. Availability is checked again before use.</string>
+    <string name="saved_status_list_available" formatted="false">Currently available</string>
+    <string name="saved_status_list_unavailable" formatted="false">Currently unavailable</string>
+    <string name="saved_status_list_checking" formatted="false">Checking</string>
+    <string name="saved_status_list_unknown" formatted="false">Status unconfirmed</string>
+    <string name="saved_status_list_failed" formatted="false">Check failed</string>
+</resources>

@@ -15,6 +15,7 @@ import android.view.View
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.RadioButton
 import android.widget.SeekBar
+import android.widget.Switch
 import android.widget.TextView
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ActivityScenario
@@ -26,9 +27,12 @@ import com.google.zxing.EncodeHintType
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.RGBLuminanceSource
 import com.google.zxing.common.BitMatrix
-import com.journeyapps.barcodescanner.DecoderFactory
 import com.journeyapps.barcodescanner.DecoratedBarcodeView
 import com.journeyapps.barcodescanner.ScanOptions
+import dev.rain.laundry.core.ScanDecodeAttempt
+import dev.rain.laundry.core.ScanFrameObservation
+import dev.rain.laundry.scanner.ScanQrDecoder
+import dev.rain.laundry.scanner.ScanQrDecoderFactory
 import dev.rain.laundry.scanner.ScreenCodeCaptureActivity
 import org.junit.Assert.*
 import org.junit.Before
@@ -123,6 +127,38 @@ class ScannerRuntimeTest {
         }
     }
 
+    @Test fun autoAdjustmentToggleAndStatusSurviveRecreation() {
+        launchScanner().use { scenario ->
+            awaitPreview(scenario)
+            scenario.onActivity { activity ->
+                assertTrue("Auto adjustment is on by default",
+                    activity.findViewById<Switch>(R.id.scanner_auto).isChecked)
+                assertTrue(activity.findViewById<TextView>(R.id.scanner_auto_status).text.isNotEmpty())
+                activity.findViewById<Switch>(R.id.scanner_auto).performClick()
+            }
+            await {
+                onScanner(scenario) { activity ->
+                    !activity.findViewById<Switch>(R.id.scanner_auto).isChecked &&
+                        activity.findViewById<TextView>(R.id.scanner_auto_status).text.toString() ==
+                        activity.getString(R.string.scanner_auto_off)
+                }
+            }
+            scenario.recreate()
+            awaitPreview(scenario)
+            scenario.onActivity { activity ->
+                assertFalse(activity.findViewById<Switch>(R.id.scanner_auto).isChecked)
+                assertEquals(activity.getString(R.string.scanner_auto_off),
+                    activity.findViewById<TextView>(R.id.scanner_auto_status).text.toString())
+                activity.findViewById<Switch>(R.id.scanner_auto).performClick()
+            }
+            await {
+                onScanner(scenario) { it.findViewById<Switch>(R.id.scanner_auto).isChecked }
+            }
+            scenario.onActivity { it.findViewById<View>(R.id.scanner_close).performClick() }
+            await { scenario.state == Lifecycle.State.DESTROYED }
+        }
+    }
+
     @Test fun systemBackCancelsWithoutReturningADeviceCode() {
         launchScanner().use { scenario ->
             awaitPreview(scenario)
@@ -135,9 +171,11 @@ class ScannerRuntimeTest {
 
     @Test fun configuredDecoderReadsSyntheticQrAtAllRotationsAndBothPolarities() {
         launchScanner().use { scenario ->
-            val factory = AtomicReference<DecoderFactory>()
             scenario.onActivity { activity ->
-                factory.set(activity.findViewById<DecoratedBarcodeView>(R.id.zxing_barcode_scanner).decoderFactory)
+                // Do not call factory.createDecoder() on this live preview: that creates a
+                // new preview binding and would stop the camera's current decoder session.
+                assertTrue(activity.findViewById<DecoratedBarcodeView>(R.id.zxing_barcode_scanner)
+                    .decoderFactory is ScanQrDecoderFactory)
             }
             val payload = "https://example.invalid/scanner-regression?fixture=synthetic"
             val matrix = MultiFormatWriter().encode(
@@ -147,8 +185,8 @@ class ScannerRuntimeTest {
                 var pixels = pixels(matrix, inverted)
                 for (rotation in 0..3) {
                     val source = RGBLuminanceSource(matrix.width, matrix.height, pixels)
-                    val decoder = factory.get().createDecoder(emptyMap<DecodeHintType, Any>())
-                    // MixedDecoder alternates polarity between frames; use the same generated frame twice.
+                    val decoder = ScanQrDecoder(emptyMap<DecodeHintType, Any?>()) { 0L }
+                    // The bounded decoder tries normal polarity first, then inverted on a later frame.
                     val result = decoder.decode(source) ?: decoder.decode(source)
                     assertNotNull("Synthetic QR failed: rotation=${rotation * 90}, inverted=$inverted", result)
                     assertEquals(payload, result!!.text)
@@ -157,9 +195,20 @@ class ScannerRuntimeTest {
             }
             val barcode = MultiFormatWriter().encode("SCANNER-TEST-CODE128", BarcodeFormat.CODE_128, 640, 160)
             val source = RGBLuminanceSource(barcode.width, barcode.height, pixels(barcode, false))
-            val decoder = factory.get().createDecoder(emptyMap<DecodeHintType, Any>())
+            val decoder = ScanQrDecoder(emptyMap<DecodeHintType, Any?>()) { 0L }
             repeat(2) { assertNull("The device scanner remains restricted to QR codes", decoder.decode(source)) }
         }
+    }
+
+    @Test fun configuredDecoderUsesPeriodicHardGlobalFallback() {
+        val observations = mutableListOf<ScanFrameObservation>()
+        val decoder = ScanQrDecoder(emptyMap<DecodeHintType, Any?>(), { observations.add(it) }) { 0L }
+        val blankFrame = RGBLuminanceSource(320, 320, IntArray(320 * 320) { 0xFFFFFFFF.toInt() })
+
+        repeat(5) { assertNull(decoder.decode(blankFrame)) }
+
+        assertTrue(observations.any { ScanDecodeAttempt.HARD_LOW_CONTRAST in it.attempts })
+        assertTrue(observations.all { it.attempts.size <= 2 })
     }
 
     private fun launchScanner(): ActivityScenario<ScreenCodeCaptureActivity> {

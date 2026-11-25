@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_submitted_unconfirmed">"付款請求已提交，請重新整理訂單查詢最終狀態"</string>
+    <string name="water_submitted_unconfirmed">"用水指令已提交，請重新整理查詢狀態；若設備正在出水，請確認後結束用水"</string>
+    <string name="payment_deduction_unsupported">"平台為這筆訂單套用了不支援的抵扣，已停止付款。請在原應用程式調整後重試"</string>
+    <string name="payment_deduction_unconfirmed">"無法核對訂單抵扣明細，已停止付款。請重新整理訂單後重試"</string>
+</resources>

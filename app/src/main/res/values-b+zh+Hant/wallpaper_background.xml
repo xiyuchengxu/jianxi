@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_background_title">"使用系統桌布作為背景"</string>
+    <string name="wallpaper_background_brightness">"背景明暗"</string>
+    <string name="wallpaper_background_darker">"暗"</string>
+    <string name="wallpaper_background_lighter">"亮"</string>
+    <string name="wallpaper_background_original">"原始亮度"</string>
+    <string name="wallpaper_background_dimmed">"調暗 %1$d%%"</string>
+    <string name="wallpaper_background_brightened">"調亮 %1$d%%"</string>
+    <string name="wallpaper_background_reset">"恢復原亮度"</string>
+    <string name="wallpaper_background_unsupported">"此裝置無法顯示系統桌布"</string>
+    <string name="wallpaper_settings_title">"桌布"</string>
+    <string name="control_transparency">控制項透明度</string>
+    <string name="control_adjust_individual">單獨調整透明度</string>
+    <string name="control_follow_global">跟隨全域設定</string>
+    <string name="control_done">完成</string>
+    <string name="control_long_press_hint">長按控制項即可單獨調整透明度。文字輸入框請長按右側邊緣。</string>
+</resources>

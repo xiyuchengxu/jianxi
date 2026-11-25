@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scanner_feature_disabled">掃碼功能已關閉，請在設定中開啟。</string>
+  <string name="settings_scanner_title" formatted="false">"掃碼功能"</string>
+  <string name="settings_scanner_help" formatted="false">"控制相機掃碼入口，與洗衣和飲水開關互相獨立。關閉後仍可手動輸入裝置碼或使用已儲存的裝置；不會取消訂單、付款或啟動裝置。"</string>
+</resources>

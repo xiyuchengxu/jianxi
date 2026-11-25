@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="points_title">"ポイント"</string>
+    <string name="points_balance">"ポイント残高"</string>
+    <string name="points_login_required">"ポイントを確認するにはログインしてください"</string>
+    <string name="points_loading">"ポイントとタスクを更新中"</string>
+    <string name="points_signing">"チェックイン中"</string>
+    <string name="points_sign_confirmed">"チェックインを確認しました"</string>
+    <string name="points_finished">"チェックインを確認し、ポイントを更新しました"</string>
+    <string name="points_already_signed">"本日はチェックイン済み"</string>
+    <string name="points_result_unknown">"チェックイン結果が未確認です。更新して確認してください"</string>
+    <string name="points_load_error">"ポイント情報が未確認です。更新して再試行してください"</string>
+    <string name="points_open_failed">"胖乖アプリが見つかりません"</string>
+    <string name="points_refresh">"更新"</string>
+    <string name="points_start">"自動チェックインして更新"</string>
+    <string name="points_unsigned_today">"本日は未チェックイン"</string>
+    <string name="points_sign_status_unknown">"チェックイン状況を未取得"</string>
+    <string name="points_tasks_title">"ポイントタスク"</string>
+    <string name="points_empty">"プラットフォームからタスクが返されていません"</string>
+    <string name="points_not_loaded">"更新してポイントタスクを取得"</string>
+    <string name="points_open_original">"胖乖を開いてタスクを完了"</string>
+    <string name="points_logs_title">"実行記録"</string>
+    <string name="points_task_reward">"報酬：%1$s ポイント"</string>
+    <string name="points_task_progress">"完了 %1$d / %2$d 回"</string>
+    <string name="points_task_completed_count">"%1$d 回完了"</string>
+    <string name="points_task_done">"完了"</string>
+    <string name="points_task_original">"胖乖で完了してください"</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"주문 동기화가 일시적으로 실패했습니다(HTTP %1$s). 동기화 대기 상태로 자동 재시도하며 수동으로도 재시도할 수 있습니다."</string>
+    <string name="cloud_sync_rejected">"서버가 이 주문의 클라우드 구독을 수락하지 않았으며 알림이 생성되지 않았습니다. 주문이 계속 실행 중인지 확인한 후 수동으로 다시 시도하세요."</string>
+    <string name="cloud_sync_rejected_http">"서버가 이 주문의 클라우드 구독을 수락하지 않았습니다(HTTP %1$s). 알림이 생성되지 않았습니다. 주문이 계속 실행 중인지 확인한 후 수동으로 다시 시도하세요."</string>
+    <string name="cloud_upstream_http_405">"플랫폼이 서버 조회를 거부했습니다(405). 주문 구독이 생성되지 않았습니다. 나중에 수동으로 다시 시도하고, 계속되면 운영자에게 서버 조회 권한 확인을 요청하세요."</string>
+    <string name="cloud_upstream_http_403">"플랫폼이 서버 조회를 거부했습니다(403). 주문 구독이 생성되지 않았습니다. 플랫폼 로그인 상태를 확인한 후 수동으로 다시 시도하세요."</string>
+    <string name="cloud_upstream_retryable">"플랫폼 조회를 일시적으로 사용할 수 없습니다. 주문 구독이 아직 생성되지 않았습니다. 자동으로 다시 시도합니다."</string>
+    <string name="cloud_upstream_terminal">"플랫폼이 주문 조회를 거부했습니다. 주문 구독이 생성되지 않았습니다. 나중에 수동으로 다시 시도하세요."</string>
+    <string name="cloud_upstream_identity_mismatch">"플랫폼 주문 식별 정보가 일치하지 않습니다. 주문 구독이 생성되지 않았습니다."</string>
+    <string name="cloud_device_unsupported">"이 서버 버전은 휴대폰 보조 알림을 지원하지 않아 활성화되지 않았습니다. 서버를 업그레이드하거나 플랫폼 확인 모드를 계속 사용하세요."</string>
+    <string name="cloud_device_rejected">"서버가 휴대폰 보고를 수락하지 않아 알림이 업데이트되지 않았습니다. 나중에 수동으로 다시 시도하세요."</string>
+    <string name="cloud_device_assist_desc">"활성화하면 휴대폰이 로컬에서 관찰한 실행 상태와 플랫폼 예상 시간을 서버로 보냅니다. 예상 시간에 서버가 알림을 보내고, 세탁 완료는 휴대폰이 명확히 확인합니다. 예상 시간이 없으면 만들지 않으며, 서버가 지원하지 않으면 명확한 오류를 표시합니다."</string>
+    <string name="cloud_device_assist_enable">"휴대폰 보조 알림 활성화"</string>
+    <string name="cloud_device_assist_unbind">"휴대폰 보조를 중지하려면 아래 '연결 해제'를 사용하세요. 숨은 전환은 없습니다."</string>
+    <string name="cloud_device_assist_enabled">"휴대폰 보조 알림이 활성화되었습니다"</string>
+    <string name="cloud_device_assist_pending">"실행 증거를 동기화하는 중…"</string>
+    <string name="cloud_device_assist_pending_terminal">"휴대폰 보고가 동기화 대기 중입니다. 명확한 응답 전에는 완료나 취소를 주장하지 않습니다."</string>
+    <string name="cloud_device_assist_scheduled">"예상 알림이 예약되었습니다(예상 %1$s)."</string>
+    <string name="cloud_device_assist_awaiting">"휴대폰의 완료 확인을 기다리는 중입니다."</string>
+    <string name="cloud_device_assist_awaiting_unknown">"휴대폰의 완료 확인을 기다리는 중입니다(플랫폼 예상 시간 없음)."</string>
+    <string name="cloud_device_assist_completed">"휴대폰이 완료를 확인했습니다."</string>
+    <string name="cloud_device_assist_cancelled">"주문이 취소/환불되어 전송되지 않은 알림이 철회되었습니다."</string>
+    <string name="cloud_device_assist_accepted">"서비스 제공자가 예상 알림을 수락했으며, 이는 WeChat 도달을 의미하지 않습니다."</string>
+    <string name="cloud_source_label">"클라우드 출처: %1$s"</string>
+    <string name="cloud_source_device">"휴대폰 보조"</string>
+    <string name="cloud_source_platform">"플랫폼 확인"</string>
+</resources>

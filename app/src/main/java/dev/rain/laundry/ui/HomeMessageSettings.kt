@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
+import dev.rain.laundry.ui.ControlIcon as Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextButton
@@ -100,7 +100,7 @@ internal fun HomeMessageSettings(settings: ThemeSettings, onChange: (ThemeSettin
         horizontalArrangement = Arrangement.spacedBy(14.dp)
     ) {
         Box(
-            Modifier.size(34.dp).background(colors.surfaceContainerHigh, RoundedCornerShape(10.dp)),
+            Modifier.size(34.dp).background(colors.surfaceContainerHigh.controlContainer(), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(Icons.Outlined.Home, null, Modifier.size(19.dp), tint = colors.onSurfaceVariant)
@@ -160,12 +160,13 @@ private fun HomeMessageDialog(
                     style = MaterialTheme.typography.bodySmall,
                     color = colors.onSurfaceVariant
                 )
-                OutlinedTextField(
+                AppOutlinedTextField(
                     value = draft,
                     onValueChange = { onDraftChange(it.takeCodePoints(MAX_HOME_MESSAGE_LENGTH)) },
                     modifier = Modifier.fillMaxWidth().semantics {
                         contentDescription = appText(R.string.msg_41c71d37f309 , MAX_HOME_MESSAGE_LENGTH)
                     },
+                    labelText = appText(R.string.msg_37f64a4b3e45),
                     label = { Text(appText(R.string.msg_37f64a4b3e45)) },
                     minLines = 3,
                     maxLines = 6,
@@ -188,7 +189,7 @@ private fun HomeMessageDialog(
                         style = MaterialTheme.typography.bodySmall,
                         color = colors.onSurfaceVariant
                     )
-                    TextButton(
+                    AppTextButton(
                         onClick = onReset,
                         modifier = Modifier.semantics { contentDescription = appText(R.string.msg_a0640541affa) }
                     ) { Text(appText(R.string.msg_ba2e93e73037)) }
@@ -196,13 +197,13 @@ private fun HomeMessageDialog(
             }
         },
         confirmButton = {
-            TextButton(
+            AppTextButton(
                 onClick = onSave,
                 modifier = Modifier.semantics { contentDescription = appText(R.string.msg_37bacd3c428f) }
             ) { Text(appText(R.string.msg_a3030bf8f16d)) }
         },
         dismissButton = {
-            TextButton(
+            AppTextButton(
                 onClick = onDismiss,
                 modifier = Modifier.semantics { contentDescription = appText(R.string.msg_d0032305b571) }
             ) { Text(appText(R.string.msg_2cd0f3be8738)) }

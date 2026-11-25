@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
@@ -56,13 +57,31 @@ fun LaundryApp(
     settings: ThemeSettings = ThemeSettings(),
     onThemeChange: (ThemeSettings) -> Unit = {}
 ) {
+    ControlTransparencyHost {
+        LaundryContent(vm, onScan, onPay, onWaterStart, settings, onThemeChange)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun LaundryContent(vm: LaundryViewModel, onScan: () -> Unit, onPay: () -> Unit,
+    onWaterStart: () -> Unit, settings: ThemeSettings, onThemeChange: (ThemeSettings) -> Unit) {
     val state by vm.state.collectAsStateWithLifecycle()
     var aboutOpen by rememberSaveable { mutableStateOf(false) }
     var themeOpen by rememberSaveable { mutableStateOf(false) }
     var settingsOpen by rememberSaveable { mutableStateOf(false) }
     var notificationsOpen by rememberSaveable { mutableStateOf(false) }
+    var diagnosticsOpen by rememberSaveable { mutableStateOf(false) }
+    var savedDevicesOpen by rememberSaveable { mutableStateOf(false) }
+    var savedDevicesKind by rememberSaveable { mutableStateOf(SavedDeviceKind.LAUNDRY.wire) }
+    LaunchedEffect(state.savedDeviceSelection) {
+        if (state.savedDeviceSelection > 0) savedDevicesOpen = false
+    }
+    LaunchedEffect(state.loggedIn) {
+        if (!state.loggedIn) savedDevicesOpen = false
+    }
     LaunchedEffect(state.orderOpenRequest) {
-        if (state.orderOpenRequest > 0) { aboutOpen = false; themeOpen = false; settingsOpen = false; notificationsOpen = false }
+        if (state.orderOpenRequest > 0) { aboutOpen = false; themeOpen = false; settingsOpen = false; notificationsOpen = false; diagnosticsOpen = false }
     }
     val pageStates = rememberSaveableStateHolder()
     // One ScrollState per page, hoisted above AnimatedContent. Refreshes and screen
@@ -70,19 +89,22 @@ fun LaundryApp(
     val pageScrollStates = rememberSaveable(saver = PageScrollStatesSaver) {
         AppScreen.entries.associateWith { ScrollState(0) }
     }
+    val colors = MaterialTheme.colorScheme
+    val wallpaperVisible = useSystemWallpaperWindow(settings.wallpaperBackgroundEnabled)
+    val wallpaperTint = if (wallpaperVisible) Modifier.background(wallpaperBrightnessOverlay(settings.wallpaperBackgroundBrightness))
+        else Modifier
+    val pageColor = if (wallpaperVisible) Color.Transparent else colors.background
     if (aboutOpen) {
-        AboutScreen(onBack = { aboutOpen = false })
+        AboutScreen(onBack = { aboutOpen = false }, pageColor = pageColor, modifier = wallpaperTint)
         return
     }
     val backdrop = rememberGraphicsLayer()
     val snackbar = remember { SnackbarHostState() }
     var inputOpen by rememberSaveable { mutableStateOf(false) }
-    var logoutOpen by rememberSaveable { mutableStateOf(false) }
-    val colors = MaterialTheme.colorScheme
-    val tabs = remember(settings.laundryEnabled, settings.waterEnabled) { settings.visibleTabs }
-    val defaultPage = when { settings.laundryEnabled -> Page.HOME; settings.waterEnabled -> Page.WATER; else -> Page.ORDERS }
+    val tabs = remember(settings.laundryEnabled, settings.dryerEnabled, settings.waterEnabled) { settings.visibleTabs }
+    val defaultPage = when { settings.laundryEnabled || settings.dryerEnabled -> Page.HOME; settings.waterEnabled -> Page.WATER; else -> Page.ORDERS }
     val visiblePage = when {
-        !settings.laundryEnabled && state.page in listOf(Page.HOME, Page.DEVICE, Page.CHECKOUT) -> defaultPage
+        !settings.laundryEnabled && !settings.dryerEnabled && state.page in listOf(Page.HOME, Page.DEVICE, Page.CHECKOUT) -> defaultPage
         !settings.waterEnabled && state.page == Page.WATER -> defaultPage
         else -> state.page
     }
@@ -90,6 +112,7 @@ fun LaundryApp(
         if (state.loggedIn && !state.busy && state.page != visiblePage) vm.navigate(visiblePage)
     }
     val screen = when {
+        diagnosticsOpen -> AppScreen.DIAGNOSTICS
         notificationsOpen -> AppScreen.NOTIFICATIONS
         themeOpen -> AppScreen.THEME
         settingsOpen -> AppScreen.SETTINGS
@@ -101,7 +124,7 @@ fun LaundryApp(
         else -> AppScreen.ORDERS
     }
     val currentTab = when {
-        themeOpen || settingsOpen || notificationsOpen -> NavigationTab.SETTINGS
+        themeOpen || settingsOpen || notificationsOpen || diagnosticsOpen -> NavigationTab.SETTINGS
         visiblePage == Page.WATER -> NavigationTab.WATER
         visiblePage == Page.ORDERS -> NavigationTab.ORDERS
         else -> NavigationTab.LAUNDRY
@@ -109,13 +132,14 @@ fun LaundryApp(
     val selectedTab = tabs.indexOf(currentTab).coerceAtLeast(0)
     val selectTab: (Int) -> Unit = { index ->
         if (!state.busy) when (val tab = tabs.getOrNull(index)) {
-            NavigationTab.SETTINGS -> { settingsOpen = true; themeOpen = false; notificationsOpen = false }
+            NavigationTab.SETTINGS -> { settingsOpen = true; themeOpen = false; notificationsOpen = false; diagnosticsOpen = false }
             NavigationTab.LAUNDRY, NavigationTab.WATER, NavigationTab.ORDERS -> {
                 val destination = when (tab) { NavigationTab.LAUNDRY -> Page.HOME; NavigationTab.WATER -> Page.WATER; else -> Page.ORDERS }
-                if (settingsOpen || themeOpen || notificationsOpen || state.page != destination) {
+                if (settingsOpen || themeOpen || notificationsOpen || diagnosticsOpen || state.page != destination) {
                     settingsOpen = false
                     themeOpen = false
                     notificationsOpen = false
+                    diagnosticsOpen = false
                     vm.navigate(destination)
                 }
             }
@@ -124,14 +148,27 @@ fun LaundryApp(
     }
     val openWater: () -> Unit = {
         if (settings.waterEnabled) {
-            settingsOpen = false; themeOpen = false; notificationsOpen = false
+            settingsOpen = false; themeOpen = false; notificationsOpen = false; diagnosticsOpen = false
             // Reopen the stored transaction explicitly; plain navigation after this
             // change no longer restores an idle outlet/device from the vault.
             if (state.waterSession != null) vm.openWaterSession() else vm.navigate(Page.WATER)
         } else {
-            settingsOpen = true; themeOpen = false; notificationsOpen = false
+            settingsOpen = true; themeOpen = false; notificationsOpen = false; diagnosticsOpen = false
             vm.notice(appText(R.string.msg_5ee487891e56))
         }
+    }
+    val openSavedDevices: (SavedDeviceKind) -> Unit = { kind ->
+        if (!state.busy && state.loggedIn) {
+            vm.refreshSavedDevices()
+            savedDevicesKind = kind.wire
+            savedDevicesOpen = true
+        }
+    }
+    LaunchedEffect(savedDevicesOpen, state.loggedIn, savedDevicesKind) {
+        if (savedDevicesOpen && state.loggedIn &&
+            SavedDeviceKind.fromWire(savedDevicesKind) == SavedDeviceKind.LAUNDRY)
+            vm.checkSavedDeviceStatuses(SavedDeviceKind.LAUNDRY)
+        else vm.cancelSavedDeviceStatusChecks()
     }
     val swipeEnabled = settings.swipeNavigation && state.loggedIn && !state.busy &&
         screen in listOf(AppScreen.HOME, AppScreen.WATER, AppScreen.ORDERS, AppScreen.SETTINGS)
@@ -162,44 +199,52 @@ fun LaundryApp(
             if (vm.state.value.message == message) vm.clearMessage()
         }
     }
-    BackHandler(state.loggedIn && !settingsOpen && !themeOpen && !notificationsOpen && state.page !in listOf(Page.HOME, Page.WATER, Page.ORDERS) && !state.busy) {
+    BackHandler(state.loggedIn && !settingsOpen && !themeOpen && !notificationsOpen && !diagnosticsOpen && state.page !in listOf(Page.HOME, Page.WATER, Page.ORDERS) && !state.busy) {
         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
     }
-    BackHandler(!state.loggedIn && settingsOpen && !themeOpen && !notificationsOpen) { settingsOpen = false }
+    BackHandler(!state.loggedIn && settingsOpen && !themeOpen && !notificationsOpen && !diagnosticsOpen) { settingsOpen = false }
     BackHandler(themeOpen) { themeOpen = false; settingsOpen = true }
     BackHandler(notificationsOpen) { notificationsOpen = false; settingsOpen = true }
+    BackHandler(diagnosticsOpen) { diagnosticsOpen = false; settingsOpen = true }
     val backdropModifier = if (glassUnderlay) {
         Modifier.drawWithContent {
             backdrop.record { this@drawWithContent.drawContent() }
             drawLayer(backdrop)
         }
     } else Modifier
-    Box(Modifier.fillMaxSize().background(colors.background)) {
+    Box(Modifier.fillMaxSize().then(wallpaperTint)) {
         Box(Modifier.fillMaxSize().then(backdropModifier)) {
-            Scaffold(containerColor = colors.background, topBar = {
-                TopAppBar(title = {
+            val barTitle = appText(when {
+                diagnosticsOpen -> R.string.diagnostics_title
+                notificationsOpen -> R.string.msg_4b6ded8a7f18
+                themeOpen -> R.string.msg_788db1cfec2a
+                settingsOpen -> R.string.msg_df3d58c7d84b
+                visiblePage == Page.WATER -> R.string.msg_6edae041a323
+                else -> R.string.msg_2b207da009d1
+            })
+            AppScaffold(containerColor = pageColor, topBar = {
+                AppTopAppBar(titleText = barTitle, title = {
                     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(when { notificationsOpen -> Icons.Outlined.NotificationsActive; themeOpen -> Icons.Outlined.Palette; settingsOpen -> Icons.Outlined.Settings; visiblePage == Page.WATER -> Icons.Outlined.WaterDrop;
+                        Icon(when { diagnosticsOpen -> Icons.Outlined.Description; notificationsOpen -> Icons.Outlined.NotificationsActive; themeOpen -> Icons.Outlined.Palette; settingsOpen -> Icons.Outlined.Settings; visiblePage == Page.WATER -> Icons.Outlined.WaterDrop;
                             else -> Icons.Outlined.LocalLaundryService }, null, tint = colors.primary)
-                        Text(when { notificationsOpen -> appText(R.string.msg_4b6ded8a7f18); themeOpen -> appText(R.string.msg_788db1cfec2a); settingsOpen -> appText(R.string.msg_df3d58c7d84b); visiblePage == Page.WATER -> appText(R.string.msg_6edae041a323); else -> appText(R.string.msg_2b207da009d1) }, fontWeight = FontWeight.Bold)
+                        Text(barTitle, fontWeight = FontWeight.Bold)
                     }
                 }, navigationIcon = {
-                    if (themeOpen || notificationsOpen) IconButton(onClick = { themeOpen = false; notificationsOpen = false; settingsOpen = true }) {
+                    if (themeOpen || notificationsOpen || diagnosticsOpen) AppIconButton(onClick = { themeOpen = false; notificationsOpen = false; diagnosticsOpen = false; settingsOpen = true }) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close))
-                    } else if (settingsOpen && !state.loggedIn) IconButton(onClick = { settingsOpen = false }) {
+                    } else if (settingsOpen && !state.loggedIn) AppIconButton(onClick = { settingsOpen = false }) {
                         Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close))
-                    } else if (!settingsOpen && state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) IconButton(onClick = {
+                    } else if (!settingsOpen && state.loggedIn && state.page in listOf(Page.DEVICE, Page.CHECKOUT)) AppIconButton(onClick = {
                         vm.navigate(if (state.page == Page.CHECKOUT) Page.DEVICE else Page.HOME)
                     }, enabled = !state.busy) { Icon(Icons.AutoMirrored.Outlined.ArrowBack, appText(R.string.scanner_close)) }
-                }, actions = {
-                    if (!state.loggedIn && !themeOpen && !settingsOpen) IconButton(onClick = { settingsOpen = true }) {
+                    else if (screen == AppScreen.LOGIN) AppIconButton(controlId = "header.settings", onClick = { settingsOpen = true }) {
                         Icon(Icons.Outlined.Settings, contentDescription = appText(R.string.msg_df3d58c7d84b))
                     }
-                    IconButton(onClick = { aboutOpen = true }, enabled = !state.busy) {
+                }, actions = {
+                    AppIconButton(controlId = "header.about", onClick = { aboutOpen = true }, enabled = !state.busy) {
                         Icon(Icons.Outlined.Info, contentDescription = appText(R.string.msg_c1cb5f40de7c))
                     }
-                    if (state.loggedIn) TextButton(onClick = { logoutOpen = true }, enabled = !state.busy) { Text(appText(R.string.msg_498e1d59b4d7)) }
-                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = colors.background))
+                }, containerColor = pageColor)
             }, snackbarHost = { SnackbarHost(snackbar, Modifier.padding(bottom = navigationSpace)) }) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding).consumeWindowInsets(padding)) {
                     AnimatedContent(targetState = screen,
@@ -231,13 +276,27 @@ fun LaundryApp(
                                 Column(Modifier.widthIn(max = 520.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(22.dp)) {
                                     when (displayed) {
                                         AppScreen.LOGIN -> LoginScreen(state, vm::sendCode, vm::login)
-                                        AppScreen.HOME -> HomeScreen(state, settings.homeMessage, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) })
+                                        AppScreen.HOME -> HomeScreen(state, settings.homeMessage, onScan, { inputOpen = true }, { vm.navigate(Page.ORDERS) }, openSavedDevices,
+                                            scannerEnabled = settings.scannerEnabled, laundryEnabled = settings.laundryEnabled,
+                                            dryerEnabled = settings.dryerEnabled)
                                         AppScreen.SETTINGS -> SettingsScreen(settings, onThemeChange, { themeOpen = true }, !state.busy,
-                                            { notificationsOpen = true })
-                                        AppScreen.NOTIFICATIONS -> NotificationSettingsScreen(state.laundryProgressError)
+                                            { notificationsOpen = true }, { diagnosticsOpen = true },
+                                            onLogout = if (state.loggedIn) ({
+                                                vm.logout()
+                                                if (!vm.state.value.loggedIn) settingsOpen = false
+                                            }) else null)
+                                        AppScreen.DIAGNOSTICS -> DiagnosticsScreen()
+                                        AppScreen.NOTIFICATIONS -> NotificationSettingsScreen(
+                                            state.laundryProgressError, state.cloudReminder,
+                                            state.loggedIn, vm::bindCloudReminder,
+                                            vm::refreshCloudStatus, vm::retryCloudSync,
+                                            vm::unbindCloudReminder, vm::reauthorizeCloudReminder,
+                                            vm::updateCloudNotificationCode, vm::testCloudNotification,
+                                            vm::enableCloudDeviceAssisted)
                                         AppScreen.WATER -> WaterScreen(state, onScan, { inputOpen = true }, vm::selectWaterOutlet,
-                                            onWaterStart, vm::endWater, { vm.refreshWater() }, { vm.navigate(Page.ORDERS) }, vm::selectWaterPayment)
-                                        AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::preview)
+                                            onWaterStart, vm::endWater, { vm.refreshWater() }, { vm.navigate(Page.ORDERS) },
+                                            vm::selectWaterPayment, openSavedDevices, scannerEnabled = settings.scannerEnabled)
+                                        AppScreen.DEVICE -> DeviceScreen(state, vm::selectMode, vm::selectDryerDuration, vm::preview)
                                         AppScreen.CHECKOUT -> CheckoutScreen(state, vm::selectPayment, onPay)
                                         AppScreen.ORDERS -> OrdersScreen(state, { vm.refreshOrder(it) }, { vm.resumePayment(it) }, { vm.cancelOrder(it) }, openWater)
                                         AppScreen.THEME -> Unit
@@ -256,7 +315,8 @@ fun LaundryApp(
         }
         if (state.loggedIn) LaundryNavigationBar(backdrop, selectedTab, selectTab,
             style = settings.bottomBar, modifier = Modifier.align(Alignment.BottomCenter),
-            enabled = !state.busy, glassLevel = settings.glassLevel, tabs = tabs)
+        enabled = !state.busy, glassLevel = settings.glassLevel, tabs = tabs,
+        dryerOnly = !settings.laundryEnabled && settings.dryerEnabled)
     }
     if (inputOpen) {
         var raw by rememberSaveable { mutableStateOf("") }
@@ -264,20 +324,35 @@ fun LaundryApp(
             title = { Text(appText(R.string.msg_8e878de7a527)) }, text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Text(appText(R.string.msg_1c8a94e1b712))
-                    OutlinedTextField(raw, { raw = it.take(4096) }, label = { Text(appText(R.string.msg_2d0222b61b9a)) }, minLines = 3, maxLines = 5)
+                    AppOutlinedTextField(raw, { raw = it.take(4096) }, labelText = appText(R.string.msg_2d0222b61b9a),
+                        label = { Text(appText(R.string.msg_2d0222b61b9a)) }, minLines = 3, maxLines = 5)
                 }
-            }, confirmButton = { TextButton(onClick = {
-                inputOpen = false; vm.scan(raw, settings.laundryEnabled, settings.waterEnabled)
+            }, confirmButton = { AppTextButton(onClick = {
+                inputOpen = false; vm.scan(raw, settings.laundryEnabled, settings.waterEnabled, settings.dryerEnabled)
             }, enabled = raw.isNotBlank()) { Text(appText(R.string.msg_93f6c90cc986)) } },
-            dismissButton = { TextButton(onClick = { inputOpen = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
+            dismissButton = { AppTextButton(onClick = { inputOpen = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
     }
-    if (logoutOpen) AlertDialog(onDismissRequest = { logoutOpen = false }, title = { Text(appText(R.string.msg_b6af1a5049fc)) },
-        text = { Text(appText(R.string.msg_cdc013bc1922)) },
-        confirmButton = { TextButton(onClick = { logoutOpen = false; vm.logout() }) { Text(appText(R.string.msg_498e1d59b4d7)) } },
-        dismissButton = { TextButton(onClick = { logoutOpen = false }) { Text(appText(R.string.msg_2cd0f3be8738)) } })
+    if (savedDevicesOpen && state.loggedIn) {
+        val sheetKind = SavedDeviceKind.fromWire(savedDevicesKind) ?: SavedDeviceKind.LAUNDRY
+        SavedDevicesSheet(
+            kind = sheetKind,
+            devices = state.savedDevices,
+            busy = state.busy,
+            message = state.message,
+            onSelect = { device ->
+                if (device.savedKind == sheetKind) {
+    vm.selectSavedDevice(device, settings.laundryEnabled, settings.waterEnabled, settings.dryerEnabled)
+                }
+            },
+            onDelete = vm::deleteSavedDevice,
+            onRename = vm::renameSavedDevice,
+            onDismiss = { vm.cancelSavedDeviceStatusChecks(); savedDevicesOpen = false },
+            statuses = state.savedDeviceStatuses
+        )
+    }
 }
 
-private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, WATER, ORDERS, SETTINGS, THEME, NOTIFICATIONS }
+private enum class AppScreen { LOGIN, HOME, DEVICE, CHECKOUT, WATER, ORDERS, SETTINGS, THEME, NOTIFICATIONS, DIAGNOSTICS }
 
 private val PageScrollStatesSaver = Saver<Map<AppScreen, ScrollState>, Map<String, Int>>(
     save = { states -> AppScreen.entries.associate { it.name to (states[it]?.value ?: 0) } },
@@ -286,7 +361,7 @@ private val PageScrollStatesSaver = Saver<Map<AppScreen, ScrollState>, Map<Strin
 
 @Composable
 private fun BusyBanner(progress: String, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.background.copy(alpha = 0.94f),
+    Surface(modifier = modifier.fillMaxWidth(), color = MaterialTheme.colorScheme.background.copy(alpha = 0.94f).controlContainer(),
         tonalElevation = 2.dp) {
         Column(Modifier.padding(horizontal = 24.dp, vertical = 10.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             LinearProgressIndicator(Modifier.fillMaxWidth())
@@ -302,50 +377,68 @@ private fun LoginScreen(state: UiState, send: (String) -> Unit, login: (String, 
     var accepted by rememberSaveable { mutableStateOf(false) }
     Spacer(Modifier.height(12.dp))
     HeroIcon(Icons.Outlined.LocalLaundryService)
-    Text(appText(R.string.msg_5bcd70afb28d), style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
-    Text(appText(R.string.msg_b25ef479aebd), color = MaterialTheme.colorScheme.onSurfaceVariant)
-    Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+    Text(appText(R.string.msg_5bcd70afb28d), modifier = Modifier.wallpaperTextBacking(),
+        style = MaterialTheme.typography.displaySmall, fontWeight = FontWeight.SemiBold)
+    Text(appText(R.string.msg_b25ef479aebd), modifier = Modifier.wallpaperTextBacking(),
+        color = MaterialTheme.colorScheme.onSurfaceVariant)
+    AppCard(controlId = "login.card", shape = appShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.padding(22.dp), verticalArrangement = Arrangement.spacedBy(18.dp)) {
             Text(appText(R.string.msg_b4f947a472c7), style = MaterialTheme.typography.titleLarge)
-            OutlinedTextField(phone, { phone = it.filter(Char::isDigit).take(11) }, label = { Text(appText(R.string.msg_6f52cc94db65)) },
+            AppOutlinedTextField(phone, { phone = it.filter(Char::isDigit).take(11) }, controlId = "login.phone", labelText = appText(R.string.msg_6f52cc94db65),
+                label = { Text(appText(R.string.msg_6f52cc94db65)) },
                 prefix = { Text("+86  ") }, singleLine = true, enabled = !state.busy,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone), modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
-            OutlinedTextField(code, { code = it.filter(Char::isDigit).take(8) }, label = { Text(appText(R.string.msg_18e6bb3f9968)) },
+            AppOutlinedTextField(code, { code = it.filter(Char::isDigit).take(8) }, controlId = "login.code", labelText = appText(R.string.msg_18e6bb3f9968),
+                label = { Text(appText(R.string.msg_18e6bb3f9968)) },
                 singleLine = true, enabled = !state.busy, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
-                trailingIcon = { TextButton(onClick = { send(phone) }, enabled = accepted && !state.busy && phone.length == 11 && state.smsCooldown == 0) {
+                trailingIcon = { AppTextButton(controlId = "login.send", onClick = { send(phone) }, enabled = accepted && !state.busy && phone.length == 11 && state.smsCooldown == 0) {
                     Text(if (state.smsCooldown > 0) "${state.smsCooldown}s" else appText(R.string.msg_3b91d186d44e))
                 } }, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(16.dp))
             Row(verticalAlignment = Alignment.Top) {
-                Checkbox(accepted, { accepted = it }, modifier = Modifier.size(28.dp))
+                AppCheckbox(accepted, { accepted = it }, controlId = "login.agreement", modifier = Modifier.size(28.dp))
                 Spacer(Modifier.width(8.dp))
                 Text(appText(R.string.msg_22c8f9f73dc0), style = MaterialTheme.typography.bodySmall)
             }
-            Button(onClick = { login(phone, code) }, enabled = accepted && !state.busy && phone.length == 11 && code.length >= 4,
+            AppButton(controlId = "login.submit", onClick = { login(phone, code) }, enabled = accepted && !state.busy && phone.length == 11 && code.length >= 4,
                 modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_1e2df9c3075a), style = MaterialTheme.typography.titleMedium) }
         }
     }
-    Text(appText(R.string.msg_54744c98c1d5), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(appText(R.string.msg_54744c98c1d5), modifier = Modifier.wallpaperTextBacking(),
+        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
-private fun HomeScreen(state: UiState, homeMessage: String, scan: () -> Unit, paste: () -> Unit, orders: () -> Unit) {
-    Text(displayHomeMessage(homeMessage), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold, localize = false)
-    Text(state.phoneLabel, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium, localize = false)
-    Card(shape = RoundedCornerShape(32.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+private fun HomeScreen(state: UiState, homeMessage: String, scan: () -> Unit, paste: () -> Unit,
+    orders: () -> Unit, savedDevices: (SavedDeviceKind) -> Unit, scannerEnabled: Boolean = true,
+    laundryEnabled: Boolean = true, dryerEnabled: Boolean = true) {
+    AdjustableWallpaperLabel("home.message") { label ->
+        Text(displayHomeMessage(homeMessage), modifier = label,
+            style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold, localize = false)
+    }
+    AdjustableWallpaperLabel("home.account") { label ->
+        Text(state.phoneLabel, modifier = label, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium, localize = false)
+    }
+    AppCard(controlId = "home.start.card", shape = appShape(32.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
         Column(Modifier.fillMaxWidth().padding(28.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
-            Icon(Icons.Outlined.LocalLaundryService, null, modifier = Modifier.size(70.dp), tint = MaterialTheme.colorScheme.primary)
-            Text(appText(R.string.msg_a24b2df2ec2f), style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.SemiBold)
-            Text(appText(R.string.msg_2050c192dabd), style = MaterialTheme.typography.bodyLarge)
-            Button(onClick = scan, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(54.dp)) {
+            Icon(Icons.Outlined.LocalLaundryService,
+                null, modifier = Modifier.size(70.dp), tint = MaterialTheme.colorScheme.primary)
+            Text(if (!laundryEnabled && dryerEnabled) appText(R.string.saved_device_kind_dryer) else appText(R.string.msg_a24b2df2ec2f),
+                style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.SemiBold)
+            if (scannerEnabled) AppButton(controlId = "home.scan", onClick = scan, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(54.dp)) {
                 Icon(Icons.Outlined.QrCodeScanner, null); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_6415984a1009), style = MaterialTheme.typography.titleMedium)
             }
         }
     }
-    OutlinedButton(onClick = paste, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
+    if (laundryEnabled) SavedDevicesEntry(SavedDeviceKind.LAUNDRY, state.savedDevices, !state.busy,
+        onClick = { savedDevices(SavedDeviceKind.LAUNDRY) })
+    if (dryerEnabled) SavedDevicesEntry(SavedDeviceKind.DRYER, state.savedDevices, !state.busy,
+        onClick = { savedDevices(SavedDeviceKind.DRYER) })
+    AppOutlinedButton(controlId = "home.paste", onClick = paste, enabled = !state.busy, modifier = Modifier.fillMaxWidth().height(52.dp)) {
         Icon(Icons.Outlined.ContentPaste, null, modifier = Modifier.size(20.dp)); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_8e878de7a527))
     }
     state.order?.takeIf { !it.phase.finished }?.let {
-        OutlinedCard(onClick = orders, shape = RoundedCornerShape(24.dp)) {
+        AppOutlinedCard(controlId = "home.current.order", onClick = orders, shape = appShape(24.dp)) {
             Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.AutoMirrored.Outlined.ReceiptLong, null, tint = MaterialTheme.colorScheme.primary)
                 Spacer(Modifier.width(14.dp))
@@ -357,13 +450,26 @@ private fun HomeScreen(state: UiState, homeMessage: String, scan: () -> Unit, pa
 }
 
 @Composable
-private fun DeviceScreen(state: UiState, select: (WashMode) -> Unit, next: () -> Unit) {
+private fun DeviceScreen(state: UiState, select: (WashMode) -> Unit,
+    selectDuration: (DryerDuration) -> Unit, next: () -> Unit) {
     val device = state.device ?: return
-    Text(appText(R.string.msg_62be6c883399), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-    InfoCard(device.name, if (device.remainingMinutes > 0) appText(R.string.msg_7daf2930ebfb , device.remainingMinutes) else appText(R.string.msg_ce33b71f9fdd))
-    if (device.error.isNotBlank()) Text(device.error, color = MaterialTheme.colorScheme.error)
+    val savedStatus = state.savedDeviceStatus?.takeIf { snapshot ->
+        state.savedDevices.any { record ->
+            snapshot.matches(record) && record.savedKind == SavedDeviceKind.LAUNDRY &&
+                record.deviceId == device.id && snapshot.selectionId == state.mode?.id
+        }
+    }
+    Text(appText(if (device.isDryer) R.string.saved_device_title_dryer else R.string.msg_62be6c883399),
+        modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    if (savedStatus != null) {
+        InfoCard("device.summary", device.name, savedStatus.subject)
+        SavedDeviceStatusCard(savedStatus)
+    } else InfoCard("device.summary", device.name, if (device.isDryer) appText(R.string.saved_device_kind_dryer)
+        else if (device.remainingMinutes > 0) appText(R.string.msg_7daf2930ebfb , device.remainingMinutes)
+        else appText(R.string.saved_status_unknown))
+    if (device.error.isNotBlank()) Text(device.error, modifier = Modifier.wallpaperTextBacking(), color = MaterialTheme.colorScheme.error)
     device.modes.forEach { mode ->
-        OutlinedCard(onClick = { select(mode) }, enabled = !state.busy, shape = RoundedCornerShape(24.dp),
+        AppOutlinedCard(controlId = privateControlId("device.mode", mode.id), onClick = { select(mode) }, enabled = !state.busy, shape = appShape(24.dp),
             border = BorderStroke(if (state.mode == mode) 2.dp else 1.dp, if (state.mode == mode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant),
             colors = CardDefaults.outlinedCardColors(containerColor = if (state.mode == mode) MaterialTheme.colorScheme.primaryContainer.copy(alpha = .35f) else MaterialTheme.colorScheme.surface)) {
             Row(Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -373,40 +479,66 @@ private fun DeviceScreen(state: UiState, select: (WashMode) -> Unit, next: () ->
                 Text("¥${mode.price}", style = MaterialTheme.typography.titleLarge)
             }
         }
+        if (device.isDryer && mode == state.mode) {
+            Text(appText(R.string.dryer_duration_title), modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.titleSmall)
+            mode.dryerDurations.forEach { duration ->
+                val selected = duration == state.dryerDuration
+                AppOutlinedCard(controlId = "device.duration.${duration.minutes}", onClick = { selectDuration(duration) }, enabled = !state.busy,
+                    border = BorderStroke(if (selected) 2.dp else 1.dp,
+                        if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant)) {
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically) {
+                        RadioButton(selected, onClick = null)
+                        Column(Modifier.weight(1f)) {
+                            Text(appText(R.string.dryer_duration_minutes, duration.minutes))
+                            if (duration.description.isNotBlank()) Text(duration.description, style = MaterialTheme.typography.bodySmall, localize = false)
+                        }
+                        Text("¥${duration.price}", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+            }
+        }
     }
-    Button(onClick = next, enabled = state.mode != null && !state.busy && device.remainingMinutes <= 0 && device.error.isBlank(),
+    AppButton(controlId = "device.next", onClick = next, enabled = state.mode != null && (!device.isDryer || state.dryerDuration in state.mode?.dryerDurations.orEmpty()) &&
+        !state.busy && device.remainingMinutes <= 0 && device.error.isBlank(),
         modifier = Modifier.fillMaxWidth().height(56.dp)) { Text(appText(R.string.msg_abbd0e07316e)) }
 }
 
 @Composable
 private fun CheckoutScreen(state: UiState, choose: (PayRoute) -> Unit, pay: () -> Unit) {
     val quote = state.quote ?: return
-    Text(appText(R.string.msg_afb44149eeaf), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-    InfoCard(quote.device.name, quote.mode.name)
-    Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+    Text(appText(R.string.msg_afb44149eeaf), modifier = Modifier.wallpaperTextBacking(),
+        style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    InfoCard("checkout.device", quote.device.name, quote.mode.name)
+    AppCard(controlId = "checkout.summary", shape = appShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.fillMaxWidth().padding(24.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Line(appText(R.string.msg_b7b30111f5a8), quote.mode.name)
+            Line(appText(R.string.msg_b7b30111f5a8), quote.mode.name + (quote.dryerDuration?.let {
+                " · " + appText(R.string.dryer_duration_minutes, it.minutes)
+            }.orEmpty()))
             Line(appText(R.string.msg_5e29d121dda0), appText(R.string.msg_35cf44ac0fcb))
             HorizontalDivider()
             Text(appText(R.string.msg_7895f1bfe9af), color = MaterialTheme.colorScheme.onSurfaceVariant)
             Text("¥${quote.amount}", style = MaterialTheme.typography.displayMedium, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold)
         }
     }
-    Text(appText(R.string.msg_ca7223717fa6), style = MaterialTheme.typography.titleMedium)
+    Text(appText(R.string.msg_ca7223717fa6), modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.titleMedium)
     state.methods.forEach { method ->
-        Row(Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).clickable(enabled = !state.busy) { choose(method) }.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        AdjustableSettingRow(privateControlId("checkout.method", "${method.method.name}\u0000${method.thirdChannel}\u0000${method.outVoucherId}"),
+            Modifier.fillMaxWidth().clip(RoundedCornerShape(18.dp)).clickable(enabled = !state.busy) { choose(method) }.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically) {
             RadioButton(state.payMethod == method, onClick = { choose(method) }, enabled = !state.busy)
             Text(method.title, modifier = Modifier.weight(1f))
             Text(appText(R.string.msg_6b1933e75c74), style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
-    Button(onClick = pay, enabled = !state.busy && state.payMethod != null, modifier = Modifier.fillMaxWidth().height(58.dp)) {
+    AppButton(controlId = "checkout.pay", onClick = pay, enabled = !state.busy && state.payMethod != null, modifier = Modifier.fillMaxWidth().height(58.dp)) {
         Icon(Icons.Outlined.Lock, null, Modifier.size(18.dp)); Spacer(Modifier.width(10.dp)); Text(appText(R.string.msg_16de867a06ae , quote.amount), style = MaterialTheme.typography.titleMedium)
     }
-    Text(appText(R.string.msg_749b9fdc6f64), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(appText(R.string.msg_749b9fdc6f64), modifier = Modifier.wallpaperTextBacking(),
+        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
-private enum class OrderGroup(val label: String) { ALL("全部"), LAUNDRY("洗衣"), WATER("饮水") }
+private enum class OrderGroup(val label: String) { ALL("全部"), LAUNDRY("洗衣"), DRYER("烘干"), WATER("饮水") }
 
 @Composable
 private fun OrdersScreen(
@@ -426,7 +558,7 @@ private fun OrdersScreen(
         state.orderFocusKey?.let { group = OrderGroup.ALL; expandedKey = it }
     }
     var clock by remember { mutableLongStateOf(System.currentTimeMillis()) }
-    LaunchedEffect(history.any { !it.isWater && it.phase == OrderPhase.PAID }) {
+    LaunchedEffect(history.any { it.isLaundry && it.phase == OrderPhase.PAID }) {
         while (isActive) { clock = System.currentTimeMillis(); delay(1000) }
     }
     val session = state.waterSession
@@ -434,19 +566,31 @@ private fun OrdersScreen(
         !current.phase.finished && history.none { OrderHistory.sameOrder(it, current) }
     }
 
-    Text(appText(R.string.msg_7c7dea47f575), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+    Text(appText(R.string.msg_7c7dea47f575), modifier = Modifier.wallpaperTextBacking(),
+        style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OrderGroup.entries.forEach { candidate ->
-            FilterChip(selected = group == candidate, onClick = { group = candidate },
-                label = { Text(candidate.label) }, enabled = !state.busy)
+            AdjustableControl("orders.filter.${candidate.name.lowercase()}", Modifier) { target ->
+                val translucent = LocalControlOpacity.current < 1f
+                val chipColors = FilterChipDefaults.filterChipColors(
+                    containerColor = if (LocalControlHasOverride.current) MaterialTheme.colorScheme.surfaceContainerHigh.controlContainer() else Color.Transparent,
+                    selectedContainerColor = MaterialTheme.colorScheme.secondaryContainer.controlContainer(),
+                    disabledSelectedContainerColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .12f).controlContainer())
+                val selected = group == candidate
+                FilterChip(selected = selected, onClick = { group = candidate }, modifier = target, colors = chipColors,
+                    label = { Text(candidate.label, fontWeight = if (selected && translucent) FontWeight.Bold else null) },
+                    enabled = !state.busy)
+            }
         }
     }
 
     // An old unresolved intent remains actionable even if it predates the bounded history.
     pendingOutsideHistory?.takeIf {
-        group == OrderGroup.ALL || (it.isWater && group == OrderGroup.WATER) || (!it.isWater && group == OrderGroup.LAUNDRY)
+        group == OrderGroup.ALL || (it.isWater && group == OrderGroup.WATER) ||
+            (it.isDryer && group == OrderGroup.DRYER) || (it.isLaundry && group == OrderGroup.LAUNDRY)
     }?.let { pending ->
-        Text(appText(R.string.msg_5d5c5a7050f5), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        Text(appText(R.string.msg_5d5c5a7050f5), modifier = Modifier.wallpaperTextBacking(),
+            style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         OrderHistoryCard(pending, state.busy, expandedKey == OrderHistory.key(pending),
             { expandedKey = if (expandedKey == OrderHistory.key(pending)) null else OrderHistory.key(pending) },
             { refresh(pending) }, { resume(pending) }, { cancelTarget = pending }, clock)
@@ -457,9 +601,10 @@ private fun OrdersScreen(
         Text(when (group) {
             OrderGroup.WATER -> appText(R.string.msg_a0aa4b780049)
             OrderGroup.LAUNDRY -> appText(R.string.msg_5d3f476b86fd)
+            OrderGroup.DRYER -> appText(R.string.saved_device_empty_title_dryer)
             OrderGroup.ALL -> appText(R.string.msg_874e82006913)
-        }, style = MaterialTheme.typography.titleLarge)
-        Text(appText(R.string.msg_bc8383e2aaa8), color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }, modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.titleLarge)
+        Text(appText(R.string.msg_bc8383e2aaa8), modifier = Modifier.wallpaperTextBacking(), color = MaterialTheme.colorScheme.onSurfaceVariant)
         return
     }
 
@@ -472,7 +617,7 @@ private fun OrdersScreen(
                 else -> ""
             }
             Text(appText(R.string.msg_d727d75a30fb, prefix, week.start, week.end), style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp))
+                color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(top = 8.dp).wallpaperTextBacking())
             week.orders.forEach { order ->
                 val identity = OrderHistory.key(order)
                 key(identity) {
@@ -484,27 +629,35 @@ private fun OrdersScreen(
             }
         }
     }
-    if (group != OrderGroup.WATER) {
-        val laundry = history.filterNot { it.isWater }
+    if (group != OrderGroup.WATER && group != OrderGroup.DRYER) {
+        val laundry = history.filter { it.isLaundry }
         OrderGroupHeader(Icons.Outlined.LocalLaundryService, appText(R.string.msg_bc982c81c510), appText(R.string.msg_478a69f47b5e , laundry.size))
         if (laundry.isEmpty()) Text(appText(R.string.msg_ac301767677f),
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         else records(laundry)
     }
-    if (group != OrderGroup.LAUNDRY) {
+    if (group != OrderGroup.LAUNDRY && group != OrderGroup.DRYER) {
         val bills = history.filter { it.isWater }
         OrderGroupHeader(Icons.Outlined.WaterDrop, appText(R.string.msg_6edae041a323), appText(R.string.msg_1f405289ff28 , bills.size))
         // A running session is separate from the 20 order records and is the only restorable entry.
         if (session != null && (session.active || bills.isEmpty())) WaterSessionEntry(session, water)
         if (bills.isEmpty() && session == null) Text(appText(R.string.msg_822a8903fcb0),
-            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
         else records(bills)
+    }
+    if (group != OrderGroup.LAUNDRY && group != OrderGroup.WATER) {
+        val dryerOrders = history.filter { it.isDryer }
+        OrderGroupHeader(Icons.Outlined.LocalLaundryService, appText(R.string.saved_device_kind_dryer),
+            appText(R.string.dryer_order_count, dryerOrders.size))
+        if (dryerOrders.isEmpty()) Text(appText(R.string.dryer_order_empty),
+            modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        else records(dryerOrders)
     }
     cancelTarget?.let { target ->
         AlertDialog(onDismissRequest = { cancelTarget = null }, title = { Text(appText(R.string.msg_51ebba34a15f)) },
             text = { Text(appText(R.string.msg_94654c53105c , target.deviceName, target.modeName)) },
-            confirmButton = { TextButton(onClick = { cancelTarget = null; cancel(target) }, enabled = !state.busy) { Text(appText(R.string.msg_b741efb628be)) } },
-            dismissButton = { TextButton(onClick = { cancelTarget = null }) { Text(appText(R.string.msg_f65b4f1a14a2)) } })
+            confirmButton = { AppTextButton(onClick = { cancelTarget = null; cancel(target) }, enabled = !state.busy) { Text(appText(R.string.msg_b741efb628be)) } },
+            dismissButton = { AppTextButton(onClick = { cancelTarget = null }) { Text(appText(R.string.msg_f65b4f1a14a2)) } })
     }
 }
 
@@ -519,10 +672,10 @@ private fun OrderHistoryCard(
     LaunchedEffect(focusRequest) {
         if (focusRequest > 0) { delay(250); bringIntoView.bringIntoView() }
     }
-    OutlinedCard(shape = RoundedCornerShape(20.dp), modifier = Modifier.bringIntoViewRequester(bringIntoView)) {
+    AppOutlinedCard(controlId = privateControlId("order.row", OrderHistory.key(order)), shape = appShape(20.dp), modifier = Modifier.bringIntoViewRequester(bringIntoView)) {
         Row(Modifier.fillMaxWidth().clickable(onClick = toggle).padding(16.dp),
             verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(if (order.isWater) Icons.Outlined.WaterDrop else Icons.Outlined.LocalLaundryService,
+            Icon(when { order.isWater -> Icons.Outlined.WaterDrop; else -> Icons.Outlined.LocalLaundryService },
                 null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(24.dp))
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(order.deviceName, style = MaterialTheme.typography.titleSmall, localize = false)
@@ -552,15 +705,15 @@ private fun OrderGroupHeader(icon: androidx.compose.ui.graphics.vector.ImageVect
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
         Spacer(Modifier.width(8.dp))
-        Text(title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+        Text(title, modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
         Spacer(Modifier.weight(1f))
-        Text(detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(detail, modifier = Modifier.wallpaperTextBacking(), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }
 
 @Composable
 private fun WaterSessionEntry(session: WaterSession, open: () -> Unit) {
-    OutlinedCard(onClick = open, enabled = session.active, shape = RoundedCornerShape(24.dp)) {
+    AppOutlinedCard(controlId = "orders.water.session", onClick = open, enabled = session.active, shape = appShape(24.dp)) {
         Row(Modifier.fillMaxWidth().padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
             Icon(Icons.Outlined.WaterDrop, null, tint = MaterialTheme.colorScheme.primary)
             Spacer(Modifier.width(12.dp))
@@ -580,22 +733,23 @@ private fun WaterSessionEntry(session: WaterSession, open: () -> Unit) {
 private fun OrderDetail(order: LocalOrder, busy: Boolean, refresh: () -> Unit, resume: () -> Unit, requestCancel: () -> Unit) {
     val cancelled = order.phase == OrderPhase.CANCELLED
     Text(orderDescription(order), color = MaterialTheme.colorScheme.onSurfaceVariant)
-    Card(shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+    AppCard(controlId = privateControlId("order.detail", OrderHistory.key(order)), shape = appShape(28.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Line(appText(R.string.msg_e1506406a5bd), order.deviceName)
-            Line(if (order.isWater) appText(R.string.msg_717d0bf23fb3) else appText(R.string.msg_47a270081ab2), order.modeName)
+            Line(when { order.isWater -> appText(R.string.msg_717d0bf23fb3); order.isDryer -> appText(R.string.saved_device_kind_dryer); else -> appText(R.string.msg_47a270081ab2) }, order.modeName)
             Line(appText(R.string.msg_ffc624300de8), "¥${order.amount}")
             Line(appText(R.string.msg_ca7223717fa6), localizedMessage(order.payMethod.title))
             Line(if (order.isWater) appText(R.string.msg_9eaf7337eac7) else appText(R.string.msg_1e75a9bc677c), SimpleDateFormat("MM-dd HH:mm", AppStrings.locale()).format(Date(order.createdAt)))
             if (order.orderNo.isNotBlank()) Text(appText(R.string.msg_a01fa2926a83 , order.orderNo), style = MaterialTheme.typography.bodySmall)
         }
     }
-    if (order.orderNo.isNotBlank() && !cancelled) OutlinedButton(onClick = refresh, enabled = !busy,
+    if (order.orderNo.isNotBlank() && !cancelled) AppOutlinedButton(controlId = privateControlId("order.refresh", OrderHistory.key(order)), onClick = refresh, enabled = !busy,
         modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_f727d5abd647)) }
     if (!order.phase.finished && order.orderNo.isNotBlank() && (order.payMethod == PayMethod.ALIPAY || order.phase == OrderPhase.CREATED))
-        Button(onClick = resume, enabled = !busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_6253728e4fa9)) }
-    if (!order.isWater && !order.phase.finished && order.orderId.isNotBlank())
-        TextButton(onClick = requestCancel, enabled = !busy) { Text(appText(R.string.msg_adcead944a6f)) }
+        AppButton(controlId = privateControlId("order.resume", OrderHistory.key(order)), onClick = resume, enabled = !busy, modifier = Modifier.fillMaxWidth().height(54.dp)) { Text(appText(R.string.msg_6253728e4fa9)) }
+    if ((order.isLaundry || order.isDryer) && !order.phase.finished && order.orderId.isNotBlank())
+        AppTextButton(controlId = privateControlId("order.cancel", OrderHistory.key(order)), onClick = requestCancel, enabled = !busy) { Text(appText(R.string.msg_adcead944a6f)) }
 }
 
 private fun orderHeadline(order: LocalOrder): String = when (order.phase) {
@@ -640,16 +794,21 @@ private fun orderDescription(order: LocalOrder): String {
 
 @Composable
 private fun HeroIcon(icon: androidx.compose.ui.graphics.vector.ImageVector) {
-    Box(Modifier.size(88.dp).background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(28.dp)), contentAlignment = Alignment.Center) {
+    Box(Modifier.size(88.dp).background(MaterialTheme.colorScheme.primaryContainer.controlContainer(), RoundedCornerShape(28.dp)), contentAlignment = Alignment.Center) {
         Icon(icon, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(44.dp))
     }
 }
 @Composable
-private fun InfoCard(title: String, subtitle: String) {
-    Row(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainerLow, RoundedCornerShape(24.dp)).padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
-        Icon(Icons.Outlined.LocalLaundryService, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
-        Spacer(Modifier.width(16.dp))
-        Column { Text(title, style = MaterialTheme.typography.titleMedium, localize = false); Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false) }
+private fun InfoCard(controlId: String, title: String, subtitle: String) {
+    AdjustableSurface(controlId, Modifier.fillMaxWidth(), shape = appShape(24.dp), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Row(Modifier.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Outlined.LocalLaundryService, null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(32.dp))
+            Spacer(Modifier.width(16.dp))
+            Column {
+                Text(title, style = MaterialTheme.typography.titleMedium, localize = false)
+                Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, localize = false)
+            }
+        }
     }
 }
 @Composable

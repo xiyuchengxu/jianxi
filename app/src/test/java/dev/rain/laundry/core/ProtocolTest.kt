@@ -34,6 +34,28 @@ class ProtocolTest {
     @Test fun acceptsExactlySelectedWash() {
         assertEquals("4.00", PurchaseRules.verifyQuote(quote(), device, mode).amount)
     }
+    @Test fun washQuoteAllowsOmittedOptionalNumButRejectsChangedNum() {
+        val withNum = quote(items = """[{"goodsId":"g1","skuId":"sku1","amount":"1","num":"1"}]""")
+        assertEquals("4.00", PurchaseRules.verifyQuote(withNum, device, mode).amount)
+        val changed = quote(items = """[{"goodsId":"g1","skuId":"sku1","amount":"1","num":"2"}]""")
+        assertThrows(ClientError::class.java) { PurchaseRules.verifyQuote(changed, device, mode) }
+    }
+    @Test fun dryerQuoteBindsAmountAndNumToTheSelectedMinutes() {
+        val duration = DryerDuration(60, "3.00", selectedByPlatform = true)
+        val dryerMode = WashMode("sku-d", "标准烘", "3.00", dryerDurations = listOf(duration))
+        val dryer = device.copy(category = "02")
+        val selected = JsonParser.parseString("""{"realPrice":"3.00","items":[{"goodsId":"g1","skuId":"sku-d","amount":"60","soldType":"1","num":"60"}],"promotions":[]}""").asJsonObject
+        val result = PurchaseRules.verifyQuote(selected, dryer, dryerMode, duration)
+        assertEquals(duration, result.dryerDuration)
+        for (item in listOf(
+            """{"goodsId":"g1","skuId":"sku-d","amount":"30","soldType":"1","num":"60"}""",
+            """{"goodsId":"g1","skuId":"sku-d","amount":"60","soldType":"1","num":"30"}""",
+            """{"goodsId":"g1","skuId":"sku-d","amount":"60","soldType":"1"}"""
+        )) {
+            val data = JsonParser.parseString("""{"realPrice":"3.00","items":[$item],"promotions":[]}""").asJsonObject
+            assertThrows(ClientError::class.java) { PurchaseRules.verifyQuote(data, dryer, dryerMode, duration) }
+        }
+    }
     @Test fun rejectsExtraOrDifferentGoodsAndPromotions() {
         assertThrows(ClientError::class.java) { PurchaseRules.verifyQuote(quote("""[{"goodsId":"g1","skuId":"sku1"},{"goodsId":"vip"}]"""), device, mode) }
         assertThrows(ClientError::class.java) { PurchaseRules.verifyQuote(quote("""[{"goodsId":"g1","skuId":"different"}]"""), device, mode) }

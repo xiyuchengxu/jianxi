@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="points_title">"Баллы"</string>
+    <string name="points_balance">"Баланс баллов"</string>
+    <string name="points_login_required">"Войдите, чтобы посмотреть баллы"</string>
+    <string name="points_loading">"Обновление баллов и заданий"</string>
+    <string name="points_signing">"Ежедневная отметка"</string>
+    <string name="points_sign_confirmed">"Отметка подтверждена"</string>
+    <string name="points_finished">"Отметка подтверждена, баллы обновлены"</string>
+    <string name="points_already_signed">"Сегодня уже отмечено"</string>
+    <string name="points_result_unknown">"Результат отметки не подтверждён. Обновите для проверки."</string>
+    <string name="points_load_error">"Данные о баллах не подтверждены. Обновите и повторите."</string>
+    <string name="points_open_failed">"Приложение Pangguai не найдено"</string>
+    <string name="points_refresh">"Обновить"</string>
+    <string name="points_start">"Автоматически отметиться и обновить"</string>
+    <string name="points_unsigned_today">"Сегодня ещё не отмечено"</string>
+    <string name="points_sign_status_unknown">"Статус отметки ещё не проверен"</string>
+    <string name="points_tasks_title">"Задания за баллы"</string>
+    <string name="points_empty">"Платформа не вернула задания за баллы"</string>
+    <string name="points_not_loaded">"Обновите, чтобы загрузить задания"</string>
+    <string name="points_open_original">"Открыть Pangguai для выполнения заданий"</string>
+    <string name="points_logs_title">"Журнал действий"</string>
+    <string name="points_task_reward">"Награда: %1$s баллов"</string>
+    <string name="points_task_progress">"Выполнено: %1$d / %2$d"</string>
+    <string name="points_task_completed_count">"Выполнено: %1$d"</string>
+    <string name="points_task_done">"Выполнено"</string>
+    <string name="points_task_original">"Выполните в Pangguai"</string>
+</resources>

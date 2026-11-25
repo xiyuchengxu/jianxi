@@ -1,6 +1,7 @@
 package dev.rain.laundry.i18n
 
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text as MaterialText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
+import dev.rain.laundry.ui.LocalControlGlyphOutline
+import dev.rain.laundry.ui.controlForegroundOutline
 
 /** Translates known domain status/error labels at display time; callers can retain user text verbatim. */
 @Composable
@@ -28,7 +31,15 @@ fun LocalizedText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current, localize: Boolean = true
 ) {
-    MaterialText(if (localize) localizedMessage(text) else text, modifier, color, fontSize,
+    val label = if (LocalControlGlyphOutline.current) {
+        val foreground = when {
+            color != Color.Unspecified -> color
+            style.color != Color.Unspecified -> style.color
+            else -> LocalContentColor.current
+        }
+        modifier.controlForegroundOutline(foreground)
+    } else modifier
+    MaterialText(if (localize) localizedMessage(text) else text, label, color, fontSize,
         fontStyle, fontWeight, fontFamily, letterSpacing, textDecoration, textAlign, lineHeight,
         overflow, softWrap, maxLines, minLines, onTextLayout, style)
 }

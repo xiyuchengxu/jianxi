@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shizuku_title" formatted="false">"Shizuku background residency"</string>
+    <string name="shizuku_optional" formatted="false">"Optional and off by default."</string>
+    <string name="shizuku_enabled" formatted="false">"Background guard is running"</string>
+    <string name="shizuku_disabled" formatted="false">"Assistance is off"</string>
+    <string name="shizuku_pending_restore" formatted="false">"Assistance is off; restoration is pending. Start and authorize Shizuku, then retry."</string>
+    <string name="shizuku_existing" formatted="false">"Assistance is off; existing system battery settings are preserved"</string>
+    <string name="shizuku_unavailable" formatted="false">"Shizuku is not running. Ordinary reminders remain available."</string>
+    <string name="shizuku_not_authorized" formatted="false">"Shizuku permission has not been granted; requested only when you act."</string>
+    <string name="shizuku_ready" formatted="false">"Shizuku is connected and authorized"</string>
+    <string name="shizuku_old_version" formatted="false">"Requires Shizuku API 13 or later."</string>
+    <string name="shizuku_denied" formatted="false">"Permission was not granted. Ordinary reminders are unaffected."</string>
+    <string name="shizuku_failure" formatted="false">"Background guard was not confirmed. Check Shizuku authorization and retry."</string>
+    <string name="shizuku_storage" formatted="false">"Could not save settings; no further system changes were made."</string>
+    <string name="shizuku_reapply_needed" formatted="false">"Background guard is not running. Retry to reconnect."</string>
+    <string name="shizuku_retry_restore" formatted="false">"Retry restoring system settings"</string>
+    <string name="shizuku_reapply" formatted="false">"Retry background guard"</string>
+    <string name="shizuku_open" formatted="false">"Open Shizuku / startup guide"</string>
+    <string name="shizuku_battery_settings" formatted="false">"System battery optimization settings"</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shizuku_title" formatted="false">"Shizuku 背景常駐"</string>
+    <string name="shizuku_optional" formatted="false">"選用，預設關閉"</string>
+    <string name="shizuku_enabled" formatted="false">"背景守護執行中"</string>
+    <string name="shizuku_disabled" formatted="false">"輔助未啟用"</string>
+    <string name="shizuku_pending_restore" formatted="false">"已關閉輔助，系統設定待還原；請啟動並授權 Shizuku 後重試。"</string>
+    <string name="shizuku_existing" formatted="false">"輔助未啟用，保留既有系統電池設定"</string>
+    <string name="shizuku_unavailable" formatted="false">"Shizuku 未執行；一般提醒仍可用。"</string>
+    <string name="shizuku_not_authorized" formatted="false">"Shizuku 尚未授權；僅在操作時要求。"</string>
+    <string name="shizuku_ready" formatted="false">"Shizuku 已連線並授權"</string>
+    <string name="shizuku_old_version" formatted="false">"需要 Shizuku API 13 或更新版本。"</string>
+    <string name="shizuku_denied" formatted="false">"未獲授權；一般提醒不受影響。"</string>
+    <string name="shizuku_failure" formatted="false">"背景守護未確認，請檢查 Shizuku 授權後重試。"</string>
+    <string name="shizuku_storage" formatted="false">"無法儲存設定，未繼續變更系統。"</string>
+    <string name="shizuku_reapply_needed" formatted="false">"背景守護未執行，可重試。"</string>
+    <string name="shizuku_retry_restore" formatted="false">"重試還原系統設定"</string>
+    <string name="shizuku_reapply" formatted="false">"重試背景守護"</string>
+    <string name="shizuku_open" formatted="false">"開啟 Shizuku / 查看啟動說明"</string>
+    <string name="shizuku_battery_settings" formatted="false">"系統電池最佳化設定"</string>
+</resources>

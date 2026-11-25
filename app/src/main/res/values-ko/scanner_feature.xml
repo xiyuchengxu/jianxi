@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scanner_feature_disabled">스캔이 꺼져 있습니다. 설정에서 켜 주세요.</string>
+  <string name="settings_scanner_title" formatted="false">"카메라 스캔"</string>
+  <string name="settings_scanner_help" formatted="false">"세탁 및 급수 스위치와 별개로 카메라 스캔 진입점을 제어합니다. 꺼도 기기 코드 직접 입력과 저장된 기기를 사용할 수 있습니다. 주문 취소, 결제 또는 기기 시작은 수행하지 않습니다."</string>
+</resources>

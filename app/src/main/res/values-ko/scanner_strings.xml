@@ -1,0 +1,25 @@
+<resources>
+    <string name="scanner_title">세탁기 또는 정수기 QR 코드 스캔</string>
+    <string name="scanner_close">뒤로</string>
+    <string name="scanner_normal">일반 코드</string>
+    <string name="scanner_screen">화면 코드</string>
+    <string name="scanner_brighter">밝게</string>
+    <string name="scanner_darker">어둡게</string>
+    <string name="scanner_brightness_accessibility">화면 코드 노출 낮추기</string>
+    <string name="scanner_waiting">카메라를 여는 중…</string>
+    <string name="scanner_normal_hint">QR 코드 전체가 프레임 안에 오도록 하세요. 화면이 너무 밝으면 “화면 코드”로 전환하세요</string>
+    <string name="scanner_screen_hint">QR 무늬가 선명해질 때까지 밝기를 천천히 조절하세요. 조금 멀리하면 초점에 도움이 됩니다</string>
+    <string name="scanner_limit_hint">카메라 노출 하한에 도달했습니다. 각도를 조금 바꾸거나 기기 화면 밝기를 낮추세요</string>
+    <string name="scanner_unsupported_hint">이 카메라는 노출을 낮출 수 없지만 스캔은 가능합니다. 각도를 바꾸거나 기기 화면 밝기를 낮추세요</string>
+    <string name="scanner_rejected_hint">카메라가 밝기 변경을 받아들이지 않았지만 스캔은 가능합니다. 각도를 바꾸거나 기기 화면 밝기를 낮추세요</string>
+    <string name="scanner_camera_error">카메라를 사용할 수 없습니다. 뒤로 가서 다시 시도하세요</string>
+    <string name="scanner_auto">자동 조정</string>
+    <string name="scanner_auto_off">자동 조정이 꺼져 있습니다. 필요하면 밝기 슬라이더를 사용하세요</string>
+    <string name="scanner_auto_waiting">자동 조정: 카메라 기능 확인 중…</string>
+    <string name="scanner_auto_stable">자동 조정 중: 화면을 안정적으로 유지</string>
+    <string name="scanner_auto_adjusting">자동 조정 중: 화면에 맞게 최적화됨</string>
+    <string name="scanner_auto_manual">수동 밝기 우선, 곧 자동으로 복귀</string>
+    <string name="scanner_auto_limit">카메라 조정 한계에 도달했습니다. 거리나 각도를 바꾸세요</string>
+    <string name="scanner_auto_limited">이 카메라는 일부 자동 조정만 지원합니다</string>
+    <string name="scanner_auto_unsupported">이 카메라는 자동 노출/줌을 지원하지 않습니다. 스캔은 가능합니다</string>
+</resources>

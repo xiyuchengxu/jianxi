@@ -105,7 +105,7 @@ object LaundryProgressProtocol {
      * flow cannot accidentally read laundry timing fields.
      */
     fun parse(data: JsonObject, order: LocalOrder, status: RemoteOrderStatus, now: Long): LaundryProgress? {
-        if (order.isWater || data.text("orderType") == "3") return null
+        if (!order.isLaundry || data.text("orderType") == "3") return null
         if (status !in setOf(RemoteOrderStatus.IN_USE, RemoteOrderStatus.COMPLETED)) return null
         return LaundryProgress(
             orderId = data.text("id").ifBlank { order.orderId },

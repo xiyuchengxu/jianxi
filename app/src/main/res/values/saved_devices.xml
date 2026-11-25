@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"常用设备"</string>
+    <string name="saved_device_title_laundry" formatted="false">"常用洗衣机"</string>
+    <string name="saved_device_title_water" formatted="false">"常用饮水机"</string>
+    <string name="saved_device_title_dryer" formatted="false">"常用烘干机"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"烘干机"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"还没有常用烘干机，扫码成功后自动保存"</string>
+    <string name="saved_device_entry_count_dryer" formatted="false">"已保存 %1$d 台烘干机，点击选用"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"这里只显示烘干机记录。选用后会重新向平台核验设备与当前时长和价格。"</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"还没有常用烘干机"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"识别并确认烘干机后会自动保存在这里；下次点选仍会重新查询平台。"</string>
+    <string name="saved_device_entry_empty" formatted="false">"扫码成功后自动保存，下次一键选用"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"还没有常用洗衣机，扫码成功后自动保存"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"还没有常用饮水机，扫码成功后自动保存"</string>
+    <string name="saved_device_entry_count">"已保存 %1$d 台，点击选用"</string>
+    <string name="saved_device_entry_count_laundry">"已保存 %1$d 台洗衣机，点击选用"</string>
+    <string name="saved_device_entry_count_water">"已保存 %1$d 台饮水机，点击选用"</string>
+    <string name="saved_device_hint" formatted="false">"选用后会重新向平台核验设备与当前状态，不会沿用旧价格、模式或授权。"</string>
+    <string name="saved_device_hint_laundry" formatted="false">"这里只显示洗衣机记录。选用后会重新向平台核验设备与当前状态，不会沿用旧价格、模式或授权。"</string>
+    <string name="saved_device_hint_water" formatted="false">"这里只显示饮水机记录。选用后会重新向平台核验设备与当前状态，不会沿用旧价格、模式或授权。"</string>
+    <string name="saved_device_empty_title" formatted="false">"还没有常用设备"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"还没有常用洗衣机"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"还没有常用饮水机"</string>
+    <string name="saved_device_empty_body" formatted="false">"成功识别并确认设备后会自动保存在这里；下次点选仍会重新查询平台。"</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"识别并确认洗衣机后会自动保存在这里；下次点选仍会重新查询平台。"</string>
+    <string name="saved_device_empty_body_water" formatted="false">"识别并确认饮水机后会自动保存在这里；下次点选仍会重新查询平台。"</string>
+    <string name="saved_device_kind_laundry" formatted="false">"洗衣机"</string>
+    <string name="saved_device_kind_water" formatted="false">"饮水机"</string>
+    <string name="saved_device_last_used">"最近使用：%1$s"</string>
+    <string name="saved_device_select" formatted="false">"选用"</string>
+    <string name="saved_device_rename" formatted="false">"重命名"</string>
+    <string name="saved_device_delete" formatted="false">"删除"</string>
+    <string name="saved_device_close" formatted="false">"关闭"</string>
+    <string name="saved_device_note_label" formatted="false">"备注（可选）"</string>
+    <string name="saved_device_note_hint" formatted="false">"例如：宿舍楼下"</string>
+    <string name="saved_device_save" formatted="false">"保存"</string>
+    <string name="saved_device_cancel" formatted="false">"取消"</string>
+    <string name="saved_device_delete_title" formatted="false">"删除常用设备？"</string>
+    <string name="saved_device_delete_body" formatted="false">"只删除本机记录，不会影响平台账户或设备。"</string>
+    <string name="saved_device_deleted" formatted="false">"已删除常用设备"</string>
+    <string name="saved_device_renamed" formatted="false">"备注已保存"</string>
+    <string name="saved_device_not_found" formatted="false">"这条常用设备记录已不存在"</string>
+    <string name="saved_device_login_required" formatted="false">"请先登录后再使用常用设备"</string>
+    <string name="saved_device_invalid" formatted="false">"这条常用设备记录无效，请重新扫码"</string>
+    <string name="saved_device_identity_changed" formatted="false">"二维码已绑定到另一台设备，请重新扫码确认"</string>
+    <string name="saved_device_save_failed" formatted="false">"无法保存常用设备，请检查存储空间"</string>
+    <string name="saved_device_rename_title" formatted="false">"重命名常用设备"</string>
+    <string name="dryer_duration_title" formatted="false">"选择烘干时长"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d 分钟"</string>
+    <string name="dryer_order_count" formatted="false">"%1$d 笔订单"</string>
+    <string name="dryer_order_empty" formatted="false">"还没有烘干订单"</string>
+</resources>

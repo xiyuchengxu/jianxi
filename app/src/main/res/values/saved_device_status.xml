@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_status_title" formatted="false">本次设备状态</string>
+    <string name="saved_status_checking" formatted="false">正在查询当前状态…</string>
+    <string name="saved_status_laundry_available" formatted="false">当前洗衣模式可用</string>
+    <string name="saved_status_water_available" formatted="false">当前出水口空闲</string>
+    <string name="saved_status_laundry_using" formatted="false">设备使用中</string>
+    <string name="saved_status_water_using" formatted="false">本人正在用水</string>
+    <string name="saved_status_occupied" formatted="false">正在被他人使用</string>
+    <string name="saved_status_unavailable" formatted="false">设备暂不可用</string>
+    <string name="saved_status_unknown" formatted="false">当前状态未确认</string>
+    <string name="saved_status_failed" formatted="false">本次状态查询失败</string>
+    <string name="saved_status_failed_detail" formatted="false">无法查询当前设备状态，请稍后重试</string>
+    <string name="saved_status_mode">所查询模式：%1$s</string>
+    <string name="saved_status_outlet">所查询出水口：%1$s</string>
+    <string name="saved_status_remaining">平台返回剩余约 %1$d 分钟</string>
+    <string name="saved_status_checked_at">本次查询：%1$s</string>
+    <string name="saved_status_snapshot_hint" formatted="false">这是本次查询结果，使用前仍会重新核验。</string>
+    <string name="saved_status_list_available" formatted="false">当前可用</string>
+    <string name="saved_status_list_unavailable" formatted="false">当前不可用</string>
+    <string name="saved_status_list_checking" formatted="false">查询中</string>
+    <string name="saved_status_list_unknown" formatted="false">状态未确认</string>
+    <string name="saved_status_list_failed" formatted="false">查询失败</string>
+</resources>

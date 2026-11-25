@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="points_title">"積分"</string>
+    <string name="points_balance">"積分餘額"</string>
+    <string name="points_login_required">"請先登入後查看積分"</string>
+    <string name="points_loading">"正在重新整理積分任務"</string>
+    <string name="points_signing">"正在簽到"</string>
+    <string name="points_sign_confirmed">"簽到已確認"</string>
+    <string name="points_finished">"簽到已確認，積分已更新"</string>
+    <string name="points_already_signed">"今日已簽到"</string>
+    <string name="points_result_unknown">"簽到結果待確認，請重新整理核對"</string>
+    <string name="points_load_error">"積分資料暫未確認，請重新整理再試"</string>
+    <string name="points_open_failed">"找不到胖乖用戶端"</string>
+    <string name="points_refresh">"重新整理"</string>
+    <string name="points_start">"自動簽到並重新整理"</string>
+    <string name="points_unsigned_today">"今日未簽到"</string>
+    <string name="points_sign_status_unknown">"簽到狀態待查詢"</string>
+    <string name="points_tasks_title">"積分任務"</string>
+    <string name="points_empty">"平台暫未傳回積分任務"</string>
+    <string name="points_not_loaded">"重新整理以取得積分任務"</string>
+    <string name="points_open_original">"開啟胖乖完成任務"</string>
+    <string name="points_logs_title">"執行記錄"</string>
+    <string name="points_task_reward">"獎勵：%1$s 積分"</string>
+    <string name="points_task_progress">"已完成 %1$d / %2$d 次"</string>
+    <string name="points_task_completed_count">"已完成 %1$d 次"</string>
+    <string name="points_task_done">"已完成"</string>
+    <string name="points_task_original">"在胖乖完成"</string>
+</resources>

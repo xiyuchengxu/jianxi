@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -132,13 +133,11 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                 .semantics { stateDescription = if (expanded) appText(R.string.msg_df647b73b990) else appText(R.string.msg_e64447db76a9) },
                 verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(appText(R.string.msg_63109ff6f1bb), style = MaterialTheme.typography.bodyLarge)
-                Text(appText(R.string.msg_ef28a66a21b1),
-                    style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
             }
-            Switch(checked = settings.splashEnabled, enabled = !importing,
+            AppSwitch(checked = settings.splashEnabled, enabled = !importing,
                 onCheckedChange = { latestOnChange(latestSettings.copy(splashEnabled = it)) },
                 modifier = Modifier.semantics { contentDescription = appText(R.string.msg_63109ff6f1bb) })
-            IconButton(onClick = ::toggleExpanded) {
+            AppIconButton(onClick = ::toggleExpanded) {
                 Icon(if (expanded) Icons.Outlined.ExpandLess else Icons.Outlined.ExpandMore,
                     if (expanded) appText(R.string.msg_2d264ece4497) else appText(R.string.msg_d00503584e15))
             }
@@ -150,8 +149,9 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                 HorizontalDivider(Modifier.padding(horizontal = 18.dp), color = colors.outlineVariant.copy(alpha = .55f))
                 Column(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 14.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(value = durationDraft,
+                    AppOutlinedTextField(value = durationDraft,
                         onValueChange = { durationDraft = it; durationError = null },
+                        labelText = appText(R.string.msg_7647946e9f07),
                         label = { Text(appText(R.string.msg_7647946e9f07)) },
                         supportingText = {
                             Text(durationError ?: appText(R.string.msg_6978239af3fb , DEFAULT_SPLASH_DURATION_MS, MIN_SPLASH_DURATION_MS, MAX_SPLASH_DURATION_MS))
@@ -168,7 +168,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                             if (durationFocused && !focus.isFocused) saveDuration()
                             durationFocused = focus.isFocused
                         })
-                    TextButton(onClick = {
+                    AppTextButton(onClick = {
                         if (saveDuration()) {
                             keyboard?.hide()
                             focusManager.clearFocus()
@@ -181,7 +181,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                     verticalAlignment = Alignment.CenterVertically) {
                     Text(appText(R.string.msg_475091a94a64 , if (custom) appText(R.string.msg_0dc111847321) else appText(R.string.msg_6f10af9918f8), images.size),
                         Modifier.weight(1f), style = MaterialTheme.typography.labelLarge, color = colors.primary)
-                    TextButton(onClick = { previewImage = images.first() }, enabled = !importing) {
+                    AppTextButton(onClick = { previewImage = images.first() }, enabled = !importing) {
                         Icon(Icons.Outlined.PlayArrow, null, Modifier.size(18.dp))
                         Spacer(Modifier.width(4.dp))
                         Text(appText(R.string.msg_b396db2e9196))
@@ -203,7 +203,7 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                             }
                             if (custom) {
                                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                                    IconButton(onClick = {
+                                    AppIconButton(onClick = {
                                         val reordered = latestSettings.splashImages.toMutableList()
                                         val currentIndex = reordered.indexOf(source)
                                         if (currentIndex in 1 until reordered.size) {
@@ -214,12 +214,12 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                                     }, enabled = !importing && index > 0, modifier = Modifier.size(48.dp)) {
                                         Icon(Icons.Outlined.ArrowBack, appText(R.string.msg_0b2f1558771b , index + 1), Modifier.size(19.dp))
                                     }
-                                    IconButton(onClick = {
+                                    AppIconButton(onClick = {
                                         latestOnChange(latestSettings.copy(splashImages = latestSettings.splashImages.filterNot { it == source }))
                                     }, enabled = !importing, modifier = Modifier.size(48.dp)) {
                                         Icon(Icons.Outlined.Close, appText(R.string.msg_1fd81704a521 , index + 1), Modifier.size(19.dp))
                                     }
-                                    IconButton(onClick = {
+                                    AppIconButton(onClick = {
                                         val reordered = latestSettings.splashImages.toMutableList()
                                         val currentIndex = reordered.indexOf(source)
                                         if (currentIndex >= 0 && currentIndex < reordered.lastIndex) {
@@ -246,24 +246,25 @@ internal fun SplashSettings(settings: ThemeSettings, onChange: (ThemeSettings) -
                         style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        FilledTonalButton(onClick = {
+                        AppButton(controlId = "theme.splash.images.add", onClick = {
                             addingImages = custom
                             error = null
                             picker.launch(arrayOf("image/*"))
-                        }, enabled = !importing && (!custom || images.size < MAX_SPLASH_IMAGES)) {
+                        }, colors = ButtonDefaults.filledTonalButtonColors(),
+                            enabled = !importing && (!custom || images.size < MAX_SPLASH_IMAGES)) {
                             Icon(Icons.Outlined.AddPhotoAlternate, null, Modifier.size(18.dp))
                             Spacer(Modifier.width(8.dp))
                             Text(if (custom) appText(R.string.msg_9f0d4e4656ee) else appText(R.string.msg_0dc111847321))
                         }
                         if (custom) {
-                            TextButton(onClick = {
+                            AppTextButton(onClick = {
                                 error = null
                                 latestOnChange(latestSettings.copy(splashImages = emptyList()))
                             }, enabled = !importing) { Text(appText(R.string.msg_ba2e93e73037)) }
                         }
                     }
                     if (custom) {
-                        TextButton(onClick = {
+                        AppTextButton(onClick = {
                             addingImages = false
                             error = null
                             picker.launch(arrayOf("image/*"))

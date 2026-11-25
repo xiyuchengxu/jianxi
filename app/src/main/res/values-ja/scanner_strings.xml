@@ -1,0 +1,25 @@
+<resources>
+    <string name="scanner_title">洗濯機または給水機のQRコードをスキャン</string>
+    <string name="scanner_close">戻る</string>
+    <string name="scanner_normal">通常コード</string>
+    <string name="scanner_screen">画面コード</string>
+    <string name="scanner_brighter">明るく</string>
+    <string name="scanner_darker">暗く</string>
+    <string name="scanner_brightness_accessibility">画面コードの露出を下げる</string>
+    <string name="scanner_waiting">カメラを起動しています…</string>
+    <string name="scanner_normal_hint">QRコード全体を枠内に収めてください。画面が明るすぎる場合は「画面コード」に切り替えてください</string>
+    <string name="scanner_screen_hint">QRの模様がはっきりするまで明るさをゆっくり調整してください。少し離すとピントが合いやすくなります</string>
+    <string name="scanner_limit_hint">カメラの露出下限に達しました。角度を少し変えるか、端末の画面輝度を下げてください</string>
+    <string name="scanner_unsupported_hint">このカメラは露出を下げられませんが、スキャンは可能です。角度を変えるか、端末の画面輝度を下げてください</string>
+    <string name="scanner_rejected_hint">カメラが明るさ変更を受け付けませんでしたが、スキャンは可能です。角度を変えるか、端末の画面輝度を下げてください</string>
+    <string name="scanner_camera_error">カメラを利用できません。戻って再試行してください</string>
+    <string name="scanner_auto">自動調整</string>
+    <string name="scanner_auto_off">自動調整はオフです。必要に応じて明るさスライダーを使用してください</string>
+    <string name="scanner_auto_waiting">自動調整：カメラの機能を確認中…</string>
+    <string name="scanner_auto_stable">自動調整中：画面を安定させています</string>
+    <string name="scanner_auto_adjusting">自動調整中：映像に合わせて最適化しました</string>
+    <string name="scanner_auto_manual">手動の明るさを優先中。まもなく自動に戻ります</string>
+    <string name="scanner_auto_limit">カメラの調整上限に達しました。距離や角度を変えてください</string>
+    <string name="scanner_auto_limited">このカメラは一部の自動調整のみ対応しています</string>
+    <string name="scanner_auto_unsupported">このカメラは自動露出・ズーム非対応です。スキャンは可能です</string>
+</resources>

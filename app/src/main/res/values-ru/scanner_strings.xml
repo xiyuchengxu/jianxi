@@ -1,0 +1,25 @@
+<resources>
+    <string name="scanner_title">Сканирование QR-кода стиральной машины или кулера</string>
+    <string name="scanner_close">Назад</string>
+    <string name="scanner_normal">Обычный код</string>
+    <string name="scanner_screen">Код на экране</string>
+    <string name="scanner_brighter">Светлее</string>
+    <string name="scanner_darker">Темнее</string>
+    <string name="scanner_brightness_accessibility">Снизить экспозицию для кода на экране</string>
+    <string name="scanner_waiting">Открытие камеры…</string>
+    <string name="scanner_normal_hint">Поместите весь QR-код в рамку; если экран очень яркий, переключитесь на «Код на экране»</string>
+    <string name="scanner_screen_hint">Плавно меняйте яркость, пока текстура QR не станет чёткой; небольшое отдаление помогает фокусу</string>
+    <string name="scanner_limit_hint">Достигнут минимум экспозиции камеры; немного измените угол или уменьшите яркость экрана устройства</string>
+    <string name="scanner_unsupported_hint">Эта камера не умеет снижать экспозицию, но сканирование работает; измените угол или уменьшите яркость экрана устройства</string>
+    <string name="scanner_rejected_hint">Камера не приняла изменение яркости, но сканирование работает; измените угол или уменьшите яркость экрана устройства</string>
+    <string name="scanner_camera_error">Камера недоступна; вернитесь и попробуйте снова</string>
+    <string name="scanner_auto">Автонастройка</string>
+    <string name="scanner_auto_off">Автонастройка выключена; при необходимости используйте ползунок яркости</string>
+    <string name="scanner_auto_waiting">Автонастройка: проверка возможностей камеры…</string>
+    <string name="scanner_auto_stable">Автонастройка: удерживайте кадр</string>
+    <string name="scanner_auto_adjusting">Автонастройка: оптимизация по изображению</string>
+    <string name="scanner_auto_manual">Приоритет ручной яркости; автонастройка скоро вернётся</string>
+    <string name="scanner_auto_limit">Достигнут предел настройки камеры; измените расстояние или угол</string>
+    <string name="scanner_auto_limited">Камера поддерживает только часть автонастроек</string>
+    <string name="scanner_auto_unsupported">Камера не поддерживает автоэкспозицию или зум; сканирование доступно</string>
+</resources>

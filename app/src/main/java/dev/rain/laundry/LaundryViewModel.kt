@@ -4,8 +4,10 @@ import android.app.Application
 import android.os.Build
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dev.rain.laundry.cloud.*
 import dev.rain.laundry.core.*
 import dev.rain.laundry.data.*
+import dev.rain.laundry.i18n.appText
 import dev.rain.laundry.notifications.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -17,7 +19,8 @@ data class UiState(
     val loggedIn: Boolean = false, val phoneLabel: String = "", val page: Page = Page.HOME,
     val busy: Boolean = false, val progress: String = "", val message: String? = null,
     val smsCooldown: Int = 0, val smsPhone: String = "", val device: Device? = null,
-    val mode: WashMode? = null, val quote: Quote? = null, val methods: List<PayRoute> = emptyList(),
+    val mode: WashMode? = null, val dryerDuration: DryerDuration? = null,
+    val quote: Quote? = null, val methods: List<PayRoute> = emptyList(),
     val payMethod: PayRoute? = null, val order: LocalOrder? = null,
     val orderHistory: List<LocalOrder> = emptyList(),
     val orderFocusKey: String? = null, val orderOpenRequest: Long = 0,
@@ -26,7 +29,14 @@ data class UiState(
     val waterStatus: WaterStatus? = null, val waterSession: WaterSession? = null,
     val waterPayments: List<WaterPayRoute> = emptyList(), val waterPayment: WaterPayRoute? = null,
     val waterPaymentError: String? = null, val waterUpdateError: String? = null,
-    val waterAuthorizationPending: Boolean = false, val waterAuthorizationMessage: String? = null
+    val waterAuthorizationPending: Boolean = false, val waterAuthorizationMessage: String? = null,
+    val savedDevices: List<SavedDevice> = emptyList(),
+    /** Incremented only after a saved record was verified and its page was applied. */
+    val savedDeviceSelection: Long = 0,
+    val savedDeviceStatus: SavedDeviceStatus? = null,
+    val savedDeviceStatuses: Map<String, SavedDeviceStatus> = emptyMap(),
+    val cloudReminder: CloudReminderUiState = CloudReminderUiState(),
+    val points: PointsUiState = PointsUiState()
 ) {
     val waterPaymentAllowed: Boolean get() = waterPayment != null && waterPayment in waterPayments &&
         waterPaymentError == null && !waterAuthorizationPending
@@ -41,11 +51,13 @@ data class WaterAuthorizationLaunch(
 class LaundryViewModel(application: Application) : AndroidViewModel(application) {
     private val vault = SessionVault(application)
     private val api = LaundryApi(vault::token, Build.MANUFACTURER)
+    private val cloudReminder = CloudReminderManager(application)
     private val location = LocationProvider(application)
     private val _state = MutableStateFlow(UiState(loggedIn = vault.token().isNotEmpty(), phoneLabel = vault.phoneLabel(),
         order = vault.order()?.let { if (it.phase == OrderPhase.CREATING) it.copy(phase = OrderPhase.UNCONFIRMED) else it },
         orderHistory = vault.orders().map(::restoreOrder),
-        waterSession = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }))
+        waterSession = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it },
+        savedDevices = vault.savedDevices()))
     val state = _state.asStateFlow()
     private val launchChannel = Channel<PaymentLaunch>(Channel.BUFFERED)
     private val waterAuthorizationChannel = Channel<WaterAuthorizationLaunch>(Channel.BUFFERED)
@@ -57,7 +69,11 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private var waterRefreshJob: Job? = null
     private var laundryRefreshJob: Job? = null
     private var foregroundRevision = 0L
+    private var savedDeviceStatusChecks: Job? = null
+    private var savedDeviceStatusGeneration = 0L
     private var smsJob: Job? = null
+    private var pointsJob: Job? = null
+    private var pointsGeneration = 0L
     val paymentLaunches = launchChannel.receiveAsFlow()
     val waterAuthorizationLaunches = waterAuthorizationChannel.receiveAsFlow()
     private val workflow = OrderWorkflow(api, { unfinishedOrder() ?: _state.value.order }, ::saveOrder)
@@ -65,7 +81,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     private val paymentWorkflow = PaymentWorkflow(
         queryPaid = { order ->
             _state.update { it.copy(progress = "正在查询付款状态") }
-            if (order.isWater && OrderStates.apply(order, api.orderStatus(order)).phase in
+            if (!order.isLaundry && OrderStates.apply(order, api.orderStatus(order)).phase in
                 setOf(OrderPhase.PAID, OrderPhase.COMPLETED)) true else api.paid(order)
         },
         onPaid = ::confirmPaid,
@@ -73,9 +89,15 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         onBalancePending = { notice("余额付款结果尚未确认，请稍后刷新订单") }
     )
     init {
-        if (state.value.loggedIn && (state.value.orderHistory + listOfNotNull(state.value.order)).any {
-                !it.isWater && it.phase == OrderPhase.PAID })
-            LaundryNotificationScheduler.requestCheck(getApplication(), vault.owner())
+        viewModelScope.launch {
+            cloudReminder.state.collect { cloud -> _state.update { it.copy(cloudReminder = cloud) } }
+        }
+        if (state.value.loggedIn) {
+            if ((state.value.orderHistory + listOfNotNull(state.value.order)).any {
+                    it.isLaundry && it.phase == OrderPhase.PAID })
+                LaundryNotificationScheduler.requestCheck(getApplication(), vault.owner())
+            cloudReminder.onSessionAvailable(vault.owner())
+        }
     }
     private fun restoreOrder(order: LocalOrder): LocalOrder =
         if (order.phase == OrderPhase.CREATING) order.copy(phase = OrderPhase.UNCONFIRMED) else order
@@ -91,8 +113,9 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
                 (current.phase.finished && order.createdAt >= current.createdAt)
             state.copy(order = if (updateCurrent) order else current, orderHistory = history)
         }
-        if (!order.isWater && order.phase == OrderPhase.PAID) {
+        if (order.isLaundry && order.phase == OrderPhase.PAID) {
             LaundryNotificationScheduler.requestCheck(getApplication(), order.owner)
+            cloudReminder.onOrderSaved(order.owner)
         }
     }
     /** Viewing history never changes the workflow pointer. Only an explicit action may promote a record. */
@@ -123,6 +146,60 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     }
     fun clearMessage() { _state.update { it.copy(message = null) } }
     fun notice(message: String) { _state.update { it.copy(message = message) } }
+
+    fun refreshPoints() = pointsWork(signIn = false)
+    fun autoSignInPoints() = pointsWork(signIn = true)
+
+    private fun pointsWork(signIn: Boolean) {
+        if (state.value.busy || pointsJob?.isActive == true) return
+        if (!state.value.loggedIn) { notice(appText(R.string.points_login_required)); return }
+        val owner = vault.owner().takeIf { it.isNotBlank() } ?: return
+        val sessionToken = vault.token().takeIf { it.isNotBlank() } ?: return
+        val generation = ++pointsGeneration
+        fun current() = state.value.loggedIn && vault.owner() == owner &&
+            vault.token() == sessionToken && pointsGeneration == generation
+        // Bind every request to this captured session, including while a blocking request unwinds.
+        val gateway = PointsApi(LaundryApi({ sessionToken }, Build.MANUFACTURER))
+        val workflow = PointsWorkflow(gateway, ::current)
+        _state.update { it.copy(points = it.points.copy(loading = !signIn, running = signIn,
+            progress = appText(if (signIn) R.string.points_signing else R.string.points_loading),
+            error = null, logs = if (signIn) emptyList() else it.points.logs)) }
+        pointsJob = viewModelScope.launch {
+            try {
+                if (signIn) {
+                    val changed = workflow.autoSignIn()
+                    if (!current()) return@launch
+                    val message = appText(if (changed) R.string.points_sign_confirmed else R.string.points_already_signed)
+                    _state.update { it.copy(points = it.points.copy(signedInToday = true,
+                        progress = appText(R.string.points_loading), logs = listOf(message))) }
+                }
+                val snapshot = workflow.refresh()
+                if (current()) _state.update { it.copy(points = it.points.withSnapshot(snapshot).copy(
+                    progress = if (signIn) appText(R.string.points_finished) else "")) }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: SessionExpired) {
+                if (current()) expireLocalSession("登录已过期，请重新登录")
+            } catch (error: Exception) {
+                if (current()) {
+                    val message = when (error) {
+                        is PointsResultUnknown -> appText(R.string.points_result_unknown)
+                        is BusinessRejected -> error.displayMessage
+                        else -> appText(R.string.points_load_error)
+                    }
+                    _state.update { it.copy(points = it.points.copy(error = message, progress = "")) }
+                }
+            } finally {
+                if (current()) _state.update { it.copy(points = it.points.copy(loading = false, running = false)) }
+            }
+        }
+    }
+
+    private fun clearPointsWork() {
+        pointsGeneration++
+        pointsJob?.cancel()
+        pointsJob = null
+    }
     fun openOrderNotification(owner: String, key: String) {
         if (!state.value.loggedIn || vault.owner() != owner) {
             notice("请登录订单所属账号后查看洗衣进度"); return
@@ -144,16 +221,15 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             val result = try { LaundryMonitorEngine.check(getApplication(), owner, api, ::current) }
             catch (cancelled: CancellationException) { throw cancelled }
             catch (_: SessionExpired) {
-                if (current()) {
-                    clearWaterAuthorization(); LaundryNotificationScheduler.cancelAll(getApplication())
-                    vault.logout(); _state.value = UiState(message = "登录已过期，请重新登录")
-                }
+                if (current()) expireLocalSession("登录已过期，请重新登录")
                 return@launch
             }
             if (!current()) return@launch
             _state.update { it.copy(order = vault.order()?.let(::restoreOrder),
                 orderHistory = vault.orders().map(::restoreOrder),
                 laundryProgressError = if (result.retry) "洗衣进度暂未同步，将稍后重试" else null) }
+            cloudReminder.refreshLocal(owner)
+            cloudReminder.requestAutoSync(owner)
             result.nextCheckAtMs?.let { next ->
                 LaundryNotificationScheduler.requestCheck(getApplication(), owner,
                     (next - System.currentTimeMillis()).coerceAtLeast(0))
@@ -177,7 +253,14 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             waterStatus = session.lastStatus, waterPayments = emptyList(), waterPayment = session.payment,
             waterPaymentError = null, waterUpdateError = null) }
     }
-    fun selectMode(mode: WashMode) { if (!state.value.busy) _state.update { it.copy(mode = mode, quote = null) } }
+    fun selectMode(mode: WashMode) { if (!state.value.busy) _state.update { it.copy(mode = mode,
+        dryerDuration = mode.dryerDurations.firstOrNull { duration -> duration.selectedByPlatform } ?: mode.dryerDurations.firstOrNull(), quote = null,
+        savedDeviceStatus = it.savedDeviceStatus?.takeUnless { status ->
+            status.kind == SavedDeviceKind.LAUNDRY && status.selectionId != mode.id }) } }
+    fun selectDryerDuration(duration: DryerDuration) {
+        if (!state.value.busy && state.value.device?.isDryer == true && duration in (state.value.mode?.dryerDurations ?: emptyList()))
+            _state.update { it.copy(dryerDuration = duration, quote = null) }
+    }
     fun selectPayment(method: PayRoute) { if (!state.value.busy && method in state.value.methods) _state.update { it.copy(payMethod = method) } }
 
     private fun work(progress: String, silent: Boolean = false, task: suspend () -> Unit) {
@@ -188,7 +271,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             try { task() }
             catch (e: CancellationException) { throw e }
-            catch (_: SessionExpired) { clearWaterAuthorization(); vault.logout(); _state.update { UiState(message = "登录已过期，请重新登录") } }
+            catch (_: SessionExpired) { expireLocalSession("登录已过期，请重新登录") }
             catch (e: QuoteChanged) { _state.update { it.copy(quote = e.quote, message = "价格已更新，请重新确认", page = Page.CHECKOUT) } }
             catch (e: Exception) { val message = when (e) {
                 is BusinessRejected -> e.displayMessage
@@ -213,36 +296,309 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         work("正在登录") {
             val token = api.login(phone, code)
             clearWaterAuthorization()
+            val previousOwner = vault.owner()
+            if (previousOwner.isNotBlank() && previousOwner != WireProtocol.sha256(phone)) {
+                cloudReminder.onLogout(previousOwner) { }
+            }
             vault.login(phone, token)
+            clearPointsWork()
+            cancelSavedDeviceStatusChecks()
             smsJob?.cancel()
             val water = vault.water()?.let { if (it.phase == WaterPhase.STARTING) it.copy(phase = WaterPhase.UNKNOWN) else it }
             _state.update { UiState(loggedIn = true, phoneLabel = vault.phoneLabel(), order = vault.order()?.let(::restoreOrder),
-                orderHistory = vault.orders().map(::restoreOrder), waterSession = water) }
+                orderHistory = vault.orders().map(::restoreOrder), waterSession = water,
+                savedDevices = vault.savedDevices()) }
+            cloudReminder.onSessionAvailable(vault.owner())
         }
     }
-    fun logout() { if (!state.value.busy) { clearWaterAuthorization(); smsJob?.cancel(); laundryRefreshJob?.cancel();
-        LaundryNotificationScheduler.cancelAll(getApplication()); vault.logout(); _state.value = UiState() } }
-    fun scan(raw: String, laundryEnabled: Boolean = true, waterEnabled: Boolean = true) {
+    fun logout() {
+        if (state.value.busy) return
+        clearPointsWork()
+        cancelSavedDeviceStatusChecks()
+        val owner = vault.owner()
+        clearWaterAuthorization()
+        smsJob?.cancel()
+        laundryRefreshJob?.cancel()
+        LaundryNotificationScheduler.cancelAll(getApplication())
+        // Detach the encrypted old binding before clearing the local session. A failed remote
+        // request is retried by WorkManager and never reused for a later account.
+        cloudReminder.onLogout(owner) { result ->
+            if (result == CloudLogoutResult.UNCONFIRMED && vault.owner().isBlank())
+                notice(appText(R.string.cloud_logout_unbind_failed))
+        }
+        vault.logout()
+        _state.value = UiState()
+    }
+
+    private fun expireLocalSession(message: String) {
+        clearPointsWork()
+        cancelSavedDeviceStatusChecks()
+        val owner = vault.owner()
+        clearWaterAuthorization()
+        LaundryNotificationScheduler.cancelAll(getApplication())
+        if (owner.isNotBlank()) cloudReminder.onLogout(owner) { }
+        vault.logout()
+        _state.value = UiState(message = message)
+    }
+
+    fun refreshCloudStatus() = cloudReminder.openSettings(vault.owner())
+    fun bindCloudReminder(serverUrl: String, pairingCode: String, miaotixingCode: String,
+        consent: Boolean
+    ) {
+        if (!state.value.loggedIn) { notice(appText(R.string.cloud_login_required)); return }
+        cloudReminder.bind(vault.owner(), serverUrl, pairingCode, miaotixingCode, consent)
+    }
+    fun retryCloudSync() = cloudReminder.retrySync(vault.owner())
+    fun enableCloudDeviceAssisted() = cloudReminder.enableDeviceAssisted(vault.owner())
+    fun unbindCloudReminder() = cloudReminder.unbind(vault.owner())
+    fun reauthorizeCloudReminder() = cloudReminder.reauthorize(vault.owner())
+    fun updateCloudNotificationCode(code: String) = cloudReminder.updateNotificationCode(vault.owner(), code)
+    fun testCloudNotification() = cloudReminder.testNotification(vault.owner())
+    fun refreshSavedDevices() {
+        if (state.value.busy || !state.value.loggedIn) return
+        _state.update { it.copy(savedDevices = vault.savedDevices()) }
+    }
+
+    /** Opening laundry history checks its rows only. Water history never starts availability requests. */
+    fun checkSavedDeviceStatuses(kind: SavedDeviceKind) {
+        cancelSavedDeviceStatusChecks()
+        _state.update { it.copy(savedDeviceStatus = null) }
+        if (!shouldCheckSavedDeviceStatuses(kind)) return
+        val owner = vault.owner()
+        val token = vault.token()
+        if (!state.value.loggedIn || owner.isBlank() || token.isBlank()) return
+        val records = SavedDevices.ofKind(state.value.savedDevices, kind).filter { it.owner == owner }
+        val request = SavedDeviceStatusRequest(owner, token, savedDeviceStatusGeneration, kind)
+        _state.update { it.copy(savedDeviceStatus = null, savedDeviceStatuses = records.associate {
+            SavedDeviceStatus.key(it) to SavedDeviceStatus.checking(it) }) }
+        fun current(record: SavedDevice) = state.value.loggedIn && request.accepts(record, vault.owner(), vault.token(),
+            savedDeviceStatusGeneration, state.value.savedDevices)
+        fun publish(record: SavedDevice, result: SavedDeviceStatus) {
+            vault.withLaundrySession(owner, token, { current(record) }) {
+                _state.update { snapshot ->
+                    if (!snapshot.loggedIn || !request.accepts(record, vault.owner(), vault.token(),
+                            savedDeviceStatusGeneration, snapshot.savedDevices)) snapshot
+                    else snapshot.copy(savedDeviceStatuses = snapshot.savedDeviceStatuses +
+                        (SavedDeviceStatus.key(record) to result))
+                }
+                true
+            }
+        }
+        savedDeviceStatusChecks = viewModelScope.launch {
+            querySavedDeviceStatuses(records, ::current, query = { record ->
+                val scanned = api.scanDevice(record.code() ?: throw ClientError(appText(R.string.saved_device_invalid)))
+                if (!current(record)) return@querySavedDeviceStatuses null
+                if (!SavedDevices.matches(record, scanned))
+                    throw ClientError(appText(R.string.saved_device_identity_changed))
+                val device = (scanned as? ScannedDevice.Laundry)?.device
+                    ?: throw ClientError(appText(R.string.saved_device_identity_changed))
+                val mode = device.modes.first()
+                val available = api.machineModeAvailable(mode)
+                SavedDeviceStatus.laundry(owner, device, mode, available, System.currentTimeMillis())
+            }, onResult = { record, result ->
+                publish(record, result)
+            }, onFailure = { record, failure ->
+                if (failure is SessionExpired) {
+                    if (current(record)) expireLocalSession(appText(R.string.msg_ff536b7aeffd))
+                } else publish(record, SavedDeviceStatus.checking(record).copy(
+                        phase = SavedDeviceStatusPhase.ERROR, detail = savedDeviceFailure(failure),
+                        checkedAt = System.currentTimeMillis()))
+            })
+        }
+    }
+
+    fun cancelSavedDeviceStatusChecks() {
+        savedDeviceStatusGeneration++
+        savedDeviceStatusChecks?.cancel()
+        savedDeviceStatusChecks = null
+        _state.update { it.copy(savedDeviceStatuses = emptyMap()) }
+    }
+
+    private fun savedDeviceFailure(failure: Exception): String = when (failure) {
+        is BusinessRejected -> failure.displayMessage
+        is ClientError, is SessionExpired -> failure.message.orEmpty()
+        else -> appText(R.string.saved_status_failed_detail)
+    }
+
+    fun deleteSavedDevice(device: SavedDevice) {
+        if (state.value.busy) return
+        val owner = vault.owner()
+        if (!state.value.loggedIn || owner.isBlank() || device.owner != owner) {
+            notice(appText(R.string.saved_device_login_required)); return
+        }
+        try {
+            if (vault.deleteSavedDevice(device)) {
+                _state.update { it.copy(savedDevices = vault.savedDevices(),
+                    savedDeviceStatuses = it.savedDeviceStatuses - SavedDeviceStatus.key(device),
+                    savedDeviceStatus = it.savedDeviceStatus?.takeUnless { status -> status.matches(device) }) }
+                notice(appText(R.string.saved_device_deleted))
+            } else notice(appText(R.string.saved_device_not_found))
+        } catch (error: Exception) {
+            notice(error.message?.takeIf { it.isNotBlank() } ?: appText(R.string.saved_device_save_failed))
+        }
+    }
+
+    fun renameSavedDevice(device: SavedDevice, note: String) {
+        if (state.value.busy) return
+        val owner = vault.owner()
+        if (!state.value.loggedIn || owner.isBlank() || device.owner != owner) {
+            notice(appText(R.string.saved_device_login_required)); return
+        }
+        try {
+            if (vault.renameSavedDevice(device, note)) {
+                _state.update { it.copy(savedDevices = vault.savedDevices()) }
+                notice(appText(R.string.saved_device_renamed))
+            } else notice(appText(R.string.saved_device_not_found))
+        } catch (error: Exception) {
+            notice(error.message?.takeIf { it.isNotBlank() } ?: appText(R.string.saved_device_save_failed))
+        }
+    }
+
+    /** A saved record is only a shortcut to the normal scan; it never supplies price/mode/auth state. */
+    fun selectSavedDevice(device: SavedDevice, laundryEnabled: Boolean = true, waterEnabled: Boolean = true,
+        dryerEnabled: Boolean = true) {
+        if (state.value.busy) return
+        if (state.value.waterAuthorizationPending) { notice("请先完成支付宝授权并返回核验"); return }
+        val owner = vault.owner()
+        if (!state.value.loggedIn || owner.isBlank() || device.owner != owner) {
+            notice(appText(R.string.saved_device_login_required)); return
+        }
+        val code = device.code()
+        if (code == null || device.savedKind == null) { notice(appText(R.string.saved_device_invalid)); return }
+        if (device.savedKind == SavedDeviceKind.DRYER && !dryerEnabled) {
+            notice("烘干功能已关闭，请先在设置中开启"); return
+        }
+        cancelSavedDeviceStatusChecks()
+        selectDeviceCode(code, device, laundryEnabled, waterEnabled, dryerEnabled)
+    }
+
+    fun scan(raw: String, laundryEnabled: Boolean = true, waterEnabled: Boolean = true, dryerEnabled: Boolean = true) {
+        val code = try { DeviceCodes.parse(raw) } catch (error: ClientError) {
+            notice(error.message.orEmpty()); return
+        }
+        if (!state.value.busy) cancelSavedDeviceStatusChecks()
+        selectDeviceCode(code, null, laundryEnabled, waterEnabled, dryerEnabled)
+    }
+
+    /**
+     * The single path used by a fresh scan and by an explicit saved-device tap. The platform is
+     * queried read-only, identity is checked before applying state, and the owner/token/revision
+     * are rechecked before writing the record.
+     */
+    private fun selectDeviceCode(code: DeviceCode, expectedSaved: SavedDevice?,
+        laundryEnabled: Boolean, waterEnabled: Boolean, dryerEnabled: Boolean) {
+        if (state.value.busy) return
+        _state.update { it.copy(savedDeviceStatus = expectedSaved
+            ?.takeIf { record -> shouldCheckSavedDeviceStatuses(record.savedKind) }
+            ?.let { record -> SavedDeviceStatus.checking(record) }) }
         work("正在识别设备") {
-            when (val scanned = api.scanDevice(DeviceCodes.parse(raw))) {
-                is ScannedDevice.Laundry -> {
-                    if (!laundryEnabled) throw ClientError("洗衣功能已关闭，请先在设置中开启")
-                    clearWaterAuthorization()
-                    _state.update { it.copy(device = scanned.device,
-                        mode = scanned.device.modes.firstOrNull(), quote = null, page = Page.DEVICE) }
+            val owner = vault.owner()
+            val token = vault.token()
+            if (!state.value.loggedIn || owner.isBlank() || token.isBlank()) throw SessionExpired()
+            if (expectedSaved != null && (expectedSaved.owner != owner || expectedSaved.savedKind == null))
+                throw ClientError(appText(R.string.saved_device_invalid))
+            val revision = foregroundRevision
+            fun current() = state.value.loggedIn && vault.owner() == owner && vault.token() == token &&
+                foregroundRevision == revision
+            try {
+                val scanned = queryDeviceForCurrentSession(::current) { api.scanDevice(code) } ?: return@work
+                if (expectedSaved != null && !SavedDevices.matches(expectedSaved, scanned)) {
+                    throw ClientError(appText(R.string.saved_device_identity_changed))
                 }
-                is ScannedDevice.Water -> {
-                    if (!waterEnabled) throw ClientError("饮水功能已关闭，请先在设置中开启")
-                    val active = state.value.waterSession?.takeIf { it.active }
-                    if (active != null && active.device.id != scanned.device.id) throw ClientError("请先处理正在进行的饮水会话")
-                    val outlet = active?.outlet ?: scanned.device.outlets.first()
-                    clearWaterAuthorization()
-                    _state.update { it.copy(waterDevice = scanned.device, waterOutlet = outlet, waterStatus = null,
-                        waterPayments = emptyList(), waterPayment = null, waterPaymentError = null,
-                        waterUpdateError = null, page = Page.WATER) }
-                    loadWaterPayments(scanned.device)
-                    reconcileWater()
+                when (scanned) {
+                    is ScannedDevice.Laundry -> {
+                        if (!laundryEnabled) throw ClientError("洗衣功能已关闭，请先在设置中开启")
+                        val device = scanned.device
+                        val statusSnapshot = if (expectedSaved != null && device.category in setOf("00", "01")) {
+                            val mode = device.modes.first()
+                            val available = queryCurrentDeviceValue(::current) { api.machineModeAvailable(mode) }
+                                ?: return@work
+                            SavedDeviceStatus.laundry(owner, device, mode, available, System.currentTimeMillis())
+                        } else null
+                        val candidate = SavedDevices.fromScan(owner, code, scanned,
+                            System.currentTimeMillis())
+                        if (!SavedDevices.isValid(owner, candidate))
+                            throw ClientError(appText(R.string.saved_device_invalid))
+                        val historyWrite = saveOptionalDeviceHistory(::current) {
+                            vault.saveSavedDevice(candidate, owner, token, ::current)
+                        }
+                        if (historyWrite == SavedDeviceWrite.STALE || !current()) return@work
+                        val devices = runCatching { vault.savedDevices() }.getOrDefault(state.value.savedDevices)
+                        clearWaterAuthorization()
+                        _state.update { it.copy(device = device,
+                            mode = device.modes.firstOrNull(), dryerDuration = null, quote = null, page = Page.DEVICE,
+                            savedDeviceStatus = statusSnapshot,
+                            savedDevices = devices,
+                            message = if (historyWrite == SavedDeviceWrite.UNAVAILABLE)
+                                appText(R.string.saved_device_save_failed) else it.message,
+                            savedDeviceSelection = if (expectedSaved != null) it.savedDeviceSelection + 1
+                                else it.savedDeviceSelection) }
+                    }
+                    is ScannedDevice.Dryer -> {
+                        if (!dryerEnabled) throw ClientError("烘干功能已关闭，请先在设置中开启")
+                        val device = scanned.device
+                        if (device.modes.any { it.dryerDurations.isEmpty() || it.dryerDurations.any { d -> d.minutes <= 0 } })
+                            throw ClientError("烘干时长尚未完整适配，请在原应用核对")
+                        val candidate = SavedDevices.fromScan(owner, code, scanned, System.currentTimeMillis())
+                        if (!SavedDevices.isValid(owner, candidate)) throw ClientError(appText(R.string.saved_device_invalid))
+                        val historyWrite = saveOptionalDeviceHistory(::current) {
+                            vault.saveSavedDevice(candidate, owner, token, ::current)
+                        }
+                        if (historyWrite == SavedDeviceWrite.STALE || !current()) return@work
+                        clearWaterAuthorization()
+                        _state.update { it.copy(device = device,
+                            mode = device.modes.firstOrNull(),
+                            dryerDuration = device.modes.firstOrNull()?.let { m ->
+                                m.dryerDurations.firstOrNull { d -> d.selectedByPlatform } ?: m.dryerDurations.firstOrNull()
+                            },
+                            quote = null, page = Page.DEVICE,
+                            savedDevices = runCatching { vault.savedDevices() }.getOrDefault(state.value.savedDevices),
+                            savedDeviceStatus = null,
+                            message = if (historyWrite == SavedDeviceWrite.UNAVAILABLE) appText(R.string.saved_device_save_failed) else it.message,
+                            savedDeviceSelection = if (expectedSaved != null) it.savedDeviceSelection + 1 else it.savedDeviceSelection) }
+                    }
+                    is ScannedDevice.Water -> {
+                        if (!waterEnabled) throw ClientError("饮水功能已关闭，请先在设置中开启")
+                        val active = state.value.waterSession?.takeIf { it.active }
+                        if (active != null && active.device.id != scanned.device.id) throw ClientError("请先处理正在进行的饮水会话")
+                        val outlet = active?.outlet ?: scanned.device.outlets.first()
+                        val candidate = SavedDevices.fromScan(owner, code, scanned,
+                            System.currentTimeMillis())
+                        if (!SavedDevices.isValid(owner, candidate))
+                            throw ClientError(appText(R.string.saved_device_invalid))
+                        val historyWrite = saveOptionalDeviceHistory(::current) {
+                            vault.saveSavedDevice(candidate, owner, token, ::current)
+                        }
+                        if (historyWrite == SavedDeviceWrite.STALE || !current()) return@work
+                        val devices = runCatching { vault.savedDevices() }.getOrDefault(state.value.savedDevices)
+                        clearWaterAuthorization()
+                        _state.update { it.copy(waterDevice = scanned.device, waterOutlet = outlet, waterStatus = null,
+                            waterPayments = emptyList(), waterPayment = null, waterPaymentError = null,
+                            waterUpdateError = null, page = Page.WATER, savedDevices = devices,
+                            savedDeviceStatus = null,
+                            message = if (historyWrite == SavedDeviceWrite.UNAVAILABLE)
+                                appText(R.string.saved_device_save_failed) else it.message,
+                            savedDeviceSelection = if (expectedSaved != null) it.savedDeviceSelection + 1
+                                else it.savedDeviceSelection) }
+                        queryCurrentDeviceValue(::current) {
+                            loadWaterPayments(scanned.device, ::current)
+                            reconcileWater(::current)
+                        }
+                    }
                 }
+            } catch (cancelled: CancellationException) { throw cancelled
+            } catch (failure: Exception) {
+                if (!current()) return@work
+                if (expectedSaved != null && shouldCheckSavedDeviceStatuses(expectedSaved.savedKind)) {
+                    _state.update {
+                        it.copy(savedDeviceStatus = SavedDeviceStatus.checking(expectedSaved).copy(
+                            phase = SavedDeviceStatusPhase.ERROR,
+                            detail = savedDeviceFailure(failure),
+                            checkedAt = System.currentTimeMillis()
+                        ))
+                    }
+                }
+                throw failure
             }
         }
     }
@@ -250,7 +606,8 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         val device = state.value.waterDevice ?: return
         if (state.value.waterSession?.active == true || state.value.waterAuthorizationPending || outlet !in device.outlets) return
         work("正在查询出水口") {
-            _state.update { it.copy(waterOutlet = outlet, waterStatus = null, waterUpdateError = null) }
+            _state.update { it.copy(waterOutlet = outlet, waterStatus = null, waterUpdateError = null,
+                savedDeviceStatus = it.savedDeviceStatus?.takeUnless { status -> status.kind == SavedDeviceKind.WATER }) }
             reconcileWater()
         }
     }
@@ -340,8 +697,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: SessionExpired) {
-                vault.logout()
-                _state.update { UiState(message = "登录已过期，请重新登录") }
+                expireLocalSession("登录已过期，请重新登录")
             } catch (error: Exception) {
                 if (matchesWaterAuthorization(launch)) {
                     val detail = when (error) {
@@ -405,7 +761,7 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
                 try { reconcileWater(isCurrent) }
                 catch (error: CancellationException) { throw error }
                 catch (_: SessionExpired) {
-                    if (isCurrent()) { clearWaterAuthorization(); vault.logout(); _state.value = UiState(message = "登录已过期，请重新登录") }
+                    if (isCurrent()) expireLocalSession("登录已过期，请重新登录")
                 } catch (error: Exception) {
                     if (isCurrent()) _state.update { it.copy(waterUpdateError = when (error) {
                         is BusinessRejected -> error.displayMessage
@@ -444,19 +800,22 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
             }
         }
     }
-    private suspend fun loadWaterPayments(device: WaterDevice) {
+    private suspend fun loadWaterPayments(device: WaterDevice, isCurrent: () -> Boolean = { true }) {
+        if (!isCurrent()) return
         val previous = state.value.waterPayment ?: state.value.waterSession?.takeIf { it.device.id == device.id }?.payment
         _state.update { it.copy(waterPayments = emptyList(), waterPaymentError = null) }
         try {
             val methods = api.waterPaymentRoutes(device)
+            if (!isCurrent()) return
             val selected = methods.firstOrNull { it.wire == previous?.wire } ?: methods.firstOrNull { it.preferred }
                 ?: methods.firstOrNull { it.method == PayMethod.BALANCE } ?: methods.first()
             _state.update { it.copy(waterPayments = methods, waterPayment = selected) }
         } catch (error: ClientError) {
-            _state.update { it.copy(waterPaymentError = error.message) }
+            if (isCurrent()) _state.update { it.copy(waterPaymentError = error.message) }
         }
     }
     private suspend fun reconcileWater(isCurrent: () -> Boolean = { true }) {
+        if (!isCurrent()) return
         val outlet = state.value.waterOutlet ?: return
         val device = state.value.waterDevice ?: return
         val status = api.waterStatus(outlet)
@@ -485,7 +844,8 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
     fun preview() {
         val device = state.value.device ?: return; val mode = state.value.mode ?: return
         work("正在确认价格") {
-            val quote = api.quote(device, mode)
+            val quote = if (device.isDryer) api.quoteDryer(device, mode,
+                state.value.dryerDuration ?: throw ClientError("请选择烘干时长")) else api.quote(device, mode)
             val methods = api.channels(quote)
             _state.update { it.copy(quote = quote, methods = methods, payMethod = methods.first(), page = Page.CHECKOUT) }
         }
@@ -497,7 +857,11 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         work("正在核对订单") {
             val fix = location.current()
             val order = try { workflow.create(quote, method.method, fix, vault.owner(), route = method) }
-            catch (e: Exception) { if (state.value.order?.phase == OrderPhase.UNCONFIRMED) _state.update { it.copy(page = Page.ORDERS) }; throw e }
+            catch (e: Exception) {
+                if (state.value.order?.let { it.phase == OrderPhase.UNCONFIRMED || it.orderId.isNotBlank() || it.orderNo.isNotBlank() } == true)
+                    _state.update { it.copy(page = Page.ORDERS) }
+                throw e
+            }
             _state.update { it.copy(page = Page.ORDERS) }
             paymentWorkflow.startOrResume(order)
         }
@@ -517,8 +881,8 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         if (payable != order) saveOrder(payable)
         _state.update { it.copy(progress = if (order.payMethod == PayMethod.BALANCE) "正在提交余额付款" else "正在获取支付信息") }
         if (order.payMethod == PayMethod.BALANCE) {
-            val pending = payable.copy(phase = OrderPhase.PAYMENT_PENDING); saveOrder(pending)
-            api.balancePay(pending)
+            val pending = payable.copy(phase = OrderPhase.PAYMENT_PENDING)
+            api.balancePay(payable) { saveOrder(pending) }
             poll(pending)
         } else {
             val payload = api.prepay(payable)
@@ -579,7 +943,11 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         OrderPhase.COMPLETED -> "订单已完成"
         OrderPhase.REFUNDING -> "订单正在退款，请在原应用查看进度"
         OrderPhase.REFUNDED -> "订单已退款，请核对到账情况"
-        OrderPhase.PAID -> if (order.isWater) "饮水账单付款已确认" else "付款已确认，请查看洗衣机运行状态"
+        OrderPhase.PAID -> when {
+            order.isWater -> "饮水账单付款已确认"
+            order.isDryer -> "烘干订单付款已确认，请查看机器状态"
+            else -> "付款已确认，请查看洗衣机运行状态"
+        }
         OrderPhase.CANCELLED -> "订单已取消"
         else -> "尚未确认付款，可稍后再次查询"
     })
@@ -598,8 +966,12 @@ class LaundryViewModel(application: Application) : AndroidViewModel(application)
         if (paid.isWater) { saveOrder(paid.copy(syncRequested = true)); notice("饮水账单付款已确认"); return }
         if (!paid.syncRequested) {
             saveOrder(paid.copy(syncRequested = true))
-            try { api.sync(paid); notice("付款已确认，已请求同步设备，请查看机器是否启动") }
-            catch (_: Exception) { notice("付款已确认；设备同步结果待核实，请查看洗衣机") }
-        } else notice("付款已确认，请查看洗衣机运行状态")
+            try {
+                api.sync(paid)
+                notice(if (paid.isDryer) "付款已确认，已请求启动烘干机，请查看设备状态" else "付款已确认，已请求同步设备，请查看机器是否启动")
+            } catch (_: Exception) {
+                notice(if (paid.isDryer) "付款已确认；烘干启动结果待核实，请查看设备" else "付款已确认；设备同步结果待核实，请查看洗衣机")
+            }
+        } else notice(if (paid.isDryer) "付款已确认，请查看烘干机运行状态" else "付款已确认，请查看洗衣机运行状态")
     }
 }

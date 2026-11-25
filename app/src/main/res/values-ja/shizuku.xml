@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shizuku_title" formatted="false">"Shizuku バックグラウンド常駐"</string>
+    <string name="shizuku_optional" formatted="false">"任意で、初期状態はオフです。"</string>
+    <string name="shizuku_enabled" formatted="false">"バックグラウンド保護が動作中"</string>
+    <string name="shizuku_disabled" formatted="false">"補助はオフです"</string>
+    <string name="shizuku_pending_restore" formatted="false">"補助はオフですが、設定の復元待ちです。Shizuku を起動して許可し、再試行してください。"</string>
+    <string name="shizuku_existing" formatted="false">"補助はオフです。既存のシステム電池設定は保持します"</string>
+    <string name="shizuku_unavailable" formatted="false">"Shizuku が動作していません。通常の通知は利用できます。"</string>
+    <string name="shizuku_not_authorized" formatted="false">"Shizuku は未許可です。操作時にのみ許可を求めます。"</string>
+    <string name="shizuku_ready" formatted="false">"Shizuku に接続・許可済みです"</string>
+    <string name="shizuku_old_version" formatted="false">"Shizuku API 13 以降が必要です。"</string>
+    <string name="shizuku_denied" formatted="false">"許可されませんでした。通常の通知には影響しません。"</string>
+    <string name="shizuku_failure" formatted="false">"バックグラウンド保護を確認できません。Shizuku の許可を確認して再試行してください。"</string>
+    <string name="shizuku_storage" formatted="false">"設定を保存できなかったため、システムの変更を続行しませんでした。"</string>
+    <string name="shizuku_reapply_needed" formatted="false">"バックグラウンド保護は停止中です。再試行してください。"</string>
+    <string name="shizuku_retry_restore" formatted="false">"システム設定の復元を再試行"</string>
+    <string name="shizuku_reapply" formatted="false">"バックグラウンド保護を再試行"</string>
+    <string name="shizuku_open" formatted="false">"Shizuku を開く / 起動方法"</string>
+    <string name="shizuku_battery_settings" formatted="false">"システムの電池最適化設定"</string>
+</resources>

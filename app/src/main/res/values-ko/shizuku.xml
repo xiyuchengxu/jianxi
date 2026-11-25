@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shizuku_title" formatted="false">"Shizuku 백그라운드 상주"</string>
+    <string name="shizuku_optional" formatted="false">"선택 기능이며 기본적으로 꺼져 있습니다."</string>
+    <string name="shizuku_enabled" formatted="false">"백그라운드 보호 실행 중"</string>
+    <string name="shizuku_disabled" formatted="false">"지원 꺼짐"</string>
+    <string name="shizuku_pending_restore" formatted="false">"지원은 꺼졌지만 설정 복원이 필요합니다. Shizuku를 시작하고 권한을 허용한 후 다시 시도하세요."</string>
+    <string name="shizuku_existing" formatted="false">"지원이 꺼져 있으며 기존 시스템 배터리 설정은 유지됩니다"</string>
+    <string name="shizuku_unavailable" formatted="false">"Shizuku가 실행 중이 아닙니다. 일반 알림은 계속 사용할 수 있습니다."</string>
+    <string name="shizuku_not_authorized" formatted="false">"Shizuku 권한이 없습니다. 작업할 때만 권한을 요청합니다."</string>
+    <string name="shizuku_ready" formatted="false">"Shizuku 연결 및 권한 허용됨"</string>
+    <string name="shizuku_old_version" formatted="false">"Shizuku API 13 이상이 필요합니다."</string>
+    <string name="shizuku_denied" formatted="false">"권한이 허용되지 않았습니다. 일반 알림에는 영향이 없습니다."</string>
+    <string name="shizuku_failure" formatted="false">"백그라운드 보호를 확인하지 못했습니다. Shizuku 권한을 확인하고 다시 시도하세요."</string>
+    <string name="shizuku_storage" formatted="false">"설정을 저장하지 못해 시스템 변경을 진행하지 않았습니다."</string>
+    <string name="shizuku_reapply_needed" formatted="false">"백그라운드 보호가 실행 중이 아닙니다. 다시 시도하세요."</string>
+    <string name="shizuku_retry_restore" formatted="false">"시스템 설정 복원 재시도"</string>
+    <string name="shizuku_reapply" formatted="false">"백그라운드 보호 다시 시도"</string>
+    <string name="shizuku_open" formatted="false">"Shizuku 열기 / 시작 안내"</string>
+    <string name="shizuku_battery_settings" formatted="false">"시스템 배터리 최적화 설정"</string>
+</resources>

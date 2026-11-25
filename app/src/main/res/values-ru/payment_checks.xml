@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_submitted_unconfirmed">"Запрос на оплату отправлен. Обновите заказ, чтобы проверить окончательный статус."</string>
+    <string name="water_submitted_unconfirmed">"Команда подачи воды отправлена. Обновите статус. Если вода подаётся, проверьте текущий сеанс и завершите его."</string>
+    <string name="payment_deduction_unsupported">"Платформа применила к этому заказу неподдерживаемый вычет. Оплата остановлена. Измените его в исходном приложении и повторите попытку."</string>
+    <string name="payment_deduction_unconfirmed">"Не удалось проверить вычеты по заказу. Оплата остановлена. Обновите заказ и повторите попытку."</string>
+</resources>

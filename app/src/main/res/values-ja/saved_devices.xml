@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"よく使う機器"</string>
+    <string name="saved_device_title_laundry" formatted="false">"よく使う洗濯機"</string>
+    <string name="saved_device_title_water" formatted="false">"よく使う給水機"</string>
+    <string name="saved_device_title_dryer" formatted="false">"よく使う乾燥機"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"乾燥機"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"保存された乾燥機はありません。読み取り成功後に自動保存されます"</string>
+    <string name="saved_device_entry_count_dryer">"乾燥機 %1$d 台保存済み。タップして選択"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"ここには乾燥機のみ表示します。選択時に現在の時間と料金をプラットフォームへ再確認します。"</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"よく使う乾燥機はまだありません"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"読み取りと確認に成功した乾燥機がここに保存されます。選択時は再度問い合わせます。"</string>
+    <string name="saved_device_entry_empty" formatted="false">"読み取り成功後に自動保存。次回はワンタップで選択できます"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"よく使う洗濯機はまだありません。読み取り成功後に自動保存されます"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"よく使う給水機はまだありません。読み取り成功後に自動保存されます"</string>
+    <string name="saved_device_entry_count">"%1$d 台保存済み。タップして選択"</string>
+    <string name="saved_device_entry_count_laundry">"洗濯機 %1$d 台保存済み。タップして選択"</string>
+    <string name="saved_device_entry_count_water">"給水機 %1$d 台保存済み。タップして選択"</string>
+    <string name="saved_device_hint" formatted="false">"選択時に機器と現在の状態をプラットフォームへ再確認します。以前の料金・モード・認証は使用しません。"</string>
+    <string name="saved_device_hint_laundry" formatted="false">"ここには洗濯機の記録のみを表示します。選択時に機器と現在の状態をプラットフォームへ再確認します。以前の料金・モード・認証は使用しません。"</string>
+    <string name="saved_device_hint_water" formatted="false">"ここには給水機の記録のみを表示します。選択時に機器と現在の状態をプラットフォームへ再確認します。以前の料金・モード・認証は使用しません。"</string>
+    <string name="saved_device_empty_title" formatted="false">"よく使う機器はまだありません"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"よく使う洗濯機はまだありません"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"よく使う給水機はまだありません"</string>
+    <string name="saved_device_empty_body" formatted="false">"読み取りと確認に成功した機器がここに自動保存されます。選択時は再度プラットフォームへ問い合わせます。"</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"読み取りと確認に成功した洗濯機がここに自動保存されます。選択時は再度プラットフォームへ問い合わせます。"</string>
+    <string name="saved_device_empty_body_water" formatted="false">"読み取りと確認に成功した給水機がここに自動保存されます。選択時は再度プラットフォームへ問い合わせます。"</string>
+    <string name="saved_device_kind_laundry" formatted="false">"洗濯機"</string>
+    <string name="saved_device_kind_water" formatted="false">"給水機"</string>
+    <string name="saved_device_last_used">"最終使用：%1$s"</string>
+    <string name="saved_device_select" formatted="false">"選択"</string>
+    <string name="saved_device_rename" formatted="false">"名前を変更"</string>
+    <string name="saved_device_delete" formatted="false">"削除"</string>
+    <string name="saved_device_close" formatted="false">"閉じる"</string>
+    <string name="saved_device_note_label" formatted="false">"メモ（任意）"</string>
+    <string name="saved_device_note_hint" formatted="false">"例：寮の1階"</string>
+    <string name="saved_device_save" formatted="false">"保存"</string>
+    <string name="saved_device_cancel" formatted="false">"キャンセル"</string>
+    <string name="saved_device_delete_title" formatted="false">"このよく使う機器を削除しますか？"</string>
+    <string name="saved_device_delete_body" formatted="false">"この端末の記録のみ削除します。プラットフォームのアカウントや機器には影響しません。"</string>
+    <string name="saved_device_deleted" formatted="false">"よく使う機器を削除しました"</string>
+    <string name="saved_device_renamed" formatted="false">"メモを保存しました"</string>
+    <string name="saved_device_not_found" formatted="false">"このよく使う機器の記録は存在しません"</string>
+    <string name="saved_device_login_required" formatted="false">"よく使う機器を使うにはログインしてください"</string>
+    <string name="saved_device_invalid" formatted="false">"このよく使う機器の記録は無効です。もう一度読み取ってください"</string>
+    <string name="saved_device_identity_changed" formatted="false">"このQRコードは別の機器に紐付いています。もう一度読み取って確認してください"</string>
+    <string name="saved_device_save_failed" formatted="false">"よく使う機器を保存できません。空き容量を確認してください"</string>
+    <string name="saved_device_rename_title" formatted="false">"よく使う機器の名前を変更"</string>
+    <string name="dryer_duration_title" formatted="false">"乾燥時間を選択"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d 分"</string>
+    <string name="dryer_order_count" formatted="false">"%1$d 件"</string>
+    <string name="dryer_order_empty" formatted="false">"乾燥機の注文はまだありません"</string>
+</resources>

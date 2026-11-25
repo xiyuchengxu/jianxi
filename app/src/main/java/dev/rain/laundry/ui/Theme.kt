@@ -5,17 +5,29 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 
 val LocalLaundryDarkTheme = staticCompositionLocalOf { false }
+val LocalMiuixStyle = staticCompositionLocalOf { false }
+
+@Composable
+internal fun appShape(defaultRadius: Dp): Shape = RoundedCornerShape(
+    defaultRadius
+).let { if (LocalMiuixStyle.current) top.yukonga.miuix.kmp.utils.SmoothRoundedCornerShape(minOf(defaultRadius, 16.dp)) else it }
 
 fun ThemePalette.accent(): Color = Color(when (this) {
     ThemePalette.SLATE -> 0xFF326780
@@ -30,6 +42,7 @@ fun ThemePalette.accent(): Color = Color(when (this) {
 
 /** Complete light/dark roles keep cards, dialogs and text fields in the same palette. */
 fun laundryColorScheme(settings: ThemeSettings, dark: Boolean): ColorScheme {
+    if (settings.designStyle == DesignStyle.MIUIX) return miuixColorScheme(settings.pureBlack, dark)
     val accent = settings.palette.accent()
     val weight = when (settings.colorStyle) {
         ColorStyle.SOFT -> .65f
@@ -89,17 +102,75 @@ fun laundryColorScheme(settings: ThemeSettings, dark: Boolean): ColorScheme {
     }
 }
 
+/** The bridge uses the installed Miuix library roles; it does not emulate that toolkit. */
+internal fun miuixLibraryColors(pureBlack: Boolean, dark: Boolean): top.yukonga.miuix.kmp.theme.Colors {
+    if (!dark) return top.yukonga.miuix.kmp.theme.lightColorScheme()
+    // Ordinary dark mode retains grey separation around cards; enhanced dark mode is pure black.
+    val colors = top.yukonga.miuix.kmp.theme.darkColorScheme(background = Color(0xFF141414))
+    return if (pureBlack) colors.copy(background = Color.Black,
+        surface = Color.Black, surfaceVariant = Color.Black,
+        surfaceContainer = Color.Black, surfaceContainerHigh = Color.Black,
+        surfaceContainerHighest = Color.Black,
+        secondary = Color.Black, secondaryVariant = Color.Black,
+        disabledSecondary = Color.Black, disabledSecondaryVariant = Color.Black,
+        secondaryContainer = Color.Black, secondaryContainerVariant = Color.Black,
+        tertiaryContainerVariant = Color.Black,
+        outline = Color.Black, dividerLine = Color.Black) else colors
+}
+
+private fun miuixColorScheme(pureBlack: Boolean, dark: Boolean): ColorScheme {
+    val colors = miuixLibraryColors(pureBlack, dark)
+    val base = if (dark) darkColorScheme() else lightColorScheme()
+    return base.copy(
+        primary = colors.primary, onPrimary = colors.onPrimary,
+        primaryContainer = colors.tertiaryContainer, onPrimaryContainer = colors.onSurface,
+        secondary = colors.primary, onSecondary = colors.onPrimary,
+        secondaryContainer = colors.secondaryVariant, onSecondaryContainer = colors.onSecondaryVariant,
+        tertiary = colors.primary, onTertiary = colors.onPrimary,
+        tertiaryContainer = colors.tertiaryContainer, onTertiaryContainer = colors.onSurface,
+        background = colors.background, onBackground = colors.onBackground,
+        surface = colors.surface, onSurface = colors.onSurface,
+        surfaceVariant = colors.secondaryVariant,
+        onSurfaceVariant = colors.onSurfaceVariantSummary.compositeOver(colors.surface),
+        surfaceDim = colors.background, surfaceBright = colors.surfaceContainerHighest,
+        surfaceContainerLowest = colors.background, surfaceContainerLow = colors.surface,
+        surfaceContainer = colors.surface, surfaceContainerHigh = colors.surfaceContainerHigh,
+        surfaceContainerHighest = colors.surfaceContainerHighest,
+        outline = colors.outline, outlineVariant = colors.dividerLine,
+        inverseSurface = if (dark) Color.White else Color.Black,
+        inverseOnSurface = if (dark) Color.Black else Color.White,
+        inversePrimary = colors.primary, surfaceTint = colors.primary,
+        scrim = Color.Black
+    )
+}
+
+private fun miuixTypography(): Typography {
+    val styles = top.yukonga.miuix.kmp.theme.defaultTextStyles()
+    return Typography(
+        displayLarge = styles.title1, displayMedium = styles.title1, displaySmall = styles.title2,
+        headlineLarge = styles.title2, headlineMedium = styles.title3, headlineSmall = styles.title4,
+        titleLarge = styles.headline1, titleMedium = styles.headline2, titleSmall = styles.subtitle,
+        bodyLarge = styles.main, bodyMedium = styles.body1, bodySmall = styles.body2,
+        labelLarge = styles.button, labelMedium = styles.footnote1, labelSmall = styles.footnote2
+    )
+}
+
 @Composable
 @Suppress("DEPRECATION")
-fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), darkSystemBars: Boolean = false, content: @Composable () -> Unit) {
+fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), darkSystemBars: Boolean = false,
+    wallpaperBehindStatusBar: Boolean = false, content: @Composable () -> Unit) {
     val systemDark = isSystemInDarkTheme()
     val dark = when (settings.mode) {
         ThemeMode.SYSTEM -> systemDark
         ThemeMode.LIGHT -> false
         ThemeMode.DARK -> true
     }
-    val dynamic = settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val wallpaper = if (dynamic) rememberDesktopWallpaperColors() else WallpaperColorInfo()
+    val miuix = settings.designStyle == DesignStyle.MIUIX
+    val dynamic = !miuix && settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val wallpaperEnabled = settings.wallpaperBackgroundEnabled && rememberSystemWallpaperSupported()
+    val wallpaperInStatusBar = wallpaperEnabled && wallpaperBehindStatusBar
+    val wallpaper = if ((dynamic || wallpaperInStatusBar) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1)
+        rememberDesktopWallpaperColors() else WallpaperColorInfo()
     val scheme = if (dynamic) {
         val context = LocalContext.current
         val configuration = LocalConfiguration.current
@@ -110,8 +181,11 @@ fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), darkSystemBars: Bool
             resolveWallpaperColorScheme(wallpaper.seed, system, dark, settings.pureBlack)
         }
     } else {
-        remember(settings, dark) { laundryColorScheme(settings, dark) }
+        remember(miuix, settings.palette, settings.colorStyle, settings.pureBlack, dark) {
+            laundryColorScheme(settings, dark)
+        }
     }
+    val typography = remember(settings.font, miuix) { if (miuix) miuixTypography() else appTypography(settings.font) }
     val view = LocalView.current
     if (!view.isInEditMode) SideEffect {
         themeActivity(view.context)?.window?.let { window ->
@@ -119,13 +193,31 @@ fun LaundryTheme(settings: ThemeSettings = ThemeSettings(), darkSystemBars: Bool
             if (Build.VERSION.SDK_INT < 29) window.navigationBarColor =
                 if (darkSystemBars) Color(0xFF111918).toArgb() else scheme.background.toArgb()
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !dark && !darkSystemBars
+                isAppearanceLightStatusBars = !darkSystemBars && if (wallpaperInStatusBar) {
+                    val base = wallpaper.primary?.let { Color(it) } ?: scheme.background
+                    // The crossover where black and white have equal contrast is about 0.179 luminance.
+                    wallpaperBrightnessOverlay(settings.wallpaperBackgroundBrightness).compositeOver(base).luminance() > .179f
+                } else !dark
                 isAppearanceLightNavigationBars = !dark && !darkSystemBars
             }
         }
     }
-    CompositionLocalProvider(LocalLaundryDarkTheme provides dark, LocalWallpaperColorInfo provides wallpaper) {
-        MaterialTheme(colorScheme = scheme, content = content)
+    val shapes = if (miuix) Shapes(
+        extraSmall = RoundedCornerShape(4.dp), small = RoundedCornerShape(8.dp),
+        medium = RoundedCornerShape(12.dp), large = RoundedCornerShape(16.dp),
+        extraLarge = RoundedCornerShape(20.dp)
+    ) else Shapes()
+    CompositionLocalProvider(LocalLaundryDarkTheme provides dark, LocalMiuixStyle provides miuix,
+        LocalWallpaperTextBacking provides wallpaperEnabled,
+        LocalControlOpacity provides (1f - settings.effectiveControlTransparency(wallpaperEnabled)),
+        // Native Miuix surfaces do not publish the Material foreground used by shared text and icons.
+        LocalContentColor provides scheme.onBackground, LocalWallpaperColorInfo provides wallpaper) {
+        if (miuix) {
+            val nativeColors = remember(settings.pureBlack, dark) { miuixLibraryColors(settings.pureBlack, dark) }
+            top.yukonga.miuix.kmp.theme.MiuixTheme(colors = nativeColors) {
+                MaterialTheme(colorScheme = scheme, typography = typography, shapes = shapes, content = content)
+            }
+        } else MaterialTheme(colorScheme = scheme, typography = typography, shapes = shapes, content = content)
     }
 }
 

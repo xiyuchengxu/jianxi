@@ -69,6 +69,17 @@ class WaterApiTest {
         assertTrue(runCatching { api.startWater(device, outlet, LocationFix(0.0, 0.0)) }.isFailure)
         assertEquals(1, server.requestCount)
     }
+    @Test fun issuedWaterCommandWithDeductionIssueRetainsQueryIdentityAndDoesNotClaimItWasStopped() = runTest {
+        reply("""[{"method":2,"isThird":0,"needOpenFlag":false}]""")
+        reply("\"selected\"")
+        reply("""{"orderNo":"issued-order","msgId":"issued-command","promotionList":[{"promotionType":8}]}""")
+        val result = api.startWater(device, outlet, LocationFix(0.0, 0.0))
+        assertEquals("issued-order", result.orderNo)
+        assertEquals("issued-command", result.msgId)
+        assertTrue(result.verificationIssue is WaterCommandSubmittedUnconfirmed)
+        assertFalse(result.verificationIssue?.message.orEmpty().contains("停止付款"))
+        assertEquals(3, server.requestCount)
+    }
     @Test fun alipayOnlyWaterMachineUsesItsAdvertisedAfterPayChannel() = runTest {
         reply("""[{"method":15,"methodName":"支付宝支付","isThird":0,"needOpenFlag":true,"defaultFlag":true},{"method":53,"methodName":"云闪付免密支付"}]""")
         reply("[]"); reply("true")
@@ -506,14 +517,16 @@ class WaterApiTest {
         val channels = server.takeRequest()
         assertEquals("/payChannelRoute/againPay", channels.path)
         assertEquals(mapOf("orderNo" to "final-no", "confirmSelectedStatus" to "false", "token" to "test-token"), fields(channels))
+        reply("""{"id":"water-bill","orderNo":"final-no","payPrice":"0.15","promotionList":[]}""")
         reply("""{"prepayParam":"server-payment-payload"}""")
         assertEquals("server-payment-payload", api.prepay(payable))
+        assertEquals("/order/detail", server.takeRequest().path)
         val prepay = server.takeRequest()
         assertEquals("/pay/unify/prePay", prepay.path)
         val prepayFields = fields(prepay)
         assertEquals("13", prepayFields["payType"])
         assertEquals("0", prepayFields["againFlag"])
-        assertEquals(4, server.requestCount)
+        assertEquals(5, server.requestCount)
     }
     @Test fun missingSingleAlipayBillRouteDoesNotPayOrActivateAnything() = runTest {
         reply("""[{"method":15,"autoPayState":1},{"method":53}]""")

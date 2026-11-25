@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scanner_feature_disabled">Сканирование выключено. Включите его в настройках.</string>
+  <string name="settings_scanner_title" formatted="false">"Сканирование камерой"</string>
+  <string name="settings_scanner_help" formatted="false">"Управляет доступом к сканированию камерой независимо от стирки и воды. После отключения можно вводить код вручную и использовать сохранённые устройства. Настройка не отменяет заказы, не оплачивает их и не запускает устройства."</string>
+</resources>

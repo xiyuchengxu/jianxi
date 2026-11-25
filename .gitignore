@@ -6,11 +6,9 @@ local.properties
 *.jks
 *.keystore
 *.p12
-release-signing-secrets.json
-*正式签名备份*.zip
-.android-sdk/
-.tools/
-artifacts/
+*.pfx
+*.pem
 *.log
 *.apk
+*.aab
 .DS_Store

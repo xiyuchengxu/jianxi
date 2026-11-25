@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scanner_feature_disabled">スキャンはオフです。設定で有効にしてください。</string>
+  <string name="settings_scanner_title" formatted="false">"カメラでスキャン"</string>
+  <string name="settings_scanner_help" formatted="false">"洗濯・給水のスイッチとは独立して、カメラスキャンの入口を切り替えます。オフでもデバイスコードの手入力や保存済みデバイスを使用できます。注文のキャンセル、支払い、デバイスの起動は行いません。"</string>
+</resources>

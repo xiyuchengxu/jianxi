@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="points_title">"Points"</string>
+    <string name="points_balance">"Points balance"</string>
+    <string name="points_login_required">"Sign in to view your points"</string>
+    <string name="points_loading">"Refreshing points and tasks"</string>
+    <string name="points_signing">"Checking in"</string>
+    <string name="points_sign_confirmed">"Check-in confirmed"</string>
+    <string name="points_finished">"Check-in confirmed and points refreshed"</string>
+    <string name="points_already_signed">"Checked in today"</string>
+    <string name="points_result_unknown">"Check-in result unconfirmed. Refresh to check."</string>
+    <string name="points_load_error">"Points data is unconfirmed. Refresh to try again."</string>
+    <string name="points_open_failed">"Pangguai app not found"</string>
+    <string name="points_refresh">"Refresh"</string>
+    <string name="points_start">"Check in automatically and refresh"</string>
+    <string name="points_unsigned_today">"Not checked in today"</string>
+    <string name="points_sign_status_unknown">"Check-in status not yet checked"</string>
+    <string name="points_tasks_title">"Points tasks"</string>
+    <string name="points_empty">"The platform has returned no points tasks"</string>
+    <string name="points_not_loaded">"Refresh to load points tasks"</string>
+    <string name="points_open_original">"Open Pangguai to complete tasks"</string>
+    <string name="points_logs_title">"Activity log"</string>
+    <string name="points_task_reward">"Reward: %1$s points"</string>
+    <string name="points_task_progress">"Completed: %1$d / %2$d"</string>
+    <string name="points_task_completed_count">"Completion count: %1$d"</string>
+    <string name="points_task_done">"Completed"</string>
+    <string name="points_task_original">"Complete in Pangguai"</string>
+</resources>

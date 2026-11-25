@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"订单同步暂时失败（HTTP %1$s），将保留“待同步”并自动重试；也可手动重试。"</string>
+    <string name="cloud_sync_rejected">"服务器未接受此订单的云订阅，未创建提醒。请确认订单仍在运行后手动重试。"</string>
+    <string name="cloud_sync_rejected_http">"服务器未接受此订单的云订阅（HTTP %1$s），未创建提醒。请确认订单仍在运行后手动重试。"</string>
+    <string name="cloud_upstream_http_405">"平台拒绝服务器查询（405），未建立订单订阅。请稍后手动重试；若持续出现，请联系维护者检查服务器查询权限。"</string>
+    <string name="cloud_upstream_http_403">"平台拒绝服务器查询（403），未建立订单订阅。请确认平台登录状态后手动重试。"</string>
+    <string name="cloud_upstream_retryable">"平台查询暂时不可用，未建立订单订阅；将自动重试。"</string>
+    <string name="cloud_upstream_terminal">"平台查询被拒绝，未建立订单订阅。请稍后手动重试。"</string>
+    <string name="cloud_upstream_identity_mismatch">"平台订单身份不一致，未建立订单订阅。"</string>
+    <string name="cloud_device_unsupported">"服务器版本不支持手机协助提醒，未启用。请升级服务器，或继续使用平台核验模式。"</string>
+    <string name="cloud_device_rejected">"服务器未接受手机报告，未更新提醒。请稍后手动重试。"</string>
+    <string name="cloud_device_assist_desc">"启用后，手机把本地观察到的运行状态和平台预计时间交给服务器；预计到点由服务器提醒，洗衣完成后由手机明确确认。平台未提供预计时间时不会编造，服务端不支持会明确报错。"</string>
+    <string name="cloud_device_assist_enable">"启用手机协助提醒"</string>
+    <string name="cloud_device_assist_unbind">"停止手机协助：使用下方“解绑”；不提供静默切换。"</string>
+    <string name="cloud_device_assist_enabled">"手机协助提醒已启用"</string>
+    <string name="cloud_device_assist_pending">"正在同步运行证据…"</string>
+    <string name="cloud_device_assist_pending_terminal">"手机报告待同步；收到明确回执前不会声称完成或取消。"</string>
+    <string name="cloud_device_assist_scheduled">"已安排预计提醒（预计 %1$s）。"</string>
+    <string name="cloud_device_assist_awaiting">"等待手机确认完成。"</string>
+    <string name="cloud_device_assist_awaiting_unknown">"等待手机确认完成（平台未提供预计时间）。"</string>
+    <string name="cloud_device_assist_completed">"手机已确认完成。"</string>
+    <string name="cloud_device_assist_cancelled">"订单已取消/退款，未发送提醒已撤销。"</string>
+    <string name="cloud_device_assist_accepted">"服务商已受理预计提醒，不代表微信已送达。"</string>
+    <string name="cloud_source_label">"云端来源：%1$s"</string>
+    <string name="cloud_source_device">"手机协助"</string>
+    <string name="cloud_source_platform">"平台核验"</string>
+</resources>

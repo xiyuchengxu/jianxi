@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -38,14 +39,12 @@ internal fun LanguageSettings(enabled: Boolean) {
     val title = appText(R.string.msg_9f6fee1aba17)
     fun label(language: AppLanguage) = if (language == AppLanguage.SYSTEM)
         appText(R.string.msg_217cfe7db1e3) else language.nativeName
-    Row(Modifier.fillMaxWidth().clickable(enabled = enabled) { open = true }
+    AdjustableSettingRow("settings.language", Modifier.fillMaxWidth().clickable(enabled = enabled) { open = true }
         .semantics { contentDescription = title }.padding(20.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(Icons.Outlined.Language, null, tint = MaterialTheme.colorScheme.primary)
         Spacer(Modifier.width(16.dp))
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title, style = MaterialTheme.typography.titleMedium)
-            Text(label(selected), style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(title, Modifier.controlGlyphContrast(MaterialTheme.colorScheme.onSurface), style = MaterialTheme.typography.titleMedium)
         }
         Icon(Icons.Outlined.ChevronRight, null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
     }
@@ -71,7 +70,7 @@ internal fun LanguageSettings(enabled: Boolean) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         },
-        confirmButton = { TextButton(onClick = { open = false }) { Text(localizedMessage("关闭")) } })
+        confirmButton = { AppTextButton(onClick = { open = false }) { Text(localizedMessage("关闭")) } })
 }
 
 private fun Context.activity(): Activity? = when (this) {

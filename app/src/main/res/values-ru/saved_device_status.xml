@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="saved_status_title" formatted="false">Состояние устройства при этой проверке</string>
+    <string name="saved_status_checking" formatted="false">Проверка текущего состояния…</string>
+    <string name="saved_status_laundry_available" formatted="false">Проверенный режим стирки доступен</string>
+    <string name="saved_status_water_available" formatted="false">Проверенный кран свободен</string>
+    <string name="saved_status_laundry_using" formatted="false">Машина используется</string>
+    <string name="saved_status_water_using" formatted="false">Вы используете этот кран</string>
+    <string name="saved_status_occupied" formatted="false">Используется другим пользователем</string>
+    <string name="saved_status_unavailable" formatted="false">Устройство сейчас недоступно</string>
+    <string name="saved_status_unknown" formatted="false">Текущее состояние не подтверждено</string>
+    <string name="saved_status_failed" formatted="false">Не удалось проверить состояние</string>
+    <string name="saved_status_failed_detail" formatted="false">Не удалось проверить текущее состояние устройства. Повторите попытку позже.</string>
+    <string name="saved_status_mode">Проверенный режим: %1$s</string>
+    <string name="saved_status_outlet">Проверенный кран: %1$s</string>
+    <string name="saved_status_remaining">По данным платформы осталось около %1$d мин.</string>
+    <string name="saved_status_checked_at">Время проверки: %1$s</string>
+    <string name="saved_status_snapshot_hint" formatted="false">Это результат данной проверки. Перед использованием доступность проверяется снова.</string>
+    <string name="saved_status_list_available" formatted="false">Сейчас доступно</string>
+    <string name="saved_status_list_unavailable" formatted="false">Сейчас недоступно</string>
+    <string name="saved_status_list_checking" formatted="false">Проверка</string>
+    <string name="saved_status_list_unknown" formatted="false">Статус не подтверждён</string>
+    <string name="saved_status_list_failed" formatted="false">Ошибка проверки</string>
+</resources>

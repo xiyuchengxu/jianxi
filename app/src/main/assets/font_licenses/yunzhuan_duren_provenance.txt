@@ -1,0 +1,12 @@
+YunZhuanDuRen / 云篆度人经
+Copyright (c) 2026 执笔之龙
+License: SIL Open Font License 1.1
+Upstream: https://github.com/Lawrence-of-AnKing/yunzhuan-duren
+Revision: bcedee13ee0cb6b491f59f781ae1e5cdf5276dd8 (v1.0.0)
+Original file: dist/YunZhuanDuRen-Unmerged.ttf
+Bundled resource: res/font/yunzhuan_duren.ttf
+SHA-256: 861288b479ebc3818583734573af97ef329f3018d760320bba0fe2894a0c52f2
+Original bytes: 4718052
+The font is bundled unmodified, without subsetting, merging, renaming its internal font names, or rebuilding.
+The full copyright notice and OFL 1.1 are bundled as res/raw/yunzhuan_duren_license.txt and available in the About screen.
+The font license is independent of Jianxi's MIT source code license.

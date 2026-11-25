@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="saved_device_title" formatted="false">"Часто используемые устройства"</string>
+    <string name="saved_device_title_laundry" formatted="false">"Сохранённые стиральные машины"</string>
+    <string name="saved_device_title_water" formatted="false">"Сохранённые кулеры"</string>
+    <string name="saved_device_title_dryer" formatted="false">"Сохранённые сушильные машины"</string>
+    <string name="saved_device_kind_dryer" formatted="false">"Сушильная машина"</string>
+    <string name="saved_device_entry_empty_dryer" formatted="false">"Сушильных машин пока нет. Сохраняется автоматически после успешного сканирования"</string>
+    <string name="saved_device_entry_count_dryer">"Сушильные машины: сохранено %1$d. Нажмите, чтобы выбрать"</string>
+    <string name="saved_device_hint_dryer" formatted="false">"Здесь показаны только сушильные машины. При выборе актуальные время сушки и цена снова проверяются на платформе."</string>
+    <string name="saved_device_empty_title_dryer" formatted="false">"Пока нет сохранённых сушильных машин"</string>
+    <string name="saved_device_empty_body_dryer" formatted="false">"Сушильная машина сохраняется после успешного сканирования и проверки. При выборе приложение снова запросит платформу."</string>
+    <string name="saved_device_entry_empty" formatted="false">"Сохраняется автоматически после успешного сканирования; выбирайте в одно касание"</string>
+    <string name="saved_device_entry_empty_laundry" formatted="false">"Сохранённых стиральных машин пока нет. Сохраняется автоматически после успешного сканирования"</string>
+    <string name="saved_device_entry_empty_water" formatted="false">"Сохранённых кулеров пока нет. Сохраняется автоматически после успешного сканирования"</string>
+    <string name="saved_device_entry_count">"Сохранено: %1$d. Нажмите, чтобы выбрать"</string>
+    <string name="saved_device_entry_count_laundry">"Стиральные машины: сохранено %1$d. Нажмите, чтобы выбрать"</string>
+    <string name="saved_device_entry_count_water">"Кулеры: сохранено %1$d. Нажмите, чтобы выбрать"</string>
+    <string name="saved_device_hint" formatted="false">"При выборе устройство и текущее состояние снова проверяются на платформе. Старые цены, режимы и авторизации не используются."</string>
+    <string name="saved_device_hint_laundry" formatted="false">"Здесь показаны только сохранённые стиральные машины. При выборе устройство и текущее состояние снова проверяются на платформе. Старые цены, режимы и авторизации не используются."</string>
+    <string name="saved_device_hint_water" formatted="false">"Здесь показаны только сохранённые кулеры. При выборе устройство и текущее состояние снова проверяются на платформе. Старые цены, режимы и авторизации не используются."</string>
+    <string name="saved_device_empty_title" formatted="false">"Пока нет сохранённых устройств"</string>
+    <string name="saved_device_empty_title_laundry" formatted="false">"Сохранённых стиральных машин пока нет"</string>
+    <string name="saved_device_empty_title_water" formatted="false">"Сохранённых кулеров пока нет"</string>
+    <string name="saved_device_empty_body" formatted="false">"Устройства сохраняются здесь после успешного сканирования и проверки. При выборе приложение снова запросит платформу."</string>
+    <string name="saved_device_empty_body_laundry" formatted="false">"Стиральные машины сохраняются здесь после успешного сканирования и проверки. При выборе приложение снова запросит платформу."</string>
+    <string name="saved_device_empty_body_water" formatted="false">"Кулеры сохраняются здесь после успешного сканирования и проверки. При выборе приложение снова запросит платформу."</string>
+    <string name="saved_device_kind_laundry" formatted="false">"Стиральная машина"</string>
+    <string name="saved_device_kind_water" formatted="false">"Кулер"</string>
+    <string name="saved_device_last_used">"Последнее использование: %1$s"</string>
+    <string name="saved_device_select" formatted="false">"Выбрать"</string>
+    <string name="saved_device_rename" formatted="false">"Переименовать"</string>
+    <string name="saved_device_delete" formatted="false">"Удалить"</string>
+    <string name="saved_device_close" formatted="false">"Закрыть"</string>
+    <string name="saved_device_note_label" formatted="false">"Заметка (необязательно)"</string>
+    <string name="saved_device_note_hint" formatted="false">"Например: общежитие, 1 этаж"</string>
+    <string name="saved_device_save" formatted="false">"Сохранить"</string>
+    <string name="saved_device_cancel" formatted="false">"Отмена"</string>
+    <string name="saved_device_delete_title" formatted="false">"Удалить это устройство?"</string>
+    <string name="saved_device_delete_body" formatted="false">"Удаляется только локальная запись. Аккаунт на платформе и само устройство не затрагиваются."</string>
+    <string name="saved_device_deleted" formatted="false">"Устройство удалено"</string>
+    <string name="saved_device_renamed" formatted="false">"Заметка сохранена"</string>
+    <string name="saved_device_not_found" formatted="false">"Эта запись устройства больше не существует"</string>
+    <string name="saved_device_login_required" formatted="false">"Войдите, чтобы использовать сохранённые устройства"</string>
+    <string name="saved_device_invalid" formatted="false">"Запись устройства недействительна. Отсканируйте код снова."</string>
+    <string name="saved_device_identity_changed" formatted="false">"Этот QR-код теперь относится к другому устройству. Отсканируйте его снова для подтверждения."</string>
+    <string name="saved_device_save_failed" formatted="false">"Не удалось сохранить устройство. Проверьте свободное место."</string>
+    <string name="saved_device_rename_title" formatted="false">"Переименовать устройство"</string>
+    <string name="dryer_duration_title" formatted="false">"Выберите время сушки"</string>
+    <string name="dryer_duration_minutes" formatted="false">"%1$d мин"</string>
+    <string name="dryer_order_count" formatted="false">"Заказов: %1$d"</string>
+    <string name="dryer_order_empty" formatted="false">"Заказов на сушку пока нет"</string>
+</resources>

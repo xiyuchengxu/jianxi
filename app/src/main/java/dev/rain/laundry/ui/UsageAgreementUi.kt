@@ -57,7 +57,8 @@ fun FirstLaunchAgreement(store: ConsentStore, onAccepted: () -> Unit, onExit: ()
                         Text(localizedConfirmation, localize = false, color = MaterialTheme.colorScheme.primary,
                             style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
                     }
-                    OutlinedTextField(value = confirmation, onValueChange = { confirmation = it.take(maxOf(128, localizedConfirmation.length)); saveError = false },
+                    AppOutlinedTextField(value = confirmation, onValueChange = { confirmation = it.take(maxOf(128, localizedConfirmation.length)); saveError = false },
+                        labelText = appText(R.string.msg_698b0d6c12a4),
                         label = { Text(appText(R.string.msg_698b0d6c12a4)) }, enabled = !saving, minLines = 2, maxLines = 3,
                         modifier = Modifier.fillMaxWidth().semantics { contentDescription = appText(R.string.msg_6ea618c519a2) },
                         supportingText = { Text(appText(R.string.msg_87b7632a53e5)) },
@@ -68,9 +69,9 @@ fun FirstLaunchAgreement(store: ConsentStore, onAccepted: () -> Unit, onExit: ()
         }
         Spacer(Modifier.height(12.dp))
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = onExit, enabled = !saving, modifier = Modifier.weight(1f)) { Text(appText(R.string.msg_40b0aade58d7)) }
-            Button(onClick = {
-                if (!valid || saving) return@Button
+            AppOutlinedButton(onClick = onExit, enabled = !saving, modifier = Modifier.weight(1f)) { Text(appText(R.string.msg_40b0aade58d7)) }
+            AppButton(onClick = {
+                if (!valid || saving) return@AppButton
                 saving = true
                 val entered = AgreementPolicy.CONFIRMATION
                 scope.launch {
@@ -93,7 +94,7 @@ fun UsageDocumentDialog(title: String, content: String, onDismiss: () -> Unit) {
             documentItems("document", title, text, includeTitle = false)
         }
         Spacer(Modifier.height(12.dp))
-        TextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(appText(R.string.msg_3fd47edce45b)) }
+        AppTextButton(onClick = onDismiss, modifier = Modifier.align(Alignment.End)) { Text(appText(R.string.msg_3fd47edce45b)) }
     }
 }
 

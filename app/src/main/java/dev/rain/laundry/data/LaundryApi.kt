@@ -2,6 +2,9 @@ package dev.rain.laundry.data
 
 import com.google.gson.*
 import dev.rain.laundry.core.*
+import dev.rain.laundry.diagnostics.DiagnosticStatus
+import dev.rain.laundry.diagnostics.DiagnosticOperation
+import dev.rain.laundry.diagnostics.DiagnosticsLog
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.withContext
@@ -26,7 +29,8 @@ class LaundryApi(
             "pay/unify/prePay", "pay/unify/pay", "order/pay_status", "order/detail", "order/sync", "order/cancel", "appoint/checkMachineCanUse",
             "goods/water/unlock", "goods/water/sync", "goods/endWater", "machine/msg/sync",
             "payChannelRoute/afterPay", "payChannelRoute/addUserAfterPayChannel", "payChannelRoute/againPay", "order/afterPay/creating",
-            "popup/shop", "alipay/isSign", "alipay/signUrl/pinpoint")
+            "popup/shop", "alipay/isSign", "alipay/signUrl/pinpoint",
+            "user/balance", "task/list", "signin/todaySignIn", "signin/signInAcList", "signin/doUserSignIn")
         private val PAYMENT_OPERATIONS = mapOf(
             "appoint/checkMachineCanUse" to "核对设备状态失败",
             "trade/preview/v4" to "核对洗衣金额失败",
@@ -74,8 +78,15 @@ class LaundryApi(
                 .header("orderRiskTimestamp", timestamp)
                 .header("orderRiskSign", WireProtocol.riskSign("/$path", authorization, timestamp, device.imei, device.category, fix))
         }
+        val started = System.nanoTime()
+        var status = DiagnosticStatus.INVALID_RESPONSE
+        var errorCode: Int? = null
         try {
             client.newCall(request.build()).execute().use { response ->
+                if (!response.isSuccessful) {
+                    status = DiagnosticStatus.HTTP_ERROR
+                    errorCode = response.code
+                }
                 if (response.code == 401 && !anonymous) throw SessionExpired()
                 if (response.code == 403) throw BusinessRejected(403, "本次请求被平台拒绝，请稍后重试（403）", PAYMENT_OPERATIONS[path])
                 if (!response.isSuccessful) throw ClientError("服务暂时不可用（${response.code}）")
@@ -87,14 +98,33 @@ class LaundryApi(
                 catch (_: Exception) { throw ClientError("服务器返回格式变化，暂时无法处理") }
                 val code = root.text("code").toIntOrNull() ?: throw ClientError("服务器响应缺少有效状态码")
                 if (code != 0) {
+                    errorCode = code
                     val message = root.text("msg", "请求失败（$code）").take(180)
                     if (!anonymous && (code == 401 || message in setOf("未登录", "登录已过期", "登录失效", "请重新登录"))) throw SessionExpired()
                     if (code == 2128 && path == "goods/normal/skus") throw BusinessRejected(code, "此设备存在未支付订单，请先在原应用处理")
                     throw BusinessRejected(code, message, PAYMENT_OPERATIONS[path])
                 }
+                status = DiagnosticStatus.SUCCESS
                 root.get("data") ?: JsonNull.INSTANCE
             }
-        } catch (_: IOException) { throw NetworkUnavailable() }
+        } catch (e: SessionExpired) {
+            status = DiagnosticStatus.SESSION_EXPIRED
+            throw e
+        } catch (e: BusinessRejected) {
+            status = DiagnosticStatus.REJECTED
+            errorCode = e.code
+            throw e
+        } catch (_: IOException) {
+            status = DiagnosticStatus.NETWORK_ERROR
+            throw NetworkUnavailable()
+        } catch (e: CancellationException) {
+            status = DiagnosticStatus.CANCELLED
+            throw e
+        } finally {
+            diagnosticOperation(path)?.let { operation ->
+                DiagnosticsLog.record(operation, status, TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started), errorCode)
+            }
+        }
     }
 
     suspend fun sendCode(phone: String) { post("common/sms/sendCode", mapOf("phone" to phone, "template" to "reg")) }
@@ -108,10 +138,14 @@ class LaundryApi(
     }
     suspend fun scanDevice(code: DeviceCode): ScannedDevice {
         val (scan, detail) = deviceDetails(code)
-        return if (detail.text("categoryCode", scan.text("categoryCode")) == "04") {
-            val skus = post("goods/normal/skus", mapOf("goodsId" to detail.text("goodsId")))
-            ScannedDevice.Water(WaterRules.device(detail, skus))
-        } else ScannedDevice.Laundry(laundryDevice(scan, detail))
+        return when (detail.text("categoryCode", scan.text("categoryCode"))) {
+            "04" -> {
+                val skus = post("goods/normal/skus", mapOf("goodsId" to detail.text("goodsId")))
+                ScannedDevice.Water(WaterRules.device(detail, skus))
+            }
+            "02" -> ScannedDevice.Dryer(dryerDevice(scan, detail))
+            else -> ScannedDevice.Laundry(laundryDevice(scan, detail))
+        }
     }
     private suspend fun deviceDetails(code: DeviceCode): Pair<JsonObject, JsonObject> {
         val scan = post("goods/scan/v2", mapOf(code.key to code.value)).asJsonObject
@@ -137,6 +171,18 @@ class LaundryApi(
             category, detail.text("shopId"), detail.text("orgId"),
             detail.text("remainTime", "0").toIntOrNull() ?: 0, modes, detail.text("deviceErrorMsg"))
     }
+    private suspend fun dryerDevice(scan: JsonObject, detail: JsonObject): Device {
+        val id = detail.text("goodsId", scan.text("id")).ifBlank { throw ClientError("设备详情缺少编号") }
+        if (detail.text("categoryCode", scan.text("categoryCode")) != "02") throw ClientError("请扫描烘干机二维码")
+        if (detail.text("isBluetooth", "0") == "1") throw ClientError("此设备需要蓝牙启动，当前版本暂不支持")
+        if (detail.text("payment") == "after") throw ClientError("此设备使用先用后付，当前版本暂不支持")
+        val imei = detail.text("imei").ifBlank { throw ClientError("设备详情缺少标识，请先在原应用核对设备") }
+        val skuResponse = post("goods/normal/skus", mapOf("goodsId" to id))
+        val modes = parseDryerModes(skuResponse)
+        if (modes.isEmpty()) throw ClientError("当前烘干机没有可用模式或时长，请在原应用核对")
+        return Device(id, detail.text("name", "烘干机"), imei, "02", detail.text("shopId"), detail.text("orgId"),
+            detail.text("remainTime", "0").toIntOrNull() ?: 0, modes, detail.text("deviceErrorMsg"))
+    }
     fun parseModes(response: JsonElement): List<WashMode> {
         // Variants must be explicitly recognized. Unknown schemas fail closed.
         val data = if (response.isJsonObject && response.asJsonObject.has("code")) response.asJsonObject.get("data") else response
@@ -156,18 +202,91 @@ class LaundryApi(
             if (id.isBlank()) null else WashMode(id, item.text("name", "洗衣模式"), money(item.text("price")), item.text("feature"))
         }
     }
-    override suspend fun quote(device: Device, mode: WashMode): Quote {
+    fun parseDryerModes(response: JsonElement): List<WashMode> {
+        val data = if (response.isJsonObject && response.asJsonObject.has("code")) response.asJsonObject.get("data") else response
+        val array = when {
+            data == null || data.isJsonNull -> null
+            data.isJsonArray -> data.asJsonArray
+            data.isJsonObject -> listOf("skus", "skuList", "list").firstNotNullOfOrNull { key ->
+                data.asJsonObject.get(key)?.takeIf { it.isJsonArray }?.asJsonArray
+            }
+            else -> null
+        } ?: throw ClientError("烘干模式数据格式尚未适配，请保留二维码供后续验证")
+        return array.mapNotNull { element ->
+            if (!element.isJsonObject) return@mapNotNull null
+            val item = element.asJsonObject
+            if (item.text("scanAvailable", "true") == "false") return@mapNotNull null
+            val id = item.text("skuId").takeIf { it.isNotBlank() } ?: return@mapNotNull null
+            val attr = jsonObjectValue(item.get("extAttr"))
+                ?: throw ClientError("烘干时长数据格式尚未适配")
+            val rawPrices = attr.get("perPrice")?.takeIf { it.isJsonArray }?.asJsonArray
+                ?: throw ClientError("烘干时长数据格式尚未适配")
+            val durations = rawPrices.mapNotNull { priceElement ->
+                if (!priceElement.isJsonObject) throw ClientError("烘干时长选项格式尚未适配")
+                val price = priceElement.asJsonObject
+                val status = price.get("status")?.let(::jsonBoolean) ?: false
+                if (!status) return@mapNotNull null
+                val minutes = price.text("time").toIntOrNull()?.takeIf { it in 1..1440 }
+                    ?: throw ClientError("烘干时长格式异常，请在原应用核对")
+                val amount = money(price.text("price").ifBlank { "0" })
+                DryerDuration(minutes, amount, price.text("desc"),
+                    price.get("selected")?.let(::jsonBoolean) ?: false)
+            }.sortedByDescending { it.minutes }
+            if (durations.isEmpty()) return@mapNotNull null
+            val selected = durations.firstOrNull { it.selectedByPlatform } ?: durations.first()
+            WashMode(id, item.text("name", "烘干模式"), selected.price, item.text("feature"), durations)
+        }
+    }
+    private fun jsonObjectValue(value: JsonElement?): JsonObject? = when {
+        value == null || value.isJsonNull -> null
+        value.isJsonObject -> value.asJsonObject
+        value.isJsonPrimitive && value.asJsonPrimitive.isString -> runCatching {
+            JsonParser.parseString(value.asString).takeIf { it.isJsonObject }?.asJsonObject
+        }.getOrNull()
+        else -> null
+    }
+    private fun jsonBoolean(value: JsonElement): Boolean = when {
+        value.isJsonPrimitive && value.asJsonPrimitive.isBoolean -> value.asBoolean
+        value.isJsonPrimitive && value.asJsonPrimitive.isString && value.asString in setOf("true", "false") -> value.asString.toBoolean()
+        else -> throw ClientError("烘干可用状态格式尚未适配")
+    }
+    /** Existing read-only availability check; a false value does not identify offline vs occupied. */
+    suspend fun machineModeAvailable(mode: WashMode): Boolean {
         val available = post("appoint/checkMachineCanUse", mapOf("skuId" to mode.id))
         if (!available.isJsonPrimitive || !available.asJsonPrimitive.isBoolean) throw ClientError("设备可用状态格式尚未适配")
-        if (!available.asBoolean) throw ClientError("此洗衣模式暂不可用，请刷新设备后重试")
+        return available.asBoolean
+    }
+    override suspend fun quote(device: Device, mode: WashMode): Quote = quotePurchase(device, mode, null)
+    override suspend fun quoteDryer(device: Device, mode: WashMode, duration: DryerDuration): Quote =
+        quotePurchase(device, mode, duration)
+    private suspend fun quotePurchase(device: Device, mode: WashMode, dryerDuration: DryerDuration?): Quote {
+        if (device.isDryer && dryerDuration == null) throw ClientError("请重新选择可用烘干时长")
+        if (!device.isDryer && dryerDuration != null) throw ClientError("洗衣设备不支持烘干时长")
+        val currentDevice: Device
+        val currentMode: WashMode
+        val currentDuration: DryerDuration?
+        if (device.isDryer) {
+            val modes = parseDryerModes(post("goods/normal/skus", mapOf("goodsId" to device.id)))
+            currentMode = modes.firstOrNull { it.id == mode.id }
+                ?: throw ClientError("烘干模式已下架，请重新识别设备")
+            currentDuration = currentMode.dryerDurations.firstOrNull { it.minutes == dryerDuration!!.minutes }
+                ?: throw ClientError("所选烘干时长已不可用，请重新选择")
+            currentDevice = device.copy(modes = modes)
+        } else {
+            currentDevice = device
+            currentMode = mode.takeIf { it in device.modes }
+                ?: throw ClientError("所选模式已变化，请重新识别设备")
+            currentDuration = null
+        }
+        if (!machineModeAvailable(currentMode)) throw ClientError("此设备模式暂不可用，请刷新设备后重试")
         // APK 1.144.0 sends numeric string flags: "0" disables automatic promotion selection.
-        val fields = mutableMapOf("items" to PurchaseRules.items(device, mode),
+        val fields = mutableMapOf("items" to PurchaseRules.items(currentDevice, currentMode, currentDuration),
             "promotions" to "[]", "isAutoSelectPromotion" to "0")
-        if (device.orgId.isNotBlank()) {
-            fields["forbiddenPromotions"] = PurchaseRules.goldExclusion(device.orgId)
+        if (currentDevice.orgId.isNotBlank()) {
+            fields["forbiddenPromotions"] = PurchaseRules.goldExclusion(currentDevice.orgId)
         }
         val data = post("trade/preview/v4", fields).asJsonObject
-        return PurchaseRules.verifyQuote(data, device, mode)
+        return checkPointsPayment { PurchaseRules.verifyQuote(data, currentDevice, currentMode, currentDuration) }
     }
     suspend fun channels(quote: Quote): List<PayRoute> {
         val device = quote.device
@@ -195,17 +314,60 @@ class LaundryApi(
         val data = post("trade/create", mapOf("items" to quote.itemsJson,
             "promotions" to PurchaseRules.goldExclusion(quote.device.orgId)), quote.device to fix).asJsonObject
         val id = data.text("orderId"); val no = data.text("tradeNo")
-        if (id.isBlank() || no.isBlank()) throw ClientError("订单返回内容不完整，请核对订单后再继续")
-        return CreatedOrder(id, no)
+        val issue = try { checkPointsPayment { NoPointsPayment.verifyResponse(data) }; null }
+            catch (error: ClientError) { error }
+        if (id.isBlank() && no.isBlank()) throw issue ?: ClientError("订单返回内容不完整，请核对订单后再继续")
+        return CreatedOrder(id, no, issue ?: if (id.isBlank() || no.isBlank())
+            ClientError("订单返回内容不完整，请核对订单后再继续") else null)
     }
     suspend fun prepay(order: LocalOrder): String {
+        verifyPaymentWithoutPoints(order)
         val fields = mutableMapOf("orderNo" to order.orderNo, "payType" to order.payMethod.wire, "againFlag" to if (order.phase == OrderPhase.PAYMENT_PENDING) "1" else "0")
         order.thirdChannel?.takeIf { it.isNotBlank() }?.let { fields["thirdChannel"] = it }
         order.outVoucherId?.takeIf { it.isNotBlank() }?.let { fields["outVoucherId"] = it }
         val data = post("pay/unify/prePay", fields).asJsonObject
+        checkPointsPayment { NoPointsPayment.verifyResponse(data) }
         return data.text("prepayParam").ifBlank { throw ClientError("未取得支付参数，请查询订单状态") }
     }
-    suspend fun balancePay(order: LocalOrder) { post("pay/unify/pay", mapOf("orderNo" to order.orderNo, "payType" to "2")) }
+    suspend fun balancePay(order: LocalOrder, beforeSubmit: () -> Unit = {}) {
+        verifyPaymentWithoutPoints(order)
+        beforeSubmit()
+        try {
+            val result = post("pay/unify/pay", mapOf("orderNo" to order.orderNo, "payType" to "2"))
+            if (result.isJsonObject) checkPointsPayment { NoPointsPayment.verifyResponse(result.asJsonObject) }
+        } catch (error: CancellationException) { throw error
+        } catch (error: BusinessRejected) { throw error
+        } catch (error: SessionExpired) { throw error
+        } catch (_: Exception) { throw PaymentSubmittedUnconfirmed() }
+    }
+    private suspend fun verifyPaymentWithoutPoints(order: LocalOrder) {
+        val fields = when {
+            order.orderId.isNotBlank() -> mapOf("orderId" to order.orderId)
+            order.orderNo.isNotBlank() -> mapOf("orderNo" to order.orderNo)
+            else -> throw ClientError("订单编号不完整，请先在原应用核对")
+        }
+        val detail = post("order/detail", fields)
+        checkPointsPayment(reportSuccess = true) {
+            if (!detail.isJsonObject) throw PointsPaymentUnconfirmed()
+            NoPointsPayment.verifyBill(detail.asJsonObject, order)
+        }
+    }
+    private inline fun <T> checkPointsPayment(reportSuccess: Boolean = false, check: () -> T): T {
+        val started = System.nanoTime()
+        var status = DiagnosticStatus.INVALID_RESPONSE
+        try {
+            val result = check()
+            status = DiagnosticStatus.SUCCESS
+            return result
+        } catch (error: PointsDeductionDetected) {
+            status = DiagnosticStatus.REJECTED
+            throw error
+        } finally {
+            if (reportSuccess || status != DiagnosticStatus.SUCCESS) DiagnosticsLog.record(
+                DiagnosticOperation.PAYMENT_CHECK, status,
+                TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - started))
+        }
+    }
     suspend fun paid(order: LocalOrder): Boolean {
         val data = post("order/pay_status", mapOf("orderNo" to order.orderNo, "payType" to order.payMethod.wire))
         if (!data.isJsonPrimitive || !data.asJsonPrimitive.isBoolean) throw ClientError("支付状态格式尚未适配")
@@ -370,8 +532,11 @@ class LaundryApi(
             riskDevice to fix)
         if (!result.isJsonObject) throw ClientError("饮水启动结果尚未确认，请刷新状态")
         val value = result.asJsonObject
-        val msgId = value.text("msgId").ifBlank { throw ClientError("饮水启动响应缺少指令编号，请刷新状态") }
-        return WaterStart(value.text("orderNo"), msgId)
+        val msgId = value.text("msgId")
+        val issue = try { checkPointsPayment { NoPointsPayment.verifyResponse(value) }; null }
+            catch (_: ClientError) { WaterCommandSubmittedUnconfirmed() }
+        return WaterStart(value.text("orderNo"), msgId,
+            issue ?: if (msgId.isBlank()) WaterCommandSubmittedUnconfirmed() else null)
     }
 
     suspend fun waterCommandAccepted(msgId: String): Boolean {

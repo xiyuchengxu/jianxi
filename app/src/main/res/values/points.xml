@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="points_title">"积分"</string>
+    <string name="points_balance">"积分余额"</string>
+    <string name="points_login_required">"请先登录后查看积分"</string>
+    <string name="points_loading">"正在刷新积分任务"</string>
+    <string name="points_signing">"正在签到"</string>
+    <string name="points_sign_confirmed">"签到已确认"</string>
+    <string name="points_finished">"签到已确认，积分已刷新"</string>
+    <string name="points_already_signed">"今日已签到"</string>
+    <string name="points_result_unknown">"签到结果待确认，请刷新核对"</string>
+    <string name="points_load_error">"积分数据暂未确认，请刷新重试"</string>
+    <string name="points_open_failed">"未找到胖乖客户端"</string>
+    <string name="points_refresh">"刷新"</string>
+    <string name="points_start">"自动签到并刷新"</string>
+    <string name="points_unsigned_today">"今日未签到"</string>
+    <string name="points_sign_status_unknown">"签到状态待查询"</string>
+    <string name="points_tasks_title">"积分任务"</string>
+    <string name="points_empty">"平台暂未返回积分任务"</string>
+    <string name="points_not_loaded">"刷新以获取积分任务"</string>
+    <string name="points_open_original">"打开胖乖完成任务"</string>
+    <string name="points_logs_title">"执行记录"</string>
+    <string name="points_task_reward">"奖励：%1$s 积分"</string>
+    <string name="points_task_progress">"已完成 %1$d / %2$d 次"</string>
+    <string name="points_task_completed_count">"已完成 %1$d 次"</string>
+    <string name="points_task_done">"已完成"</string>
+    <string name="points_task_original">"在胖乖完成"</string>
+</resources>

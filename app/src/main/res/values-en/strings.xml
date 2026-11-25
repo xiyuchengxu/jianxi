@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+    <string name="theme_design_style_title" formatted="false">"Interface style"</string>
+    <string name="theme_design_material" formatted="false">"Material"</string>
+    <string name="theme_design_miuix" formatted="false">"MIUIX"</string>
+    <string name="theme_design_miuix_fixed_colors" formatted="false">"MIUIX uses a fixed color palette"</string>
     <string name="msg_001914d23f0c" formatted="false">"Mist blue"</string>
     <string name="msg_00612aad0812" formatted="false">"The dispenser will be asked to stop this session and the platform's final bill will be checked. Also make sure water has stopped flowing."</string>
     <string name="msg_00d78bd5bca3" formatted="false">"Collapse order details"</string>
@@ -72,12 +76,10 @@
     <string name="msg_1c8a94e1b712" formatted="false">"Paste the full contents of a washing machine or water dispenser QR code."</string>
     <string name="msg_1cecf188f254" formatted="false">"Wallpaper colors applied"</string>
     <string name="msg_1d1d1e02bdf7" formatted="false">"Payment is not yet confirmed. You can check again later."</string>
-    <string name="msg_1d4fe6ba00ce" formatted="false">"Switch between pages currently shown in the bottom bar"</string>
     <string name="msg_1e027e8f269f" formatted="false">"This device's password-free authorization requirement is not yet confirmed. Refresh and try again."</string>
     <string name="msg_1e2df9c3075a" formatted="false">"Log in"</string>
     <string name="msg_1e75a9bc677c" formatted="false">"Order time"</string>
     <string name="msg_1ea9145b3d9d" formatted="false">"Balance payment incomplete"</string>
-    <string name="scanner_unsupported_hint" formatted="false">"This camera cannot lower exposure, but can still scan. Change the angle or lower the device screen's brightness."</string>
     <string name="msg_1f405289ff28">"%1$s bills"</string>
     <string name="msg_1f407ac21f14" formatted="false">"5. Service and payment risks\nChanges in networks, platform interfaces, system compatibility, device status, or operator maintenance may cause login failures, quote changes, delayed payment status, or devices failing to start. The author does not guarantee permanent availability, error-free operation, or device startup. Before paying, verify the device, item, amount, and payment channel. If results are unexpected, check the order or contact the operator before paying again. Fulfillment, refunds, and disputes are governed by the relevant service providers' valid rules and applicable law."</string>
     <string name="msg_1fd81704a521">"Remove image %1$s"</string>
@@ -125,7 +127,6 @@
     <string name="msg_3098a02a0c34" formatted="false">"The platform marked the water bill refund complete. Check that the money has arrived."</string>
     <string name="msg_30b6558e1ec2" formatted="false">"Tab animation"</string>
     <string name="msg_321554ba3c42" formatted="false">"Use the stop button on this device to stop the water, then refresh the status."</string>
-    <string name="msg_323af04842ad" formatted="false">"Hold or drag to try the liquid effect. Tap to switch with an elastic bounce."</string>
     <string name="msg_325527570302" formatted="false">"Could not verify Alipay order contents"</string>
     <string name="msg_33a072bb43bc" formatted="false">"The platform still requires password-free authorization for this device. Verify later; confirming water use will open Alipay."</string>
     <string name="msg_33cdc95be001" formatted="false">"2. Your account and lawful authorization\nOnly operate accounts, device services, and orders that belong to you or for which you have lawful authorization. Do not impersonate others, use their verification codes, steal tokens, or misuse payment accounts. Do not access, save, or disclose others' account, order, device usage, or personal information without authorization."</string>
@@ -133,7 +134,6 @@
     <string name="msg_3465dd4a34e0">"Move image %1$s later"</string>
     <string name="msg_34aa2e852e28" formatted="false">"Login response is missing session information"</string>
     <string name="msg_35cf44ac0fcb" formatted="false">"Once"</string>
-    <string name="scanner_waiting" formatted="false">"Opening camera…"</string>
     <string name="msg_37bacd3c428f" formatted="false">"Save home message"</string>
     <string name="msg_37e717d5998d" formatted="false">"Soft"</string>
     <string name="msg_37f64a4b3e45" formatted="false">"Message"</string>
@@ -166,12 +166,10 @@
     <string name="msg_409c4e104012" formatted="false">"Laundry finished"</string>
     <string name="msg_40b0aade58d7" formatted="false">"Decline and exit"</string>
     <string name="msg_40ca838c072f" formatted="false">"Saving an empty or whitespace-only message restores the default."</string>
-    <string name="scanner_title" formatted="false">"Scan a washing machine or water dispenser QR code"</string>
     <string name="msg_4167b9536d27" formatted="false">"Check the device and refresh its status first. No additional start command will be sent while the result is unconfirmed."</string>
     <string name="msg_4189cc4d71fe" formatted="false">"I have read the disclaimer and agree to follow the user agreement"</string>
     <string name="msg_41b8dd731e63" formatted="false">"Water bill details are not yet confirmed"</string>
     <string name="msg_41c71d37f309">"Home message field, up to %1$s characters"</string>
-    <string name="scanner_normal" formatted="false">"Standard code"</string>
     <string name="msg_43a112a16373" formatted="false">"The platform may charge automatically using existing Alipay authorization. Unpaid bills can be paid from Orders."</string>
     <string name="msg_44fb814b166e" formatted="false">"Theme mode"</string>
     <string name="msg_453a3ff82d81">"Alipay authorization status is not yet confirmed: %1$s. Refresh and confirm water use again."</string>
@@ -188,7 +186,6 @@
     <string name="msg_4948596875a4" formatted="false">"Accept and continue"</string>
     <string name="msg_498e1d59b4d7" formatted="false">"Exit"</string>
     <string name="msg_49e131043706" formatted="false">"Do not tap"</string>
-    <string name="scanner_limit_hint" formatted="false">"Camera brightness is at its minimum. Change the angle slightly or lower the device screen's brightness."</string>
     <string name="msg_4a3a09acabd9" formatted="false">"Log in before using the water dispenser."</string>
     <string name="msg_4b6ded8a7f18" formatted="false">"Notifications"</string>
     <string name="msg_4b77024928a1" formatted="false">"The previous order result is unconfirmed. Check the order in the original app first."</string>
@@ -225,7 +222,6 @@
     <string name="msg_569001c47283">"You can use up to %1$s images. Select fewer images."</string>
     <string name="msg_56fe9a6dd1aa" formatted="false">"Pure black mode"</string>
     <string name="msg_570d60206779" formatted="false">"Saving"</string>
-    <string name="scanner_close" formatted="false">"Back"</string>
     <string name="msg_580b9f75924d" formatted="false">"Alipay pay after use (password-free)"</string>
     <string name="msg_583465e2a15d" formatted="false">"Scan with Alipay, or save the image and scan it from your gallery."</string>
     <string name="msg_59124bffa4c0" formatted="false">"Payment confirmed and device sync requested. Check whether the machine has started."</string>
@@ -249,8 +245,6 @@
     <string name="msg_609c3bd23883" formatted="false">"and up (tiered pricing)"</string>
     <string name="msg_610654391ab3" formatted="false">"9. Respectful feedback and protecting others\nJoining the feedback group and providing feedback are voluntary. Respect others, describe issues objectively, and do not spam, harass, insult, post unlawful content, or spread unverified personal accusations. Redact sensitive details before submitting screenshots, logs, or QR codes. Do not give group members SMS codes, tokens, payment passwords, or other information that grants account control."</string>
     <string name="msg_6132aaeef659" formatted="false">"The order has expired or is invalid. Return to Laundry to choose a mode again."</string>
-    <string name="scanner_brightness_accessibility" formatted="false">"Screen code brightness"</string>
-    <string name="scanner_screen" formatted="false">"Screen code"</string>
     <string name="msg_61ec6116d1f5" formatted="false">"Water is disabled. Enable it in Settings first."</string>
     <string name="msg_62200c199491" formatted="false">"Unsupported device availability format"</string>
     <string name="msg_6253728e4fa9" formatted="false">"Continue payment"</string>
@@ -272,10 +266,8 @@
     <string name="msg_65e1d3722879" formatted="false">"The fixed bottom bar does not use liquid glass. The selected level applies when you switch back to the floating bar."</string>
     <string name="msg_660ffe0aeef5" formatted="false">"Could not check water settlement"</string>
     <string name="msg_661d94d78724" formatted="false">"Getting payment information"</string>
-    <string name="scanner_normal_hint" formatted="false">"Fit the entire QR code in the frame. Switch to Screen code if the screen is too bright."</string>
     <string name="msg_670afc87ff0c" formatted="false">"3. Follow service and payment rules\nUse laundry equipment according to the operator's, school's, and venue's valid rules. Verify the clothes, device, item, and amount before paying. Do not evade fees, forge discounts or payment results, repeat requests to obtain improper benefits, or exploit interface differences to bypass restrictions. If status is uncertain, verify the order before placing or paying again."</string>
     <string name="msg_67105fbcc14e" formatted="false">"Log in to the order's account to view laundry progress."</string>
-    <string name="scanner_screen_hint" formatted="false">"Adjust brightness slowly until the QR pattern is clear. Move slightly farther away to help focus."</string>
     <string name="msg_685bb17fdb2b" formatted="false">"Array"</string>
     <string name="msg_694111630619" formatted="false">"Device information is incomplete. Scan again to confirm."</string>
     <string name="msg_6978239af3fb">"Default %1$s ms, range %2$s–%3$s ms"</string>
@@ -292,7 +284,6 @@
     <string name="msg_6c3a3a160315" formatted="false">"Could not create splash image folder"</string>
     <string name="msg_6c61dc3a5f3d" formatted="false">"Amount awaiting sync"</string>
     <string name="msg_6c6594023f60" formatted="false">"Sending verification code"</string>
-    <string name="msg_6cdb2ed0c44e" formatted="false">"Soft frosted glass with subtle refraction and distortion"</string>
     <string name="msg_6ce4fd181551" formatted="false">"Confirm end of water session"</string>
     <string name="msg_6d1262e5d2e0" formatted="false">"Final amount returned by the platform"</string>
     <string name="msg_6d1c3af7a838" formatted="false">"Could not refresh water status. Try again later."</string>
@@ -384,7 +375,6 @@
     <string name="msg_9490a9f00e48" formatted="false">"Floating bottom bar preview"</string>
     <string name="msg_960aa8eb1c5d" formatted="false">"This session uses Alipay pay-after-use (password-free), with charges settled by the platform based on actual usage. After confirmation, the device's agreement requirements will be checked. If needed, Alipay will open; confirm water use again when you return. Check unpaid bills and payment status in Orders."</string>
     <string name="msg_960e8d3fc1e1" formatted="false">"Verifying Alipay password-free authorization"</string>
-    <string name="scanner_camera_error" formatted="false">"Camera unavailable. Go back and try again."</string>
     <string name="msg_976a1c14feb1" formatted="false">"Water settlement ID is not yet confirmed. Refresh later."</string>
     <string name="msg_97c0474b816d" formatted="false">"Confirm water start"</string>
     <string name="msg_97d1ee0dcbe2" formatted="false">"The logged-in account has changed. Confirm water use again."</string>
@@ -405,7 +395,6 @@
     <string name="msg_9eaf7337eac7" formatted="false">"Bill time"</string>
     <string name="msg_9f0d4e4656ee" formatted="false">"Add images"</string>
     <string name="msg_9f6fee1aba17" formatted="false">"Language"</string>
-    <string name="scanner_brighter" formatted="false">"Brighter"</string>
     <string name="msg_9ff5a9563ee2" formatted="false">"This water session has ended"</string>
     <string name="msg_a00234e52c02" formatted="false">"Unsupported wash mode data format. Keep the QR code for later verification."</string>
     <string name="msg_a01fa2926a83">"Order %1$s"</string>
@@ -424,7 +413,6 @@
     <string name="msg_a54c648d6a5d" formatted="false">"Refresh and choose a water payment method first."</string>
     <string name="msg_a555b7117495" formatted="false">"Cancellation is not yet confirmed. Refresh the order."</string>
     <string name="msg_a5a749ecf99b" formatted="false">"An independent Android laundry and water client built with Kotlin and Jetpack Compose."</string>
-    <string name="msg_a6b6c3b4d179" formatted="false">"Clear glass with stronger refraction and elastic distortion"</string>
     <string name="msg_a6b75d068032" formatted="false">"Dark"</string>
     <string name="msg_a6e01b215620" formatted="false">"The dispenser is in use or its status is uncertain. Refresh first."</string>
     <string name="msg_a6e3cad608b3" formatted="false">"Unsupported order details format. Check in the original app first."</string>
@@ -450,7 +438,6 @@
     <string name="msg_ada841bf67e9">"Service temporarily unavailable (%1$s)"</string>
     <string name="msg_adcead944a6f" formatted="false">"Cancel unpaid order"</string>
     <string name="msg_ae8e4d07d70a" formatted="false">"Scan the water dispenser QR code."</string>
-    <string name="msg_af93b6dcf87a" formatted="false">"Solid bottom bar with an elastic indicator"</string>
     <string name="msg_afb44149eeaf" formatted="false">"Confirm this wash"</string>
     <string name="msg_afdbcbccf8a9">"QQ group: %1$s"</string>
     <string name="msg_b01e2d77a8c6" formatted="false">"Order refunded"</string>
@@ -505,7 +492,6 @@
     <string name="msg_c5500a58e0c5" formatted="false">"Number"</string>
     <string name="msg_c6135da0ea76" formatted="false">"Could not check payment status"</string>
     <string name="msg_c6143fa2daf8" formatted="false">"The platform still requires password-free authorization but has not provided an agreement link. Refresh later."</string>
-    <string name="scanner_rejected_hint" formatted="false">"The camera did not accept the brightness change, but can still scan. Change the angle or lower the device screen's brightness."</string>
     <string name="msg_c65b3b97b411" formatted="false">"Unknown format"</string>
     <string name="msg_c66b688131ed" formatted="false">"No app available to open the GitHub link"</string>
     <string name="msg_c6729b9b5fe1" formatted="false">"Device details are missing an identifier. Check the device in the original app first."</string>
@@ -528,7 +514,6 @@
     <string name="msg_d00503584e15" formatted="false">"Expand splash settings"</string>
     <string name="msg_d007cc91971f" formatted="false">"Theme colors"</string>
     <string name="msg_d03a42384c95" formatted="false">"Automatically use your wallpaper's representative colors"</string>
-    <string name="scanner_darker" formatted="false">"Darker"</string>
     <string name="msg_d0f6b2e6e6e0" formatted="false">"Waiting for Alipay authorization verification"</string>
     <string name="msg_d12a5c36eda7" formatted="false">"Payment includes an agreement and was stopped"</string>
     <string name="msg_d22657dec5d1" formatted="false">"Extract colors again"</string>
@@ -593,7 +578,6 @@
     <string name="msg_ed06c8b46087" formatted="false">"Location unavailable. Try again later."</string>
     <string name="msg_edbdfa509c1e" formatted="false">"A water record needs attention. Scan the original device or restore it from Orders."</string>
     <string name="msg_eef16f7a3477" formatted="false">"3. Necessary requests and data integrity\nThis software sends only necessary requests such as login, device identification, quotes, orders, payments, order queries, and cancellation in response to explicit user actions and within lawful authorization. It is not intended to tamper with, forge, or damage network data and does not provide fake payment success, malicious price or balance changes, or unauthorized account access. Normal operations update order status on the server. Amounts, payments, and device status must be verified against the server."</string>
-    <string name="msg_ef28a66a21b1" formatted="false">"One image per launch; the next appears on the following launch"</string>
     <string name="msg_ef9454bff0b4" formatted="false">"Open-source license"</string>
     <string name="msg_efab9e4d456b" formatted="false">"Jianxi-Alipay-QR.jpg"</string>
     <string name="msg_f06ac4a79992" formatted="false">"Dispenser or merchant information has changed. Scan again to confirm."</string>
@@ -631,4 +615,77 @@
     <string name="msg_ff7e349a58d1" formatted="false">"Order awaiting payment"</string>
     <string name="msg_ffc624300de8" formatted="false">"Amount"</string>
     <string name="msg_643afd7f49a2_version" formatted="false">"Version: 1.0.0 · Internal version: 0.1.16 · Updated: November 3, 2026"</string>
+    <string name="cloud_title" formatted="false">"Cloud WeChat reminders"</string>
+    <string name="cloud_subtitle" formatted="false">"A self-hosted server monitors laundry completion and sends a WeChat reminder through the Miaotixing service account."</string>
+    <string name="cloud_voluntary" formatted="false">"Optional and independent of on-device notifications. Turning it off does not affect existing laundry reminders."</string>
+    <string name="cloud_status_disabled" formatted="false">"Not enabled"</string>
+    <string name="cloud_status_bound" formatted="false">"Bound"</string>
+    <string name="cloud_status_pending" formatted="false">"Pending sync"</string>
+    <string name="cloud_status_error" formatted="false">"Error"</string>
+    <string name="cloud_status_auth_required" formatted="false">"Reauthorization required"</string>
+    <string name="cloud_server_url" formatted="false">"Server URL"</string>
+    <string name="cloud_server_hint" formatted="false">"HTTPS only. Certificate verification is never bypassed and redirects are not followed."</string>
+    <string name="cloud_pairing_code" formatted="false">"Server pairing code"</string>
+    <string name="cloud_miaotixing_code" formatted="false">"Miaotixing code"</string>
+    <string name="cloud_miaotixing_hint" formatted="false">"Used only for WeChat reminders. It is cleared after success and is not retained."</string>
+    <string name="cloud_consent" formatted="false">"I agree to send my current platform login credential and orders to be monitored to this self-hosted server for read-only queries only."</string>
+    <string name="cloud_security_note" formatted="false">"Standard TLS only. The server only reads order details and cannot start, pay for, or cancel any laundry."</string>
+    <string name="cloud_bind" formatted="false">"Bind cloud reminders"</string>
+    <string name="cloud_login_required" formatted="false">"Sign in before binding cloud reminders."</string>
+    <string name="cloud_bound_server">"Server: %1$s"</string>
+    <string name="cloud_notification_configured" formatted="false">"Miaotixing code configured"</string>
+    <string name="cloud_notification_missing" formatted="false">"Miaotixing code not configured"</string>
+    <string name="cloud_pending_sync" formatted="false">"A laundry order is waiting to sync to the server. Laundry features are unaffected; tap retry."</string>
+    <string name="cloud_auth_note" formatted="false">"The platform login on the server has expired. Reauthorize, or unbind and bind again."</string>
+    <string name="cloud_no_subscriptions" formatted="false">"No server subscriptions yet."</string>
+    <string name="cloud_subscription_summary">"Server subscriptions: %1$d active · %2$d completed"</string>
+    <string name="cloud_delivery_accepted" formatted="false">"The provider accepted the reminder, but this does not mean WeChat delivered it."</string>
+    <string name="cloud_delivery_unknown" formatted="false">"The latest reminder outcome is unknown. Do not trigger it repeatedly."</string>
+    <string name="cloud_refresh" formatted="false">"Refresh server status"</string>
+    <string name="cloud_retry" formatted="false">"Retry sync"</string>
+    <string name="cloud_reauthorize" formatted="false">"Reauthorize"</string>
+    <string name="cloud_test" formatted="false">"Send test reminder"</string>
+    <string name="cloud_test_cooldown">"Test cooling down. Try again in %1$d s."</string>
+    <string name="cloud_test_accepted" formatted="false">"The provider accepted the test reminder; this does not mean WeChat delivered it."</string>
+    <string name="cloud_test_unknown" formatted="false">"Test outcome unknown. Do not tap repeatedly."</string>
+    <string name="cloud_test_failed" formatted="false">"The provider rejected the test reminder."</string>
+    <string name="cloud_update_code" formatted="false">"Update Miaotixing code"</string>
+    <string name="cloud_update_code_label" formatted="false">"New Miaotixing code"</string>
+    <string name="cloud_save" formatted="false">"Save"</string>
+    <string name="cloud_cancel" formatted="false">"Cancel"</string>
+    <string name="cloud_unbind" formatted="false">"Unbind cloud reminders"</string>
+    <string name="cloud_unbind_confirm_title" formatted="false">"Unbind cloud reminders?"</string>
+    <string name="cloud_unbind_confirm_text" formatted="false">"This revokes the server device credential and monitored subscriptions. If the network fails, the local binding is kept so you can retry."</string>
+    <string name="cloud_error_network" formatted="false">"Cannot reach the cloud reminder server. Check your network and retry."</string>
+    <string name="cloud_error_auth" formatted="false">"The server device credential or platform authorization has expired. Reauthorize or bind again."</string>
+    <string name="cloud_error_pairing" formatted="false">"The pairing code is invalid, expired, or incomplete."</string>
+    <string name="cloud_error_url" formatted="false">"Enter a valid HTTPS URL without credentials, query parameters, or fragments."</string>
+    <string name="cloud_error_login" formatted="false">"Sign in before using cloud reminders."</string>
+    <string name="cloud_error_consent" formatted="false">"Select consent to send the information needed for read-only queries to the self-hosted server."</string>
+    <string name="cloud_error_server" formatted="false">"The server rejected the request. Try again later."</string>
+    <string name="cloud_error_rate" formatted="false">"Too many requests. Try again later."</string>
+    <string name="cloud_error_rate_seconds">"Too many requests. Try again in %1$d s."</string>
+    <string name="cloud_error_invalid_response" formatted="false">"Unexpected server response. Check the address and service version."</string>
+    <string name="cloud_error_unbind" formatted="false">"Could not confirm server unbinding. The local binding is kept; check your network and retry."</string>
+    <string name="cloud_error_notification" formatted="false">"Enter a Miaotixing code first."</string>
+    <string name="cloud_error_binding" formatted="false">"This account has not bound cloud reminders."</string>
+    <string name="cloud_error_sync" formatted="false">"Order sync failed temporarily. It will stay pending and retry later."</string>
+    <string name="cloud_error_generic" formatted="false">"Cloud reminder operation failed temporarily. Try again later."</string>
+    <string name="cloud_logout_unbind_failed" formatted="false">"Signed out locally; cloud unbinding is unconfirmed. The old device credential is retained for retries."</string>
+    <string name="font_settings_title" formatted="false">"Font"</string>
+    <string name="font_settings_desc" formatted="false">"Choose the app interface font; option labels and hints always use the system font"</string>
+    <string name="font_system_title" formatted="false">"Follow system"</string>
+    <string name="font_system_desc" formatted="false">"Use the Android system font"</string>
+    <string name="font_yunzhuan_title" formatted="false">"云篆度人经 (Yunzhuan Duren)"</string>
+    <string name="font_yunzhuan_desc" formatted="false">"Covers only some Han characters; characters not included are completed by the system font"</string>
+    <string name="font_preview_label" formatted="false">"Font preview"</string>
+    <string name="font_preview_sample" formatted="false">"元始无量度人上品妙经"</string>
+    <string name="font_preview_notice" formatted="false">"The Yunzhuan font covers only some Han characters; unsupported characters such as digits and Latin letters are shown in the system font"</string>
+    <string name="font_license_entry" formatted="false">"云篆度人经 · SIL OFL 1.1"</string>
+    <string name="font_license_title" formatted="false">"云篆度人经 (Yunzhuan Duren) Font License"</string>
+    <string name="font_license_author" formatted="false">"Author: 执笔之龙"</string>
+    <string name="font_license_upstream" formatted="false">"Upstream: github.com/Lawrence-of-AnKing/yunzhuan-duren"</string>
+    <string name="font_license_revision" formatted="false">"Revision: bcedee13ee0cb6b491f59f781ae1e5cdf5276dd8"</string>
+    <string name="font_license_note" formatted="false">"This app bundles the upstream font as-is without modifying the font files. The font covers only some Han characters; unsupported characters fall back to the system font, and full character-set coverage is not guaranteed."</string>
+    <string name="settings_log_out">Log out</string>
 </resources>

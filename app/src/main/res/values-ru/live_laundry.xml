@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="live_laundry_channel_name">Прогресс стирки</string>
+    <string name="live_laundry_channel_description" formatted="false">"Ожидаемое время окончания и состояние текущей стирки."</string>
+    <string name="live_laundry_title_running">Стирка выполняется · %1$s</string>
+    <string name="live_laundry_text_running">Ожидаемое окончание: %1$s. Обратный отсчёт является оценкой; его нулевое значение не означает завершение.</string>
+    <string name="live_laundry_title_unknown">Стирка выполняется · %1$s</string>
+    <string name="live_laundry_text_unknown">Платформа не предоставила время окончания. Состояние периодически проверяется; оставшееся время показать нельзя.</string>
+    <string name="live_laundry_title_expired">"Ожидание подтверждения · %1$s"</string>
+    <string name="live_laundry_text_expired">Ожидаемое время %1$s прошло. Ожидается подтверждение платформы; нулевой отсчёт не означает завершение.</string>
+    <string name="live_laundry_title_offline">"Статус стирки не обновлён · %1$s"</string>
+    <string name="live_laundry_text_offline">"Не удалось обновить статус. Последнее ожидаемое время: %1$s. Повторная попытка; завершение не подтверждено."</string>
+    <string name="live_laundry_text_offline_unknown" formatted="false">"Не удалось обновить статус; время окончания неизвестно. Повторная попытка."</string>
+    <string name="live_laundry_text_offline_expired" formatted="false">"Не удалось обновить статус. Расчётное время истекло; ожидается подтверждение платформы."</string>
+    <string name="live_laundry_text_stale">Ожидаемое окончание %1$s; состояние требует проверки.</string>
+    <string name="live_laundry_title_checking">Проверка состояния стирки</string>
+    <string name="live_laundry_text_checking">Ожидается подтверждение платформой выполнения. После подтверждения появится оценка оставшегося времени.</string>
+    <string name="live_laundry_short_waiting">Ожидает подтверждения</string>
+    <string name="live_laundry_short_unknown">Время не определено</string>
+    <string name="live_laundry_setting_title">Прогресс стирки</string>
+    <string name="live_laundry_setting_summary" formatted="false">"Примерное оставшееся время текущей стирки."</string>
+    <string name="live_laundry_setting_note" formatted="false">"На поддерживаемых устройствах доступны текущие уведомления. Их вид зависит от системы и настроек уведомлений. По истечении расчётного времени нужно дождаться подтверждения завершения от платформы."</string>
+    <string name="live_laundry_setting_status_idle">Включено. Появится при наличии выполняющегося заказа стирки.</string>
+    <string name="live_laundry_setting_status_running">Текущее ожидаемое окончание: %1$s.</string>
+    <string name="live_laundry_setting_status_expired">Ожидаемое время окончания прошло. Ожидается подтверждение платформы.</string>
+    <string name="live_laundry_setting_status_unknown">Платформа не предоставила время окончания, поэтому оставшееся время показать нельзя.</string>
+    <string name="live_laundry_setting_status_offline" formatted="false">"Статус не обновлён. Сохранён предыдущий прогноз, выполняется повторная попытка."</string>
+    <string name="live_laundry_setting_status_off">Прогресс в реальном времени выключен.</string>
+    <string name="live_laundry_setting_status_finished">Стирка завершена. Прогресс в реальном времени остановлен.</string>
+    <string name="live_laundry_setting_notifications_off">Системные уведомления выключены, поэтому прогресс в реальном времени не отображается. Сначала включите разрешение на уведомления.</string>
+    <string name="live_laundry_manage_system" formatted="false">"Системные настройки уведомлений"</string>
+    <string name="live_laundry_resume_current" formatted="false">"Снова показать текущий заказ"</string>
+    <string name="live_laundry_setting_status_hidden" formatted="false">"Текущее уведомление для этого заказа скрыто."</string>
+</resources>

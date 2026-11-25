@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"訂單同步暫時失敗（HTTP %1$s），將保留「待同步」並自動重試；也可手動重試。"</string>
+    <string name="cloud_sync_rejected">"伺服器未接受此訂單的雲端訂閱，未建立提醒。請確認訂單仍在執行中後手動重試。"</string>
+    <string name="cloud_sync_rejected_http">"伺服器未接受此訂單的雲端訂閱（HTTP %1$s），未建立提醒。請確認訂單仍在執行中後手動重試。"</string>
+    <string name="cloud_upstream_http_405">"平台拒絕伺服器查詢（405），未建立訂單訂閱。請稍後手動重試；若持續出現，請聯絡維護者檢查伺服器查詢權限。"</string>
+    <string name="cloud_upstream_http_403">"平台拒絕伺服器查詢（403），未建立訂單訂閱。請確認平台登入狀態後手動重試。"</string>
+    <string name="cloud_upstream_retryable">"平台查詢暫時無法使用，尚未建立訂單訂閱；將自動重試。"</string>
+    <string name="cloud_upstream_terminal">"平台查詢被拒絕，未建立訂單訂閱。請稍後手動重試。"</string>
+    <string name="cloud_upstream_identity_mismatch">"平台訂單身分不一致，未建立訂單訂閱。"</string>
+    <string name="cloud_device_unsupported">"伺服器版本不支援手機協助提醒，因此未啟用。請升級伺服器，或繼續使用平台核驗模式。"</string>
+    <string name="cloud_device_rejected">"伺服器未接受手機報告，提醒未更新。請稍後手動重試。"</string>
+    <string name="cloud_device_assist_desc">"啟用後，手機把本機觀察到的執行狀態與平台預計時間交給伺服器；預計到點由伺服器提醒，洗衣完成後由手機明確確認。平台未提供預計時間時不會編造，伺服器不支援時會明確報錯。"</string>
+    <string name="cloud_device_assist_enable">"啟用手機協助提醒"</string>
+    <string name="cloud_device_assist_unbind">"停止手機協助：使用下方「解綁」；不提供無聲切換。"</string>
+    <string name="cloud_device_assist_enabled">"手機協助提醒已啟用"</string>
+    <string name="cloud_device_assist_pending">"正在同步執行證據…"</string>
+    <string name="cloud_device_assist_pending_terminal">"手機報告待同步；收到明確回執前不會聲稱完成或取消。"</string>
+    <string name="cloud_device_assist_scheduled">"已安排預計提醒（預計 %1$s）。"</string>
+    <string name="cloud_device_assist_awaiting">"等待手機確認完成。"</string>
+    <string name="cloud_device_assist_awaiting_unknown">"等待手機確認完成（平台未提供預計時間）。"</string>
+    <string name="cloud_device_assist_completed">"手機已確認完成。"</string>
+    <string name="cloud_device_assist_cancelled">"訂單已取消/退款，未送出的提醒已撤銷。"</string>
+    <string name="cloud_device_assist_accepted">"服務商已受理預計提醒，不代表微信已送達。"</string>
+    <string name="cloud_source_label">"雲端來源：%1$s"</string>
+    <string name="cloud_source_device">"手機協助"</string>
+    <string name="cloud_source_platform">"平台核驗"</string>
+</resources>

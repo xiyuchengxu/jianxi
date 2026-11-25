@@ -18,7 +18,7 @@ object OrderHistory {
     const val LIMIT = 20
 
     fun sameOrder(a: LocalOrder, b: LocalOrder): Boolean {
-        if (a.owner != b.owner || a.isWater != b.isWater) return false
+        if (a.owner != b.owner || a.workflowKind != b.workflowKind) return false
         // Even a shared number cannot reconcile conflicting strong identifiers.
         if (a.orderId.isNotBlank() && b.orderId.isNotBlank() && a.orderId != b.orderId) return false
         if (a.orderNo.isNotBlank() && b.orderNo.isNotBlank() && a.orderNo != b.orderNo) return false
@@ -61,10 +61,10 @@ object OrderHistory {
             order.orderNo.isNotBlank() -> listOf("number", order.orderNo, order.orderId)
             order.orderId.isNotBlank() -> listOf("id", order.orderId)
             else -> listOf("attempt", order.createdAt.toString(), order.deviceName, order.modeName,
-                order.isWater.toString(), order.payMethod.name, order.amount)
+                order.workflowKind, order.payMethod.name, order.amount)
         }
         // Length prefixes keep arbitrary device / order strings from colliding with delimiters.
-        return (listOf(order.owner, order.isWater.toString()) + identity).joinToString("") { "${it.length}:$it" }
+        return (listOf(order.owner, order.workflowKind) + identity).joinToString("") { "${it.length}:$it" }
     }
 
     fun weeklyGroups(

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="shizuku_title" formatted="false">"Фоновая работа через Shizuku"</string>
+    <string name="shizuku_optional" formatted="false">"Необязательно и выключено по умолчанию."</string>
+    <string name="shizuku_enabled" formatted="false">"Фоновая защита работает"</string>
+    <string name="shizuku_disabled" formatted="false">"Помощь выключена"</string>
+    <string name="shizuku_pending_restore" formatted="false">"Помощь выключена; ожидается восстановление настроек. Запустите Shizuku, выдайте разрешение и повторите."</string>
+    <string name="shizuku_existing" formatted="false">"Помощь выключена; прежние системные настройки батареи сохранены"</string>
+    <string name="shizuku_unavailable" formatted="false">"Shizuku не запущен. Обычные напоминания доступны."</string>
+    <string name="shizuku_not_authorized" formatted="false">"Разрешение Shizuku не выдано; запрос появится только при действии."</string>
+    <string name="shizuku_ready" formatted="false">"Shizuku подключён, разрешение выдано"</string>
+    <string name="shizuku_old_version" formatted="false">"Нужен Shizuku API 13 или новее."</string>
+    <string name="shizuku_denied" formatted="false">"Разрешение не выдано. Обычные напоминания не затронуты."</string>
+    <string name="shizuku_failure" formatted="false">"Работа фоновой защиты не подтверждена. Проверьте разрешение Shizuku и повторите попытку."</string>
+    <string name="shizuku_storage" formatted="false">"Не удалось сохранить настройки; дальнейшие изменения системы не выполнялись."</string>
+    <string name="shizuku_reapply_needed" formatted="false">"Фоновая защита не работает. Повторите подключение."</string>
+    <string name="shizuku_retry_restore" formatted="false">"Повторить восстановление настроек"</string>
+    <string name="shizuku_reapply" formatted="false">"Перезапустить фоновую защиту"</string>
+    <string name="shizuku_open" formatted="false">"Открыть Shizuku / инструкция запуска"</string>
+    <string name="shizuku_battery_settings" formatted="false">"Настройки оптимизации батареи"</string>
+</resources>

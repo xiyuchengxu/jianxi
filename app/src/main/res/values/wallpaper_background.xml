@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="wallpaper_background_title">"使用系统壁纸作为背景"</string>
+    <string name="wallpaper_background_brightness">"背景亮暗"</string>
+    <string name="wallpaper_background_darker">"暗"</string>
+    <string name="wallpaper_background_lighter">"亮"</string>
+    <string name="wallpaper_background_original">"原始亮度"</string>
+    <string name="wallpaper_background_dimmed">"调暗 %1$d%%"</string>
+    <string name="wallpaper_background_brightened">"调亮 %1$d%%"</string>
+    <string name="wallpaper_background_reset">"恢复原亮度"</string>
+    <string name="wallpaper_background_unsupported">"此设备无法显示系统壁纸"</string>
+    <string name="wallpaper_settings_title">"壁纸"</string>
+    <string name="control_transparency">控件透明度</string>
+    <string name="control_adjust_individual">单独调节透明度</string>
+    <string name="control_follow_global">跟随全局</string>
+    <string name="control_done">完成</string>
+    <string name="control_long_press_hint">长按控件可单独调节透明度。输入框请长按右侧边缘。</string>
+</resources>

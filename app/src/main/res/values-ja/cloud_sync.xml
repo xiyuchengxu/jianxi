@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="cloud_sync_pending_http">"注文の同期に一時的に失敗しました（HTTP %1$s）。「同期待ち」のまま自動再試行します。手動でも再試行できます。"</string>
+    <string name="cloud_sync_rejected">"サーバーはこの注文のクラウド購読を受け付けませんでした。リマインダーは作成されていません。注文が実行中であることを確認してから手動で再試行してください。"</string>
+    <string name="cloud_sync_rejected_http">"サーバーはこの注文のクラウド購読を受け付けませんでした（HTTP %1$s）。リマインダーは作成されていません。注文が実行中であることを確認してから手動で再試行してください。"</string>
+    <string name="cloud_upstream_http_405">"プラットフォームがサーバー照会を拒否しました（405）。注文購読は作成されていません。後で手動で再試行してください。続く場合は保守担当者にサーバー照会権限の確認を依頼してください。"</string>
+    <string name="cloud_upstream_http_403">"プラットフォームがサーバー照会を拒否しました（403）。注文購読は作成されていません。プラットフォームのログイン状態を確認して手動で再試行してください。"</string>
+    <string name="cloud_upstream_retryable">"プラットフォーム照会を一時的に利用できません。注文購読はまだ作成されていません。自動で再試行します。"</string>
+    <string name="cloud_upstream_terminal">"プラットフォームが注文照会を拒否しました。注文購読は作成されていません。後で手動で再試行してください。"</string>
+    <string name="cloud_upstream_identity_mismatch">"プラットフォームの注文識別情報が一致しません。注文購読は作成されていません。"</string>
+    <string name="cloud_device_unsupported">"このサーバーバージョンはスマートフォン補助リマインダーに対応していないため、有効化されていません。サーバーを更新するか、プラットフォーム確認モードを引き続き使用してください。"</string>
+    <string name="cloud_device_rejected">"サーバーがスマートフォン報告を受け付けなかったため、リマインダーは更新されていません。後で手動で再試行してください。"</string>
+    <string name="cloud_device_assist_desc">"有効にすると、スマートフォンがローカルで観測した実行状態とプラットフォームの予定時刻をサーバーへ送ります。予定時刻にはサーバーが通知し、洗濯完了はスマートフォンが明示的に確認します。予定時刻がない場合は捏造せず、サーバー未対応時は明確なエラーを表示します。"</string>
+    <string name="cloud_device_assist_enable">"スマートフォン補助リマインダーを有効にする"</string>
+    <string name="cloud_device_assist_unbind">"スマートフォン補助を停止するには下の「解除」を使用してください。無言の切り替えはありません。"</string>
+    <string name="cloud_device_assist_enabled">"スマートフォン補助リマインダーは有効です"</string>
+    <string name="cloud_device_assist_pending">"実行証拠を同期中…"</string>
+    <string name="cloud_device_assist_pending_terminal">"スマートフォン報告は同期待ちです。明確な応答を受け取るまで完了・取消を主張しません。"</string>
+    <string name="cloud_device_assist_scheduled">"予定リマインダーを設定しました（予定 %1$s）。"</string>
+    <string name="cloud_device_assist_awaiting">"スマートフォンの完了確認を待っています。"</string>
+    <string name="cloud_device_assist_awaiting_unknown">"スマートフォンの完了確認を待っています（プラットフォームの予定時刻なし）。"</string>
+    <string name="cloud_device_assist_completed">"スマートフォンが完了を確認しました。"</string>
+    <string name="cloud_device_assist_cancelled">"注文は取消/返金され、未送信の通知は取り消されました。"</string>
+    <string name="cloud_device_assist_accepted">"サービス提供者は予定リマインダーを受理しましたが、WeChat への到達を意味しません。"</string>
+    <string name="cloud_source_label">"クラウド取得元：%1$s"</string>
+    <string name="cloud_source_device">"スマートフォン補助"</string>
+    <string name="cloud_source_platform">"プラットフォーム確認"</string>
+</resources>

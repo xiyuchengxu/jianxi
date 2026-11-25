@@ -2,6 +2,10 @@ package dev.rain.laundry.notifications
 
 import android.content.Context
 import android.os.Build
+import dev.rain.laundry.cloud.CloudReminderVault
+import dev.rain.laundry.cloud.CloudReminderWork
+import dev.rain.laundry.cloud.CloudReminderOperations
+import dev.rain.laundry.cloud.CloudSyncOutcome
 import dev.rain.laundry.core.*
 import dev.rain.laundry.data.LaundryApi
 import dev.rain.laundry.data.SessionVault
@@ -39,7 +43,7 @@ object LaundryMonitorEngine {
         val reminders = vault.laundryReminders().filter { it.completedAtMs == null }
         val history = vault.orders() + listOfNotNull(vault.order())
         val candidates = (history + reminders.map { it.order }).filter { order ->
-            order.owner == owner && !order.isWater &&
+            order.owner == owner && order.isLaundry &&
                 (order.orderId.isNotBlank() || order.orderNo.isNotBlank()) &&
                 (order.phase == OrderPhase.PAID || reminders.any { OrderHistory.sameOrder(it.order, order) }) &&
                 now - order.createdAt in 0..MAX_MONITOR_AGE
@@ -51,7 +55,7 @@ object LaundryMonitorEngine {
             if (!valid()) return@withLock interrupted()
             if (order.phase in setOf(OrderPhase.CLOSED, OrderPhase.CANCELLED, OrderPhase.REJECTED,
                     OrderPhase.REFUNDING, OrderPhase.REFUNDED)) {
-                LaundryReminders.forget(context, order)
+                observe(context, order, fresh = false)
                 continue
             }
             try {
@@ -87,16 +91,39 @@ object LaundryMonitorEngine {
             }
         }
         if (valid()) LaundryReminders.publishPending(context)
+        // The cloud reminder is opt-in and read-only. Scheduling a short worker here never blocks
+        // the existing local notification/order refresh path.
+        if (valid() && runCatching { CloudReminderVault(context).binding(owner) }.getOrNull() != null)
+            CloudReminderWork.requestSync(context, owner)
         LaundryMonitorCheck(next, retry)
     }
 
-    fun observe(context: Context, order: LocalOrder) {
+    fun observe(context: Context, order: LocalOrder, fresh: Boolean = true) {
         val progress = order.laundryProgress
+        val cancelled = order.phase in setOf(OrderPhase.CLOSED, OrderPhase.CANCELLED, OrderPhase.REJECTED,
+            OrderPhase.REFUNDING, OrderPhase.REFUNDED)
+        val running = !cancelled && progress?.runState == LaundryRunState.RUNNING
+        val completed = !cancelled && progress?.completionConfirmed == true
         LaundryReminders.observe(context, order,
-            running = progress?.runState == LaundryRunState.RUNNING,
-            completed = progress?.completionConfirmed == true,
+            running = running,
+            completed = completed,
             expectedEndAtMs = progress?.expectedEndAt)
-        if (order.phase in setOf(OrderPhase.CLOSED, OrderPhase.CANCELLED, OrderPhase.REJECTED,
-                OrderPhase.REFUNDING, OrderPhase.REFUNDED)) LaundryReminders.forget(context, order)
+        // Persist a device-assisted transition before stopping the live service. Its lease may
+        // become invalid below, so check()'s trailing sync scheduling is not sufficient here.
+        runCatching {
+            val session = SessionVault(context)
+            val token = session.token()
+            session.withLaundrySession(order.owner, token, { order.isLaundry }) {
+                val binding = CloudReminderVault(context).binding(order.owner)
+                    ?.takeIf { it.deviceAssisted } ?: return@withLaundrySession false
+                if (CloudReminderOperations(context).queueObservation(order.owner, order, binding, fresh) == CloudSyncOutcome.PENDING)
+                    CloudReminderWork.requestSync(context, order.owner)
+                true
+            }
+        }
+        if (cancelled) LaundryReminders.forget(context, order)
+        // The live notification is separate from the true completion notification. It only
+        // follows the current owner's current order and only starts from a visible Activity.
+        runCatching { LaundryLiveMonitor.onOrderObserved(context, order, running, completed) }
     }
 }

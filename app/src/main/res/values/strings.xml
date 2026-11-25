@@ -1,5 +1,9 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
+    <string name="theme_design_style_title" formatted="false">"界面风格"</string>
+    <string name="theme_design_material" formatted="false">"Material"</string>
+    <string name="theme_design_miuix" formatted="false">"MIUIX"</string>
+    <string name="theme_design_miuix_fixed_colors" formatted="false">"MIUIX 使用固定配色"</string>
     <string name="msg_001914d23f0c" formatted="false">"雾蓝"</string>
     <string name="msg_00612aad0812" formatted="false">"将请求饮水机停止本次用水，并查询平台结算账单。请同时确认机器已停止出水。"</string>
     <string name="msg_00d78bd5bca3" formatted="false">"收起订单详情"</string>
@@ -72,7 +76,6 @@
     <string name="msg_1c8a94e1b712" formatted="false">"粘贴洗衣机或饮水机二维码的完整内容。"</string>
     <string name="msg_1cecf188f254" formatted="false">"壁纸颜色已应用"</string>
     <string name="msg_1d1d1e02bdf7" formatted="false">"尚未确认付款，可稍后再次查询"</string>
-    <string name="msg_1d4fe6ba00ce" formatted="false">"在底栏当前显示的页面之间切换"</string>
     <string name="msg_1e027e8f269f" formatted="false">"本设备免密授权要求尚未确认，请刷新后重试"</string>
     <string name="msg_1e2df9c3075a" formatted="false">"登录"</string>
     <string name="msg_1e75a9bc677c" formatted="false">"下单时间"</string>
@@ -124,7 +127,6 @@
     <string name="msg_3098a02a0c34" formatted="false">"平台已标记饮水账单退款完成，请核对到账情况。"</string>
     <string name="msg_30b6558e1ec2" formatted="false">"选项卡动画"</string>
     <string name="msg_321554ba3c42" formatted="false">"这台设备请使用机身停止按钮结束出水，再刷新状态。"</string>
-    <string name="msg_323af04842ad" formatted="false">"长按或拖动体验液态形变，轻点切换带弹性回弹。"</string>
     <string name="msg_325527570302" formatted="false">"支付宝订单内容无法确认"</string>
     <string name="msg_33a072bb43bc" formatted="false">"平台仍提示本设备需要免密授权，请稍后核验；确认用水后将打开支付宝。"</string>
     <string name="msg_33cdc95be001" formatted="false">"二、本人账户与合法授权\n仅操作本人或已获合法授权的账户、设备服务及订单，不盗用身份、借用他人验证码、窃取令牌或冒用支付账户。未经授权不得查询、保存或传播他人的账户、订单、设备使用及个人信息。"</string>
@@ -282,7 +284,6 @@
     <string name="msg_6c3a3a160315" formatted="false">"无法创建开屏图片目录"</string>
     <string name="msg_6c61dc3a5f3d" formatted="false">"金额待同步"</string>
     <string name="msg_6c6594023f60" formatted="false">"正在发送验证码"</string>
-    <string name="msg_6cdb2ed0c44e" formatted="false">"柔和毛玻璃，轻微折射与形变"</string>
     <string name="msg_6ce4fd181551" formatted="false">"确认结束用水"</string>
     <string name="msg_6d1262e5d2e0" formatted="false">"平台返回的结算金额"</string>
     <string name="msg_6d1c3af7a838" formatted="false">"饮水状态暂时无法刷新，请稍后重试"</string>
@@ -412,7 +413,6 @@
     <string name="msg_a54c648d6a5d" formatted="false">"请先刷新并选择饮水支付方式"</string>
     <string name="msg_a555b7117495" formatted="false">"取消结果尚未确认，请刷新订单"</string>
     <string name="msg_a5a749ecf99b" formatted="false">"使用 Kotlin 与 Jetpack Compose 构建的独立 Android 洗衣与饮水客户端。"</string>
-    <string name="msg_a6b6c3b4d179" formatted="false">"通透玻璃，更明显的折射与弹性形变"</string>
     <string name="msg_a6b75d068032" formatted="false">"深色"</string>
     <string name="msg_a6e01b215620" formatted="false">"饮水机正在使用或状态尚未确认，请先刷新状态"</string>
     <string name="msg_a6e3cad608b3" formatted="false">"订单详情格式尚未适配，请先在原应用核对"</string>
@@ -438,7 +438,6 @@
     <string name="msg_ada841bf67e9">"服务暂时不可用（%1$s）"</string>
     <string name="msg_adcead944a6f" formatted="false">"取消未付款订单"</string>
     <string name="msg_ae8e4d07d70a" formatted="false">"请扫描饮水机二维码"</string>
-    <string name="msg_af93b6dcf87a" formatted="false">"实色底栏，保留弹性滑块"</string>
     <string name="msg_afb44149eeaf" formatted="false">"确认这一次洗衣"</string>
     <string name="msg_afdbcbccf8a9">"QQ 群：%1$s"</string>
     <string name="msg_b01e2d77a8c6" formatted="false">"订单已退款"</string>
@@ -579,7 +578,6 @@
     <string name="msg_ed06c8b46087" formatted="false">"暂时无法获取位置，请稍后重试"</string>
     <string name="msg_edbdfa509c1e" formatted="false">"有一条饮水记录待处理，请扫描原设备或在订单中恢复。"</string>
     <string name="msg_eef16f7a3477" formatted="false">"三、必要请求与数据完整性\n本软件仅在用户明确操作及合法授权范围内发送登录、设备识别、报价、下单、付款、订单查询或取消等必要请求。不以篡改、伪造、破坏网络数据为目的，不提供伪造付款成功、恶意修改价格或余额、越权访问账户等功能。正常业务操作会由服务端依法更新相应订单状态；金额、支付和设备状态须以服务端核验结果为准。"</string>
-    <string name="msg_ef28a66a21b1" formatted="false">"每次启动显示一张，下次启动切换下一张"</string>
     <string name="msg_ef9454bff0b4" formatted="false">"开源协议"</string>
     <string name="msg_efab9e4d456b" formatted="false">"简洗-支付宝收款码.jpg"</string>
     <string name="msg_f06ac4a79992" formatted="false">"饮水机或商户信息已变化，请重新扫码确认"</string>
@@ -618,4 +616,77 @@
     <string name="msg_ffc624300de8" formatted="false">"金额"</string>
     <string name="app_name" translatable="false">@string/msg_2b207da009d1</string>
     <string name="msg_643afd7f49a2_version" formatted="false">"版本：1.0.0｜内部版本：0.1.16｜更新日期：2026年11月3日"</string>
+    <string name="cloud_title" formatted="false">"云微信提醒"</string>
+    <string name="cloud_subtitle" formatted="false">"由自建服务器监测洗衣完成，通过喵提醒服务号发送微信提醒"</string>
+    <string name="cloud_voluntary" formatted="false">"完全自愿，独立于本机通知；不开启也不影响现有洗衣提醒。"</string>
+    <string name="cloud_status_disabled" formatted="false">"未启用"</string>
+    <string name="cloud_status_bound" formatted="false">"已绑定"</string>
+    <string name="cloud_status_pending" formatted="false">"待同步"</string>
+    <string name="cloud_status_error" formatted="false">"异常"</string>
+    <string name="cloud_status_auth_required" formatted="false">"需重新授权"</string>
+    <string name="cloud_server_url" formatted="false">"服务器地址"</string>
+    <string name="cloud_server_hint" formatted="false">"仅支持 HTTPS；不跳过证书校验，不跟随重定向。"</string>
+    <string name="cloud_pairing_code" formatted="false">"服务器配对码"</string>
+    <string name="cloud_miaotixing_code" formatted="false">"喵码"</string>
+    <string name="cloud_miaotixing_hint" formatted="false">"仅用于微信提醒，成功后立即清空，不会长期保存。"</string>
+    <string name="cloud_consent" formatted="false">"我同意将当前平台登录凭据和待监控订单交给该自建服务器，仅用于只读查询。"</string>
+    <string name="cloud_security_note" formatted="false">"仅使用标准 TLS；服务器只读订单详情，不能触发任何洗衣启动、付款或取消操作。"</string>
+    <string name="cloud_bind" formatted="false">"绑定云提醒"</string>
+    <string name="cloud_login_required" formatted="false">"请先登录后再绑定云提醒。"</string>
+    <string name="cloud_bound_server">"服务器：%1$s"</string>
+    <string name="cloud_notification_configured" formatted="false">"喵码已配置"</string>
+    <string name="cloud_notification_missing" formatted="false">"喵码未配置"</string>
+    <string name="cloud_pending_sync" formatted="false">"有洗衣订单待同步到服务器；本机洗衣功能不受影响，可点击重试。"</string>
+    <string name="cloud_auth_note" formatted="false">"服务器上的平台登录已失效。请重新授权，或解绑后重新绑定。"</string>
+    <string name="cloud_no_subscriptions" formatted="false">"暂无服务器订阅。"</string>
+    <string name="cloud_subscription_summary">"服务器订阅：运行中 %1$d 个 · 已完成 %2$d 个"</string>
+    <string name="cloud_delivery_accepted" formatted="false">"服务商已受理提醒，但这不代表微信已送达。"</string>
+    <string name="cloud_delivery_unknown" formatted="false">"最近一次提醒结果未知，请勿反复触发。"</string>
+    <string name="cloud_refresh" formatted="false">"刷新服务器状态"</string>
+    <string name="cloud_retry" formatted="false">"重试同步"</string>
+    <string name="cloud_reauthorize" formatted="false">"重新授权"</string>
+    <string name="cloud_test" formatted="false">"发送测试提醒"</string>
+    <string name="cloud_test_cooldown">"测试冷却中，%1$d 秒后可重试"</string>
+    <string name="cloud_test_accepted" formatted="false">"服务商已受理测试提醒，不代表微信已送达。"</string>
+    <string name="cloud_test_unknown" formatted="false">"测试结果未知，请勿反复点击。"</string>
+    <string name="cloud_test_failed" formatted="false">"服务商拒绝了测试提醒。"</string>
+    <string name="cloud_update_code" formatted="false">"更新喵码"</string>
+    <string name="cloud_update_code_label" formatted="false">"新的喵码"</string>
+    <string name="cloud_save" formatted="false">"保存"</string>
+    <string name="cloud_cancel" formatted="false">"取消"</string>
+    <string name="cloud_unbind" formatted="false">"解绑云提醒"</string>
+    <string name="cloud_unbind_confirm_title" formatted="false">"解绑云提醒？"</string>
+    <string name="cloud_unbind_confirm_text" formatted="false">"将撤销服务器上的设备凭据和待监控订阅。网络失败时会保留本地绑定，以便重试确认。"</string>
+    <string name="cloud_error_network" formatted="false">"无法连接云提醒服务器，请检查网络后重试。"</string>
+    <string name="cloud_error_auth" formatted="false">"服务器设备凭据或平台授权已失效，请重新授权或重新绑定。"</string>
+    <string name="cloud_error_pairing" formatted="false">"配对码无效、已过期，或填写不完整。"</string>
+    <string name="cloud_error_url" formatted="false">"请输入有效的 HTTPS 地址；不能包含账号密码、查询参数或片段。"</string>
+    <string name="cloud_error_login" formatted="false">"请先登录后再操作云提醒。"</string>
+    <string name="cloud_error_consent" formatted="false">"请先勾选同意，将只读查询所需信息交给自建服务器。"</string>
+    <string name="cloud_error_server" formatted="false">"服务器拒绝了此次请求，请稍后重试。"</string>
+    <string name="cloud_error_rate" formatted="false">"请求过于频繁，请稍后重试。"</string>
+    <string name="cloud_error_rate_seconds">"请求过于频繁，请在 %1$d 秒后重试。"</string>
+    <string name="cloud_error_invalid_response" formatted="false">"服务器响应格式不正确，请确认地址与服务版本。"</string>
+    <string name="cloud_error_unbind" formatted="false">"未能确认服务器解绑；本地绑定仍保留，请检查网络后重试。"</string>
+    <string name="cloud_error_notification" formatted="false">"请填写喵码后再试。"</string>
+    <string name="cloud_error_binding" formatted="false">"当前账户尚未绑定云提醒。"</string>
+    <string name="cloud_error_sync" formatted="false">"订单同步暂时失败，将保留“待同步”并在稍后重试。"</string>
+    <string name="cloud_error_generic" formatted="false">"云提醒操作暂时失败，请稍后重试。"</string>
+    <string name="cloud_logout_unbind_failed" formatted="false">"本机已退出；云端提醒解绑未确认，已保留旧设备凭据用于重试。"</string>
+    <string name="font_settings_title" formatted="false">"字体"</string>
+    <string name="font_settings_desc" formatted="false">"选择应用界面字体；选项标签与提示始终使用系统字体"</string>
+    <string name="font_system_title" formatted="false">"跟随系统"</string>
+    <string name="font_system_desc" formatted="false">"使用 Android 系统字体"</string>
+    <string name="font_yunzhuan_title" formatted="false">"云篆度人经"</string>
+    <string name="font_yunzhuan_desc" formatted="false">"仅覆盖部分汉字，未收录字符由系统字体补全"</string>
+    <string name="font_preview_label" formatted="false">"字体预览"</string>
+    <string name="font_preview_sample" formatted="false">"元始无量度人上品妙经"</string>
+    <string name="font_preview_notice" formatted="false">"云篆字体仅覆盖部分汉字；数字、拉丁字母等未收录字符由系统字体显示"</string>
+    <string name="font_license_entry" formatted="false">"云篆度人经 · SIL OFL 1.1"</string>
+    <string name="font_license_title" formatted="false">"云篆度人经字体许可"</string>
+    <string name="font_license_author" formatted="false">"作者：执笔之龙"</string>
+    <string name="font_license_upstream" formatted="false">"上游：github.com/Lawrence-of-AnKing/yunzhuan-duren"</string>
+    <string name="font_license_revision" formatted="false">"修订：bcedee13ee0cb6b491f59f781ae1e5cdf5276dd8"</string>
+    <string name="font_license_note" formatted="false">"本应用按上游原样打包字体，未修改字体文件。字体仅覆盖部分汉字，未覆盖字符由系统字体回退显示，不保证覆盖全部字符集。"</string>
+    <string name="settings_log_out">退出登录</string>
 </resources>

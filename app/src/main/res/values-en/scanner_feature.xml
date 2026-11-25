@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+  <string name="scanner_feature_disabled">Scanning is off. Enable it in Settings.</string>
+  <string name="settings_scanner_title" formatted="false">"Camera scanning"</string>
+  <string name="settings_scanner_help" formatted="false">"Controls camera scanning independently of Laundry and Water. When off, you can still enter a device code or use a saved device. This setting does not cancel orders, make payments or start devices."</string>
+</resources>

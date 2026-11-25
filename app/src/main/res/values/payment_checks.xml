@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="payment_submitted_unconfirmed">"付款请求已提交，请刷新订单查询最终状态"</string>
+    <string name="water_submitted_unconfirmed">"用水指令已提交，请刷新查询状态；如设备正在出水，请确认后结束用水"</string>
+    <string name="payment_deduction_unsupported">"平台为这笔订单应用了不支持的抵扣，已停止付款。请在原应用调整后重试"</string>
+    <string name="payment_deduction_unconfirmed">"无法核对订单抵扣明细，已停止付款。请刷新订单后重试"</string>
+</resources>

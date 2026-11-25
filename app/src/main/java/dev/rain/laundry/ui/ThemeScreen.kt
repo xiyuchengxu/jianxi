@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
+import dev.rain.laundry.ui.ControlIcon as Icon
 import dev.rain.laundry.i18n.LocalizedText as Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,9 +38,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -47,29 +52,51 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
     contentBottomPadding: Dp = 28.dp) {
     val colors = MaterialTheme.colorScheme
     val dynamicSupported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-    val dynamicActive = dynamicSupported && settings.dynamicColor
+    val dynamicActive = dynamicSupported && settings.dynamicColor && settings.designStyle == DesignStyle.MATERIAL
+    val miuixActive = settings.designStyle == DesignStyle.MIUIX
     val wallpaper = LocalWallpaperColorInfo.current
     LazyColumn(modifier.fillMaxSize(), contentPadding = PaddingValues(top = 12.dp, bottom = contentBottomPadding),
         verticalArrangement = Arrangement.spacedBy(24.dp)) {
         item(key = "preview") { ThemePreview(settings) }
 
+        item(key = "design_style") {
+            SettingGroup("theme.style", appText(R.string.theme_design_style_title), Icons.Outlined.DashboardCustomize) {
+                DesignStyle.entries.forEachIndexed { index, style ->
+                    if (index > 0) SettingDivider()
+                    ChoiceRow("theme.style.${style.name.lowercase()}", appText(if (style == DesignStyle.MIUIX) R.string.theme_design_miuix else R.string.theme_design_material),
+                        if (style == DesignStyle.MIUIX) Icons.Outlined.Tune else Icons.Outlined.Palette,
+                        settings.designStyle == style,
+                        { onChange(settings.copy(designStyle = style)) })
+                }
+            }
+        }
+
+        // Existing installations can still return to their system font.
+        if (settings.font != AppFont.SYSTEM) item(key = "restore_system_font") {
+            SettingGroup("theme.font", appText(R.string.font_settings_title), Icons.Outlined.TextFields,
+                fontFamily = FontFamily.Default) {
+                ChoiceRow("theme.font.system", appText(R.string.font_system_title), Icons.Outlined.PhoneAndroid, false,
+                    { onChange(settings.copy(font = AppFont.SYSTEM)) }, fontFamily = FontFamily.Default)
+            }
+        }
+
         item(key = "home_message") {
-            SettingGroup(appText(R.string.msg_3e0d676d2d85), Icons.Outlined.EditNote) {
+            SettingGroup("theme.home.message", appText(R.string.msg_3e0d676d2d85), Icons.Outlined.EditNote) {
                 HomeMessageSettings(settings, onChange)
             }
         }
 
         item(key = "splash") {
-            SettingGroup(appText(R.string.msg_e94328786abb), Icons.Outlined.PhotoLibrary) {
+            SettingGroup("theme.splash", appText(R.string.msg_e94328786abb), Icons.Outlined.PhotoLibrary) {
                 SplashSettings(settings, onChange)
             }
         }
 
         item(key = "mode") {
-            SettingGroup(appText(R.string.msg_44fb814b166e), Icons.Outlined.Brightness6) {
+            SettingGroup("theme.mode", appText(R.string.msg_44fb814b166e), Icons.Outlined.Brightness6) {
                 ThemeMode.entries.forEachIndexed { index, mode ->
                     if (index > 0) SettingDivider()
-                    ChoiceRow(mode.title, when (mode) {
+                    ChoiceRow("theme.mode.${mode.name.lowercase()}", mode.title, when (mode) {
                         ThemeMode.SYSTEM -> Icons.Outlined.BrightnessAuto
                         ThemeMode.LIGHT -> Icons.Outlined.LightMode
                         ThemeMode.DARK -> Icons.Outlined.DarkMode
@@ -79,7 +106,7 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "black") {
-            SettingGroup(appText(R.string.msg_46bad67d0636), Icons.Outlined.Contrast) {
+            SettingGroup("theme.black", appText(R.string.msg_46bad67d0636), Icons.Outlined.Contrast) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.Nightlight, null, tint = colors.onSurfaceVariant)
@@ -87,20 +114,20 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                         Text(appText(R.string.msg_56fe9a6dd1aa), style = MaterialTheme.typography.bodyLarge)
                         Text(appText(R.string.msg_247ab5060860), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
-                    Switch(settings.pureBlack, { onChange(settings.copy(pureBlack = it)) },
+                    AppSwitch(settings.pureBlack, { onChange(settings.copy(pureBlack = it)) },
                         modifier = Modifier.semantics { contentDescription = appText(R.string.msg_56fe9a6dd1aa) })
                 }
             }
         }
 
         item(key = "palette") {
-            SettingGroup(appText(R.string.msg_d007cc91971f), Icons.Outlined.Palette) {
+            SettingGroup("theme.palette", appText(R.string.msg_d007cc91971f), Icons.Outlined.Palette) {
                 FlowRow(Modifier.fillMaxWidth().padding(12.dp),
                     horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     ThemePalette.entries.forEach { palette ->
-                        val chosen = !dynamicActive && settings.palette == palette
-                        Box(Modifier.size(48.dp).alpha(if (dynamicActive) .4f else 1f).clip(CircleShape)
-                            .selectable(chosen, enabled = !dynamicActive, role = Role.RadioButton, onClick = { onChange(settings.copy(palette = palette)) })
+                        val chosen = !dynamicActive && !miuixActive && settings.palette == palette
+                        Box(Modifier.size(48.dp).alpha(if (dynamicActive || miuixActive) .4f else 1f).clip(CircleShape)
+                            .selectable(chosen, enabled = !dynamicActive && !miuixActive, role = Role.RadioButton, onClick = { onChange(settings.copy(palette = palette)) })
                             .semantics { contentDescription = appText(R.string.msg_4c0130832ac1 , localizedMessage(palette.title)) }, contentAlignment = Alignment.Center) {
                             Box(Modifier.size(40.dp).then(if (chosen) Modifier.border(2.dp, colors.primary, CircleShape) else Modifier)
                                 .padding(4.dp).background(palette.accent(), CircleShape), contentAlignment = Alignment.Center) {
@@ -110,6 +137,7 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                     }
                 }
                 Text(when {
+                    miuixActive -> appText(R.string.theme_design_miuix_fixed_colors)
                     !dynamicActive -> appText(R.string.msg_755f809f9c52 , localizedMessage(settings.palette.title))
                     wallpaper.seed != null -> appText(R.string.msg_03dd0c88d8ac)
                     wallpaper.loading -> appText(R.string.msg_5ecc022c1ca8)
@@ -122,12 +150,12 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                 val menuScale = animateFloatAsState(if (styleMenu) .982f else 1f,
                     spring(dampingRatio = .5f, stiffness = 600f), label = "styleAnchor")
                 Box {
-                    Row(Modifier.fillMaxWidth().alpha(if (dynamicActive) .4f else 1f)
+                    AdjustableSettingRow("theme.palette.style", Modifier.fillMaxWidth().alpha(if (dynamicActive || miuixActive) .4f else 1f)
                         .graphicsLayer { scaleX = menuScale.value; scaleY = menuScale.value }
-                        .clickable(enabled = !dynamicActive) { styleMenu = true }.padding(18.dp),
+                        .clickable(enabled = !dynamicActive && !miuixActive) { styleMenu = true }.padding(18.dp),
                         verticalAlignment = Alignment.CenterVertically) {
                         Text(appText(R.string.msg_4d29b30867a0), Modifier.weight(1f))
-                        Text(if (dynamicActive) appText(R.string.msg_7eb336e42cb5) else settings.colorStyle.title, color = colors.onSurfaceVariant)
+                        Text(if (dynamicActive || miuixActive) appText(R.string.msg_7eb336e42cb5) else settings.colorStyle.title, color = colors.onSurfaceVariant)
                         Spacer(Modifier.width(4.dp))
                         Icon(Icons.Outlined.UnfoldMore, null, tint = colors.onSurfaceVariant, modifier = Modifier.size(18.dp))
                     }
@@ -146,19 +174,20 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "wallpaper") {
-            SettingGroup(appText(R.string.msg_bc99124901b6), Icons.Outlined.Wallpaper) {
+            SettingGroup("theme.wallpaper", appText(R.string.wallpaper_settings_title), Icons.Outlined.Wallpaper) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.AutoAwesome, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(appText(R.string.msg_458e4ccaafb1), style = MaterialTheme.typography.bodyLarge)
                         Text(when {
+                            miuixActive -> appText(R.string.theme_design_miuix_fixed_colors)
                             !dynamicSupported -> appText(R.string.msg_e7e3ad41fdb9)
                             dynamicActive -> appText(R.string.msg_0b8351751e94)
                             else -> appText(R.string.msg_d03a42384c95)
                         }, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
-                    Switch(checked = dynamicActive, enabled = dynamicSupported,
+                    AppSwitch(checked = dynamicActive, enabled = dynamicSupported && !miuixActive,
                         onCheckedChange = { onChange(settings.copy(dynamicColor = it)) },
                         modifier = Modifier.semantics { contentDescription = appText(R.string.msg_458e4ccaafb1) })
                 }
@@ -175,42 +204,38 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
                             wallpaper.seed != null -> appText(R.string.msg_1cecf188f254)
                             else -> appText(R.string.msg_13c1f4bc5d91)
                         }, Modifier.weight(1f), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
-                        TextButton(onClick = wallpaper.refresh, enabled = !wallpaper.loading) {
+                        AppTextButton(onClick = wallpaper.refresh, enabled = !wallpaper.loading) {
                             Text(appText(R.string.msg_d22657dec5d1))
                         }
                     }
                 }
+                SettingDivider()
+                WallpaperBackgroundSettings(settings, onChange)
             }
         }
 
         item(key = "navigation") {
-            SettingGroup(appText(R.string.msg_894df8bd55a2), Icons.Outlined.Layers) {
-                ChoiceRow(appText(R.string.msg_b70c4e8a2e1d), Icons.Outlined.ViewAgenda, settings.bottomBar == BottomBarStyle.FLOATING,
+            SettingGroup("theme.navigation", appText(R.string.msg_894df8bd55a2), Icons.Outlined.Layers) {
+                ChoiceRow("theme.navigation.floating", appText(R.string.msg_b70c4e8a2e1d), Icons.Outlined.ViewAgenda, settings.bottomBar == BottomBarStyle.FLOATING,
                     { onChange(settings.copy(bottomBar = BottomBarStyle.FLOATING)) }, appText(R.string.msg_c4af153a611c , localizedMessage(settings.glassLevel.title)))
                 SettingDivider()
-                ChoiceRow(appText(R.string.msg_d4b3f49cd2e4), Icons.Outlined.VerticalAlignBottom, settings.bottomBar == BottomBarStyle.FIXED,
+                ChoiceRow("theme.navigation.fixed", appText(R.string.msg_d4b3f49cd2e4), Icons.Outlined.VerticalAlignBottom, settings.bottomBar == BottomBarStyle.FIXED,
                     { onChange(settings.copy(bottomBar = BottomBarStyle.FIXED)) }, appText(R.string.msg_b3b023c8f791))
             }
         }
 
         item(key = "glass") {
-            SettingGroup(appText(R.string.msg_b1c9c1d036e2), Icons.Outlined.WaterDrop) {
+            SettingGroup("theme.glass", appText(R.string.msg_b1c9c1d036e2), Icons.Outlined.WaterDrop) {
                 GlassLevel.entries.forEachIndexed { index, level ->
                     if (index > 0) SettingDivider()
-                    ChoiceRow(level.title, when (level) {
+                    ChoiceRow("theme.glass.${level.name.lowercase()}", level.title, when (level) {
                         GlassLevel.NONE -> Icons.Outlined.LayersClear
                         GlassLevel.LIGHT -> Icons.Outlined.BlurOn
                         GlassLevel.FULL -> Icons.Outlined.WaterDrop
-                    }, settings.glassLevel == level, { onChange(settings.copy(glassLevel = level)) }, when (level) {
-                        GlassLevel.NONE -> appText(R.string.msg_af93b6dcf87a)
-                        GlassLevel.LIGHT -> appText(R.string.msg_6cdb2ed0c44e)
-                        GlassLevel.FULL -> appText(R.string.msg_a6b6c3b4d179)
-                    })
+                    }, settings.glassLevel == level, { onChange(settings.copy(glassLevel = level)) })
                 }
                 SettingDivider()
-                Text(if (settings.bottomBar == BottomBarStyle.FIXED)
-                    appText(R.string.msg_65e1d3722879)
-                    else appText(R.string.msg_323af04842ad),
+                if (settings.bottomBar == BottomBarStyle.FIXED) Text(appText(R.string.msg_65e1d3722879),
                     Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                     style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                 GlassStylePreview(settings.glassLevel, settings.visibleTabs)
@@ -218,25 +243,24 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
         }
 
         item(key = "swipe") {
-            SettingGroup(appText(R.string.msg_3f2191b43607), Icons.Outlined.Swipe) {
+            SettingGroup("theme.swipe", appText(R.string.msg_3f2191b43607), Icons.Outlined.Swipe) {
                 Row(Modifier.fillMaxWidth().padding(horizontal = 18.dp, vertical = 12.dp),
                     verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Icon(Icons.Outlined.Swipe, null, tint = colors.onSurfaceVariant)
                     Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(appText(R.string.msg_088dce96a836), style = MaterialTheme.typography.bodyLarge)
-                        Text(appText(R.string.msg_1d4fe6ba00ce), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
                     }
-                    Switch(settings.swipeNavigation, { onChange(settings.copy(swipeNavigation = it)) },
+                    AppSwitch(settings.swipeNavigation, { onChange(settings.copy(swipeNavigation = it)) },
                         modifier = Modifier.semantics { contentDescription = appText(R.string.msg_088dce96a836) })
                 }
             }
         }
 
         item(key = "animation") {
-            SettingGroup(appText(R.string.msg_30b6558e1ec2), Icons.Outlined.Animation) {
+            SettingGroup("theme.animation", appText(R.string.msg_30b6558e1ec2), Icons.Outlined.Animation) {
                 PageAnimation.entries.forEachIndexed { index, animation ->
                     if (index > 0) SettingDivider()
-                    ChoiceRow(animation.title, when (animation) {
+                    ChoiceRow("theme.animation.${animation.name.lowercase()}", animation.title, when (animation) {
                         PageAnimation.SLIDE -> Icons.Outlined.Swipe
                         PageAnimation.FADE -> Icons.Outlined.BlurOn
                         PageAnimation.NONE -> Icons.Outlined.MotionPhotosOff
@@ -251,52 +275,74 @@ fun ThemeScreen(settings: ThemeSettings, onChange: (ThemeSettings) -> Unit, modi
 }
 
 @Composable
-private fun SettingGroup(title: String, icon: ImageVector, content: @Composable ColumnScope.() -> Unit) {
+private fun SettingGroup(controlId: String, title: String, icon: ImageVector, fontFamily: FontFamily? = null,
+    content: @Composable ColumnScope.() -> Unit) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(Modifier.padding(start = 4.dp), verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Icon(icon, null, Modifier.size(20.dp), tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontFamily = fontFamily)
         }
-        Surface(shape = RoundedCornerShape(26.dp), color = MaterialTheme.colorScheme.surfaceContainer,
+        AppCard(controlId = controlId, shape = appShape(26.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
             modifier = Modifier.fillMaxWidth()) {
-            Column(content = content)
+            content()
         }
     }
 }
 
 @Composable
-private fun SettingDivider() {
+internal fun SettingDivider() {
     HorizontalDivider(Modifier.padding(start = 66.dp, end = 18.dp), color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = .55f))
 }
 
 @Composable
-private fun ChoiceRow(title: String, icon: ImageVector, selected: Boolean, onSelect: () -> Unit, subtitle: String? = null) {
-    val colors = MaterialTheme.colorScheme
-    val interaction = remember { MutableInteractionSource() }
-    val pressed by interaction.collectIsPressedAsState()
-    val scale = animateFloatAsState(if (pressed) .974f else 1f,
-        spring(dampingRatio = .48f, stiffness = 650f), label = "choicePress")
-    val iconColor by animateColorAsState(if (selected) colors.primaryContainer else colors.surfaceContainerHigh,
-        spring(stiffness = 500f), label = "choiceColor")
-    Row(Modifier.fillMaxWidth().heightIn(min = 64.dp)
-        .graphicsLayer { scaleX = scale.value; scaleY = scale.value }
-        .selectable(selected, interactionSource = interaction, indication = LocalIndication.current,
-            onClick = onSelect, role = Role.RadioButton).padding(horizontal = 18.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-        Box(Modifier.size(34.dp).background(iconColor,
-            RoundedCornerShape(10.dp)), contentAlignment = Alignment.Center) {
-            Icon(icon, null, Modifier.size(19.dp), tint = if (selected) colors.primary else colors.onSurfaceVariant)
+private fun ChoiceRow(controlId: String, title: String, icon: ImageVector, selected: Boolean, onSelect: () -> Unit,
+    subtitle: String? = null, fontFamily: FontFamily? = null) {
+    AdjustableControl(controlId, Modifier) { target ->
+        val rowModifier = if (LocalControlHasOverride.current)
+            target.background(MaterialTheme.colorScheme.surfaceContainerHigh.controlContainer()) else target
+        val colors = MaterialTheme.colorScheme
+        if (LocalMiuixStyle.current) {
+            top.yukonga.miuix.kmp.basic.BasicComponent(
+                title = title, summary = subtitle, onClick = onSelect,
+                modifier = rowModifier.semantics { role = Role.RadioButton; this.selected = selected },
+                leftAction = {
+                    Icon(icon, null, Modifier.padding(end = 14.dp).size(22.dp), tint = colors.onSurfaceVariant)
+                },
+                rightActions = {
+                    if (selected) Icon(Icons.Outlined.Check, null, tint = colors.primary, modifier = Modifier.size(22.dp))
+                }
+            )
+            return@AdjustableControl
         }
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-            Text(title, style = MaterialTheme.typography.bodyLarge)
-            if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
-        }
-        Box(Modifier.size(22.dp), contentAlignment = Alignment.Center) {
-            androidx.compose.animation.AnimatedVisibility(selected,
-                enter = scaleIn(spring(dampingRatio = .46f, stiffness = 520f), initialScale = .4f) + fadeIn(tween(90)),
-                exit = scaleOut(tween(80), targetScale = .6f) + fadeOut(tween(80))) {
-                Icon(Icons.Outlined.Check, null, tint = colors.primary, modifier = Modifier.size(22.dp))
+        val interaction = remember { MutableInteractionSource() }
+        val pressed by interaction.collectIsPressedAsState()
+        val scale = animateFloatAsState(if (pressed) .974f else 1f,
+            spring(dampingRatio = .48f, stiffness = 650f), label = "choicePress")
+        val iconColor by animateColorAsState(if (selected) colors.primaryContainer else colors.surfaceContainerHigh,
+            spring(stiffness = 500f), label = "choiceColor")
+        Row(rowModifier.fillMaxWidth().heightIn(min = 64.dp)
+            .graphicsLayer { scaleX = scale.value; scaleY = scale.value }
+            .selectable(selected, interactionSource = interaction, indication = LocalIndication.current,
+                onClick = onSelect, role = Role.RadioButton).padding(horizontal = 18.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+            Box(Modifier.size(34.dp).background(iconColor.controlContainer(),
+                RoundedCornerShape(10.dp)), contentAlignment = Alignment.Center) {
+                Icon(icon, null, Modifier.size(19.dp), tint = if (selected) colors.primary else colors.onSurfaceVariant)
+            }
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(title, style = MaterialTheme.typography.bodyLarge, fontFamily = fontFamily)
+                if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodySmall,
+                    color = colors.onSurfaceVariant, fontFamily = fontFamily)
+            }
+            Box(Modifier.size(22.dp), contentAlignment = Alignment.Center) {
+                androidx.compose.animation.AnimatedVisibility(selected,
+                    enter = scaleIn(spring(dampingRatio = .46f, stiffness = 520f), initialScale = .4f) + fadeIn(tween(90)),
+                    exit = scaleOut(tween(80), targetScale = .6f) + fadeOut(tween(80))) {
+                    Icon(Icons.Outlined.Check, null, tint = colors.primary, modifier = Modifier.size(22.dp))
+                }
             }
         }
     }
@@ -307,7 +353,7 @@ private fun ChoiceRow(title: String, icon: ImageVector, selected: Boolean, onSel
 private fun ThemePreview(settings: ThemeSettings) {
     val colors = MaterialTheme.colorScheme
     Surface(Modifier.fillMaxWidth().height(264.dp).clearAndSetSemantics { contentDescription = appText(R.string.msg_f78a40791721) },
-        shape = RoundedCornerShape(30.dp), color = colors.surfaceContainer) {
+        shape = appShape(30.dp), color = colors.surfaceContainer.controlContainer()) {
         Box(contentAlignment = Alignment.Center) {
             Surface(Modifier.width(132.dp).height(234.dp), shape = RoundedCornerShape(24.dp),
                 color = colors.background, border = BorderStroke(5.dp, colors.outlineVariant)) {
